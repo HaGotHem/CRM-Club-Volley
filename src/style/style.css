@@ -3,8 +3,12 @@
    themes: light --default;
  }
 :root {
+  --color-principal:#15277B;
+  --color-secondaire:#F5D804;
+  --color-background:#363636;
+  --font-principal: 'inter', sans-serif;
 }
-*{
+body{
   margin: 0;
   padding: 0;
 }
