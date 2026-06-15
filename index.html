@@ -9,58 +9,93 @@
     <title>Login CRM volleyball</title>
   </head>
   <body class="flex flex-col min-h-screen">
-<!-- navebar -->
-    <div class="container   bg-[var(--color-principal)]">
-      <div class=" flex justify-center  navbar__logo">
+
+    <!-- navbar mobile uniquement -->
+    <div class="lg:hidden bg-[var(--color-principal)]">
+      <div class="flex justify-center">
         <img class="max-w-20 py-1" src="./src/assets/logo.svg" alt="Logo" />
       </div>
     </div>
-<!-- contenue de page -->
-    <div class="content gap-20 flex-1">
-      <!-- texte de bienvenue -->
-      <div class="Title-container flex justify-center items-center">
-        <h2 class="text-3xl text-center font-bold font-[var(--font-principal)] mt-20">Bienvenue sur la page de connexion</h2>
+
+    <!-- contenu principal -->
+    <div class="flex-1 flex flex-col lg:flex-row relative">
+
+      <!-- panneau gauche : logo desktop uniquement -->
+      <div class="hidden lg:flex lg:w-1/2 bg-[var(--color-principal)] items-center justify-center">
+        <img src="./src/assets/logo.svg" alt="Logo NVB" class="w-72" />
       </div>
-      <!-- formulaire de connexion -->
-      <div class="login-form">
-        <div class="hero">
-          <div class="hero-content flex-col lg:flex-row-reverse ">
-            <div class="card bg-base-100 w-full max-w-2xl shadow-2xl">
-              <div class="card-body p-6">
-                <fieldset class="fieldset gap-4">
-                  <label class="label text-xl">Identifiant</label>
-                  <input type="text" class="input input-lg w-full text-lg" placeholder="Identifiant" />
-                  <label class="label text-xl">Mot de passe</label>
-                  <input type="password" class="input input-lg w-full text-lg" placeholder="Entrer mot de passe" />
-                  <div><a class="link link-hover text-base">Mot de passe oublié?</a></div>
-                  <button class="btn btn-neutral text-2xl mt-6 h-16">Connexion</button>
-                </fieldset>
-              </div>
+
+      <!-- panneau droit : formulaire -->
+      <div class="flex-1 flex flex-col justify-center px-6 py-10 lg:px-20 lg:pb-20 lg:w-1/2 bg-white">
+
+        <h2 class="text-2xl lg:text-3xl font-bold text-center lg:text-left font-[var(--font-principal)] mb-10">
+          Bienvenue sur la page de connexion
+        </h2>
+
+        <!-- carte mobile / formulaire brut desktop -->
+        <div class="lg:hidden">
+          <div class="card bg-base-100 w-full shadow-2xl">
+            <div class="card-body p-6">
+              <fieldset class="fieldset gap-4">
+                <label class="label text-xl">Identifiant</label>
+                <input type="text" class="input input-lg w-full text-lg" placeholder="Identifiant" />
+                <label class="label text-xl">Mot de passe</label>
+                <input type="password" class="input input-lg w-full text-lg" placeholder="Entrer mot de passe" />
+                <div><a class="link link-hover text-base">Mot de passe oublié?</a></div>
+                <button class="btn btn-neutral text-2xl mt-6 h-16">Connexion</button>
+              </fieldset>
             </div>
           </div>
         </div>
+
+        <!-- formulaire desktop uniquement -->
+        <div class="hidden lg:flex flex-col gap-6 max-w-md">
+          <div class="flex flex-col gap-2">
+            <label class="text-base font-medium">Identifiant :</label>
+            <input
+              type="text"
+              class="input w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+              placeholder="entrer Identifiant"
+            />
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-base font-medium">Mot De Passe :</label>
+            <input
+              type="password"
+              class="input w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+              placeholder="entrer mot de passe"
+            />
+          </div>
+          <a href="#" class="link text-[var(--color-principal)] text-sm w-fit">Mot de passe oublié</a>
+          <div class="flex justify-center mt-2">
+            <button class="btn bg-[var(--color-principal)] text-white text-lg px-14 py-3 rounded-md hover:opacity-90">
+              Connexion
+            </button>
+          </div>
+        </div>
+
       </div>
+
+      <!-- vague jaune ancrée en bas des deux panneaux -->
+      <div class="absolute bottom-0 left-0 right-0 h-16 bg-[var(--color-secondaire)] [clip-path:polygon(0_70%,100%_0,100%_100%,0_100%)] z-10"></div>
     </div>
-<!-- footer -->
-    <div class="w-full h-10 bg-[var(--color-secondaire)] [clip-path:polygon(0_80%,100%_0,100%_100%,0_100%)]"></div>
+
+    <!-- footer -->
     <footer class="footer flex flex-col gap-2 footer-center bg-[var(--color-background)] text-white">
       <p>
-        Secretaria - <link class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</link> - <link class="link link-hover" href="tel:0493871277">04 93 87 12 77</link>
+        Secretaria - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
       </p>
       <p>
-        Communication / Marketing - <link class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</link>
+        Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
       </p>
       <p class="text-sm p-2">
         Nice Volley Ball © 2026.
       </p>
-    <div class="flex justify-between w-full px-4 pb-2">
-      <a class="link link-hover" href="#">Mentions légales</a>
-      <a class="link link-hover" href="#">Confidentialité</a>
-    </div>
+      <div class="flex justify-between w-full px-4 pb-2">
+        <a class="link link-hover" href="#">Mentions Légales</a>
+        <a class="link link-hover" href="#">Confidentialité</a>
+      </div>
     </footer>
-
-
-
 
     <script type="module" src="./src/script/main.js"></script>
   </body>
