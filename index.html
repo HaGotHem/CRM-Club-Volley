@@ -7,9 +7,61 @@
     <link rel="stylesheet" href="./src/style/style.css">
     <link rel="icon" type="image/svg+xml" href="./src/assets/logo.svg" />
     <title>Login CRM volleyball</title>
-
   </head>
-  <body>
+  <body class="flex flex-col min-h-screen">
+<!-- navebar -->
+    <div class="container   bg-[var(--color-principal)]">
+      <div class=" flex justify-center  navbar__logo">
+        <img class="max-w-20 py-1" src="./src/assets/logo.svg" alt="Logo" />
+      </div>
+    </div>
+<!-- contenue de page -->
+    <div class="content gap-20 flex-1">
+      <!-- texte de bienvenue -->
+      <div class="Title-container flex justify-center items-center">
+        <h2 class="text-3xl text-center font-bold font-[var(--font-principal)] mt-20">Bienvenue sur la page de connexion</h2>
+      </div>
+      <!-- formulaire de connexion -->
+      <div class="login-form">
+        <div class="hero">
+          <div class="hero-content flex-col lg:flex-row-reverse ">
+            <div class="card bg-base-100 w-full max-w-2xl shadow-2xl">
+              <div class="card-body p-6">
+                <fieldset class="fieldset gap-4">
+                  <label class="label text-xl">Identifiant</label>
+                  <input type="text" class="input input-lg w-full text-lg" placeholder="Identifiant" />
+                  <label class="label text-xl">Mot de passe</label>
+                  <input type="password" class="input input-lg w-full text-lg" placeholder="Entrer mot de passe" />
+                  <div><a class="link link-hover text-base">Mot de passe oublié?</a></div>
+                  <button class="btn btn-neutral text-2xl mt-6 h-16">Connexion</button>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+<!-- footer -->
+    <div class="w-full h-10 bg-[var(--color-secondaire)] [clip-path:polygon(0_80%,100%_0,100%_100%,0_100%)]"></div>
+    <footer class="footer flex flex-col gap-2 footer-center bg-[var(--color-background)] text-white">
+      <p>
+        Secretaria - <link class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</link> - <link class="link link-hover" href="tel:0493871277">04 93 87 12 77</link>
+      </p>
+      <p>
+        Communication / Marketing - <link class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</link>
+      </p>
+      <p class="text-sm p-2">
+        Nice Volley Ball © 2026.
+      </p>
+    <div class="flex justify-between w-full px-4 pb-2">
+      <a class="link link-hover" href="#">Mentions légales</a>
+      <a class="link link-hover" href="#">Confidentialité</a>
+    </div>
+    </footer>
+
+
+
+
     <script type="module" src="./src/script/main.js"></script>
   </body>
 </html>
