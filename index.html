@@ -48,7 +48,7 @@
           </div>
         </div>
 
-        <!-- formulaire desktop uniquement -->
+<!-- formulaire desktop uniquement -->
         <div class="hidden lg:flex flex-col gap-6 max-w-md">
           <div class="flex flex-col gap-2">
             <label class="text-base font-medium">Identifiant :</label>
@@ -76,27 +76,49 @@
 
       </div>
 
-      <!-- vague jaune ancrée en bas des deux panneaux -->
+      <!-- barre jaune -->
       <div class="absolute bottom-0 left-0 right-0 h-16 bg-[var(--color-secondaire)] [clip-path:polygon(0_70%,100%_0,100%_100%,0_100%)] z-10"></div>
     </div>
 
     <!-- footer -->
-    <footer class="footer flex flex-col gap-2 footer-center bg-[var(--color-background)] text-white">
-      <p>
-        Secretaria - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
-      </p>
-      <p>
-        Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
-      </p>
-      <p class="text-sm p-2">
-        Nice Volley Ball © 2026.
-      </p>
-      <div class="flex justify-between w-full px-4 pb-2">
-        <a class="link link-hover" href="#">Mentions Légales</a>
-        <a class="link link-hover" href="#">Confidentialité</a>
+    <footer class="bg-[var(--color-background)] text-white">
+<!-- content footer mobile -->
+      <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">
+        <p>
+          Secretariat - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
+        </p>
+        <p>
+          Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+        </p>
+        <p>Nice Volley Ball © 2026.</p>
+        <div class="flex gap-6">
+          <a class="link link-hover" href="#">Mentions Légales</a>
+          <a class="link link-hover" href="#">Confidentialité</a>
+        </div>
+      </div>
+<!-- content footer desktop -->
+      <div class="hidden lg:grid lg:grid-cols-3 items-center px-10 py-5 text-sm">
+
+        <div class="flex gap-8">
+          <a class="link link-hover" href="#">Mentions Légales</a>
+          <a class="link link-hover" href="#">Confidentialité</a>
+        </div>
+
+        <div class="flex flex-col items-center gap-1 text-center">
+          <p>
+            Secretariat - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
+          </p>
+          <p>
+            Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+          </p>
+        </div>
+
+        <div class="flex justify-end">
+          <p>Nice Volley Ball © 2026.</p>
+        </div>
+
       </div>
     </footer>
-
     <script type="module" src="./src/script/main.js"></script>
   </body>
 </html>
