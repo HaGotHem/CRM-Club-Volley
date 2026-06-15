@@ -57,7 +57,7 @@ form.addEventListener('submit', (e) => {
   const mdp = inputMdp.value.trim();
 
   if (id !== CREDENTIALS.identifiant || mdp !== CREDENTIALS.mdp) {
-    showError(errGlobal, '⚠ Identifiant ou mot de passe incorrect.');
+    showError(errGlobal, 'Identifiant ou mot de passe incorrect.');
     shakeForm();
     [inputId, inputMdp].forEach(el => el.classList.add('border-red-500', 'input-error-flash'));
     inputMdp.value = '';
