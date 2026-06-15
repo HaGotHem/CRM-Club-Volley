@@ -32,45 +32,40 @@
           Bienvenue sur la page de connexion
         </h2>
 
-        <!-- carte mobile / formulaire brut desktop -->
-        <div class="lg:hidden">
-          <div class="card bg-base-100 w-full shadow-2xl">
-            <div class="card-body p-6">
-              <fieldset class="fieldset gap-4">
-                <label class="label text-xl">Identifiant</label>
-                <input type="text" class="input input-lg w-full text-lg" placeholder="Identifiant" />
-                <label class="label text-xl">Mot de passe</label>
-                <input type="password" class="input input-lg w-full text-lg" placeholder="Entrer mot de passe" />
-                <div><a class="link link-hover text-base">Mot de passe oublié?</a></div>
-                <button class="btn btn-neutral text-2xl mt-6 h-16">Connexion</button>
-              </fieldset>
-            </div>
-          </div>
-        </div>
-
-<!-- formulaire desktop uniquement -->
-        <div class="hidden lg:flex flex-col gap-6 max-w-md">
-          <div class="flex flex-col gap-2">
-            <label class="text-base font-medium">Identifiant :</label>
-            <input
-              type="text"
-              class="input w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
-              placeholder="entrer Identifiant"
-            />
-          </div>
-          <div class="flex flex-col gap-2">
-            <label class="text-base font-medium">Mot De Passe :</label>
-            <input
-              type="password"
-              class="input w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
-              placeholder="entrer mot de passe"
-            />
-          </div>
-          <a href="#" class="link text-[var(--color-principal)] text-sm w-fit">Mot de passe oublié</a>
-          <div class="flex justify-center mt-2">
-            <button class="btn bg-[var(--color-principal)] text-white text-lg px-14 py-3 rounded-md hover:opacity-90">
-              Connexion
-            </button>
+        <!-- formulaire unique responsive -->
+        <div class="card bg-base-100 w-full lg:max-w-md shadow-2xl">
+          <div class="card-body p-6 lg:p-8">
+            <form id="login-form" class="flex flex-col gap-4 lg:gap-6">
+              <div class="flex flex-col gap-2">
+                <label for="identifiant" class="label text-xl lg:text-base font-medium">Identifiant</label>
+                <input
+                  id="identifiant"
+                  type="text"
+                  class="input input-lg lg:input-md w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-lg lg:text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+                  placeholder="Entrer identifiant"
+                  autocomplete="username"
+                />
+                <span id="error-identifiant" class="error-msg"></span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label for="mot-de-passe" class="label text-xl lg:text-base font-medium">Mot de passe</label>
+                <input
+                  id="mot-de-passe"
+                  type="password"
+                  class="input input-lg lg:input-md w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-lg lg:text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+                  placeholder="Entrer mot de passe"
+                  autocomplete="current-password"
+                />
+                <span id="error-mdp" class="error-msg"></span>
+              </div>
+              <p id="error-global" class="error-msg"></p>
+              <button
+                type="submit"
+                class="btn bg-[var(--color-principal)] text-white text-2xl lg:text-lg mt-2 h-16 lg:h-auto lg:px-14 lg:py-3 rounded-md hover:opacity-90"
+              >
+                Connexion
+              </button>
+            </form>
           </div>
         </div>
 
@@ -120,5 +115,6 @@
       </div>
     </footer>
     <script type="module" src="./src/script/main.js"></script>
+    <script type="module" src="./src/script/auth.js"></script>
   </body>
 </html>
