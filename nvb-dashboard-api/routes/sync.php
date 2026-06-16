@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-// POST /api/sync/weezevent
 $app->post('/api/sync/weezevent', function (Request $request, Response $response) {
     try {
         $weezevent  = new WeezeventService();
@@ -21,13 +20,8 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
         foreach ($participants as $participant) {
             try {
                 $contact = $weezevent->formatContact($participant);
-
-                if (empty($contact['email'])) {
-                    continue;
-                }
-
+                if (empty($contact['email'])) continue;
                 $existing = $repository->findByEmail($contact['email']);
-
                 if ($existing === null) {
                     $repository->create($contact);
                     $created++;
@@ -43,7 +37,7 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
             'success' => true,
             'message' => 'Synchronisation Weezevent terminée',
             'data'    => [
-                'total_retrieved' => count($participants),
+                'total_retrieved'  => count($participants),
                 'contacts_created' => $created,
                 'contacts_updated' => $updated,
                 'errors'           => $errors
@@ -59,7 +53,6 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
     }
 });
 
-// POST /api/sync/brevo
 $app->post('/api/sync/brevo', function (Request $request, Response $response) {
     try {
         $data      = (array) $request->getParsedBody();
@@ -76,13 +69,32 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         }
 
         $brevo   = new BrevoService();
-        $results = $brevo->syncSegment($contacts);
+        $success = 0;
+        $errors  = 0;
+        $details = [];
+
+        foreach ($contacts as $contact) {
+            try {
+                $brevo->createOrUpdateContact($contact);
+                $success++;
+            } catch (\Exception $e) {
+                $errors++;
+                $details[] = [
+                    'email' => $contact['email'],
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
 
         return jsonResponse($response, [
             'success' => true,
             'message' => 'Synchronisation Brevo terminée',
             'segment' => $segmentId,
-            'data'    => $results
+            'data'    => [
+                'success' => $success,
+                'errors'  => $errors,
+                'details' => $details
+            ]
         ]);
 
     } catch (Throwable $e) {

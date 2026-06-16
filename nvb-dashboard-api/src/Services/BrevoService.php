@@ -24,36 +24,35 @@ final class BrevoService
             ]
         ]);
     }
+    
+public function createOrUpdateContact(array $contact): array
+{
+    try {
+        $payload = [
+            'email'         => $contact['email'],
+            'attributes'    => [
+                'FIRSTNAME' => $contact['first_name'] ?? '',
+                'LASTNAME'  => $contact['last_name'] ?? '',
+                'SMS'       => $contact['phone'] ?? ''
+            ],
+            'updateEnabled' => true
+        ];
 
-    public function createOrUpdateContact(array $contact): array
-    {
-        try {
-            $payload = [
-                'email'         => $contact['email'],
-                'attributes'    => [
-                    'PRENOM'    => $contact['first_name'] ?? '',
-                    'NOM'       => $contact['last_name'] ?? '',
-                    'TELEPHONE' => $contact['phone'] ?? ''
-                ],
-                'updateEnabled' => true
-            ];
+        $response = $this->client->post('/contacts', [
+            'json' => $payload
+        ]);
 
-            $response = $this->client->post('/contacts', [
-                'json' => $payload
-            ]);
+        $body = (string) $response->getBody();
 
-            $body = (string) $response->getBody();
+        return [
+            'status_code' => $response->getStatusCode(),
+            'body'        => $body !== '' ? json_decode($body, true) : null
+        ];
 
-            return [
-                'status_code' => $response->getStatusCode(),
-                'body'        => $body !== '' ? json_decode($body, true) : null
-            ];
-
-        } catch (GuzzleException $e) {
-            throw new RuntimeException('Erreur Brevo : ' . $e->getMessage());
-        }
+    } catch (GuzzleException $e) {
+        throw new RuntimeException('Erreur Brevo : ' . $e->getMessage());
     }
-
+}
     public function syncSegment(array $contacts): array
     {
         $results = ['success' => 0, 'errors' => 0, 'details' => []];
