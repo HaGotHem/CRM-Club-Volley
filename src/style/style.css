@@ -1,11 +1,12 @@
 @import "tailwindcss";
- @plugin "daisyui" {
-   themes: light --default;
- }
+@plugin "daisyui" {
+  themes: light --default;
+}
 :root {
   --color-principal:#15277B;
   --color-secondaire:#F5D804;
   --color-background:#363636;
+  --color-cards:#FAF9F6;
   --font-principal: 'inter', sans-serif;
 }
 body{
