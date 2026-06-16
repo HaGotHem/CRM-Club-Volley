@@ -1,3 +1,49 @@
 <?php
+
 declare(strict_types=1);
-// Routes stats — à remplir mercredi
+
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+$app->get('/api/stats/dashboard', function (Request $request, Response $response) {
+    try {
+        $pdo = Database::getConnection();
+
+        $totalContacts = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts")
+            ->fetchColumn();
+
+        $weezeventContacts = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts WHERE source = 'weezevent'")
+            ->fetchColumn();
+
+        $brevoContacts = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts WHERE source = 'brevo'")
+            ->fetchColumn();
+
+        $manualContacts = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts WHERE source = 'manual'")
+            ->fetchColumn();
+
+        $newContacts = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts WHERE created_at >= NOW() - INTERVAL '7 days'")
+            ->fetchColumn();
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => [
+                'total_contacts'     => $totalContacts,
+                'weezevent_contacts' => $weezeventContacts,
+                'brevo_contacts'     => $brevoContacts,
+                'manual_contacts'    => $manualContacts,
+                'new_contacts_7days' => $newContacts
+            ]
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les statistiques',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});

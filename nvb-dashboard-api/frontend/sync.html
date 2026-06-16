@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Synchronisation — Nice Volley Ball</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <nav class="bg-blue-900 text-white px-6 py-4 flex items-center gap-6">
+        <span class="font-bold text-lg">🏐 Nice Volley Ball</span>
+        <a href="dashboard.html" class="hover:underline">Dashboard</a>
+        <a href="contacts.html" class="hover:underline">Contacts</a>
+        <a href="segments.html" class="hover:underline">Segments</a>
+        <a href="sync.html" class="hover:underline font-bold">Synchronisation</a>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Synchronisation</h1>
+
+        <!-- Weezevent -->
+        <div class="bg-white rounded-xl shadow p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700">🎟️ Weezevent</h2>
+                    <p class="text-gray-500 text-sm">Importer les participants depuis Weezevent</p>
+                </div>
+                <button id="btn-sync-weezevent"
+                    onclick="syncWeezevent()"
+                    class="bg-blue-900 text-white px-5 py-2 rounded hover:bg-blue-800 font-medium">
+                    Synchroniser
+                </button>
+            </div>
+            <div id="result-weezevent" class="hidden mt-4 p-4 rounded-lg"></div>
+        </div>
+
+        <!-- Brevo -->
+        <div class="bg-white rounded-xl shadow p-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700">📧 Brevo</h2>
+                    <p class="text-gray-500 text-sm">Envoyer un segment vers Brevo</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 mb-4">
+                <select id="segment-select"
+                    class="border border-gray-300 rounded px-3 py-2 text-gray-700 w-full">
+                    <option value="tous">Tous les contacts</option>
+                    <option value="supporters-reguliers">Supporters réguliers</option>
+                    <option value="nouveaux-visiteurs">Nouveaux visiteurs</option>
+                </select>
+                <button id="btn-sync-brevo"
+                    onclick="syncBrevo()"
+                    class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-500 font-medium whitespace-nowrap">
+                    Synchroniser
+                </button>
+            </div>
+            <div id="result-brevo" class="hidden mt-4 p-4 rounded-lg"></div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function syncWeezevent() {
+            const btn = document.getElementById("btn-sync-weezevent");
+            const result = document.getElementById("result-weezevent");
+
+            btn.disabled = true;
+            btn.textContent = "Synchronisation...";
+            result.className = "mt-4 p-4 rounded-lg bg-blue-50 text-blue-700";
+            result.classList.remove("hidden");
+            result.textContent = "Connexion à Weezevent en cours...";
+
+            try {
+                const data = await apiPost("/sync/weezevent", {});
+
+                result.className = "mt-4 p-4 rounded-lg bg-green-50 text-green-700";
+                result.innerHTML = `
+                    <p class="font-semibold mb-2">✅ Synchronisation terminée</p>
+                    <p>Participants récupérés : <strong>${data.data.total_retrieved}</strong></p>
+                    <p>Contacts créés : <strong>${data.data.contacts_created}</strong></p>
+                    <p>Contacts mis à jour : <strong>${data.data.contacts_updated}</strong></p>
+                    <p>Erreurs : <strong>${data.data.errors}</strong></p>
+                `;
+            } catch (error) {
+                result.className = "mt-4 p-4 rounded-lg bg-red-50 text-red-700";
+                result.innerHTML = `
+                    <p class="font-semibold">❌ Erreur</p>
+                    <p>${error.message}</p>
+                    <p class="text-sm mt-1">Vérifiez que la clé API Weezevent est configurée dans le fichier .env</p>
+                `;
+            }
+
+            btn.disabled = false;
+            btn.textContent = "Synchroniser";
+        }
+
+        async function syncBrevo() {
+            const btn = document.getElementById("btn-sync-brevo");
+            const result = document.getElementById("result-brevo");
+            const segment = document.getElementById("segment-select").value;
+
+            btn.disabled = true;
+            btn.textContent = "Synchronisation...";
+            result.className = "mt-4 p-4 rounded-lg bg-blue-50 text-blue-700";
+            result.classList.remove("hidden");
+            result.textContent = "Envoi vers Brevo en cours...";
+
+            try {
+                const data = await apiPost("/sync/brevo", { segment });
+
+                result.className = "mt-4 p-4 rounded-lg bg-green-50 text-green-700";
+                result.innerHTML = `
+                    <p class="font-semibold mb-2">✅ Synchronisation terminée</p>
+                    <p>Segment : <strong>${data.segment}</strong></p>
+                    <p>Contacts envoyés avec succès : <strong>${data.data.success}</strong></p>
+                    <p>Erreurs : <strong>${data.data.errors}</strong></p>
+                `;
+            } catch (error) {
+                result.className = "mt-4 p-4 rounded-lg bg-red-50 text-red-700";
+                result.innerHTML = `
+                    <p class="font-semibold">❌ Erreur</p>
+                    <p>${error.message}</p>
+                    <p class="text-sm mt-1">Vérifiez que la clé API Brevo est configurée dans le fichier .env</p>
+                `;
+            }
+
+            btn.disabled = false;
+            btn.textContent = "Synchroniser";
+        }
+    </script>
+</body>
+</html>

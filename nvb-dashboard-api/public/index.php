@@ -54,5 +54,7 @@ require __DIR__ . '/../routes/contacts.php';
 require __DIR__ . '/../routes/stats.php';
 require __DIR__ . '/../routes/segments.php';
 require __DIR__ . '/../routes/sync.php';
-
+require __DIR__ . '/../src/Repositories/ContactRepository.php';
+require __DIR__ . '/../src/Services/WeezeventService.php';
+require __DIR__ . '/../src/Services/BrevoService.php';
 $app->run();
