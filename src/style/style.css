@@ -95,3 +95,18 @@ body{
   padding: 0.6rem 1rem;
   border-color: #fca5a5;
 }
+
+/* --- menu burger --- */
+.burger_menu {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+}
+
+.burger_menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 100vh;
+}
