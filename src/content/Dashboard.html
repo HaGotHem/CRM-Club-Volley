@@ -22,35 +22,28 @@
   <!-- menu burger -->
   <div class="burger_menu bg-[var(--color-principal)] text-white z-100 rounded-box m-3" id="burger-menu">
     <ul class="menu rounded-box w-56">
-  <li><a>Item 1</a></li>
-  <li><details>
-      <summary>Item </summary>
-      <ul>
-        <li><a>Submenu 1</a></li>
-        <li>
-          <details>
-            <summary>Submenu 2</summary>
-            <ul>
-              <li><a>Submenu 1</a></li>
-              <li><a>Submenu 2</a></li>
-              <li><a>voiture 3</a></li>
-          </details>
-        </li>
-        <li><a>Submenu 2</a></li>
-        <li><details>
-            <summary>Parent</summary>
-            <ul>
-              <li><a>Submenu 1</a></li>
-              <li><a>Submenu 2</a></li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-    </details>
-  </li>
-  <li><a>Item 3</a></li>
+  <li><a href="./Dashboard.html">dashboard</a></li>
+  <li><a href="./fichecontact.html">Fiche contact</a></li>
+  <li><a href="./stats.html">Stats</a></li>
+  <li><a href="../../index.html">Déconnexion</a></li>
 </ul>
   </div>
+  <div class=" flex flex-row flex-wrap gap-5 bg-[#FAF9F6] rounded p-3 m-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-230">
+      <div class="card w-96 bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div class="card-body">
+          <h2 class="card-title">Total contacts</h2>
+          <p id="total-contacts" class="text-3xl font-bold">…</p>
+        </div>
+      </div>
+      <div class="card w-96 bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div class="card-body">
+          <h2 class="card-title">Total Groupe</h2>
+          <p id="total-groupes" class="text-3xl font-bold">…</p>
+        </div>
+      </div>
+      <a href="./fichecontact.html" class="btn btn-primary">Voir les contacts</a>
+
+    </div>
 
   </div>
 
@@ -65,13 +58,22 @@
     </nav>
     <div class="p-4 flex">
     <!-- Page content ici -->
+     <div class=" flex flex-row flex-wrap gap-5 bg-[#FAF9F6] rounded p-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-230">
       <div class="card w-96 bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
         <div class="card-body">
           <h2 class="card-title">Total contacts</h2>
           <p id="total-contacts" class="text-3xl font-bold">…</p>
         </div>
       </div>
-      
+      <div class="card w-96 bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div class="card-body">
+          <h2 class="card-title">Total Groupe</h2>
+          <p id="total-groupes" class="text-3xl font-bold">…</p>
+        </div>
+      </div>
+      <a href="./fichecontact.html" class="btn btn-primary">Voir les contacts</a>
+
+    </div>
     
     
     

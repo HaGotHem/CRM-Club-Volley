@@ -46,5 +46,21 @@ async function afficherTotalContacts() {
     totalEl.textContent = 'Erreur';
   }
 }
+async function afficherTotalGroupes() {
+  const totalGroupesEl = document.getElementById('total-groupes');
+  if (!totalGroupesEl) return;
+
+  try {
+    const res = await brevoGet('/contacts/lists?limit=50');
+    const total = res.count ?? 0;
+    console.log('Nombre de groupes :', total);
+    console.log(res.lists);
+    totalGroupesEl.textContent = total;
+  } catch (err) {
+    console.error('[total-groupes] Échec de la récupération du total :', err);
+    totalGroupesEl.textContent = 'Erreur';
+  }
+}
 
 afficherTotalContacts();
+afficherTotalGroupes();
