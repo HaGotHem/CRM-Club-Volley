@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 COPY . /var/www/html
 
 # Copier tous les fichiers PHP dans le conteneur
-COPY ./public/ /var/www/html/
+COPY ./backend/public/ /var/www/html/
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
