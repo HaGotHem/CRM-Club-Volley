@@ -5,11 +5,15 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+use App\Models\Contact;
+use App\Repositories\ContactRepository;
+use App\Services\WeezeventService;
+use App\Services\BrevoService;
+
 $app->post('/api/sync/weezevent', function (Request $request, Response $response) {
     try {
         $weezevent  = new WeezeventService();
-        $pdo        = Database::getConnection();
-        $repository = new ContactRepository($pdo);
+        $repository = new ContactRepository();
 
         $participants = $weezevent->getParticipants();
 
@@ -19,15 +23,27 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
 
         foreach ($participants as $participant) {
             try {
-                $contact = $weezevent->formatContact($participant);
-                if (empty($contact['email'])) continue;
-                $existing = $repository->findByEmail($contact['email']);
+                $contactData = $weezevent->formatContact($participant);
+                if (empty($contactData['email'])) continue;
+                
+                $contact = Contact::fromArray([
+                    'nom'                    => $contactData['last_name'],
+                    'prenom'                 => $contactData['first_name'],
+                    'email'                  => $contactData['email'],
+                    'phone'                  => $contactData['phone'] ?? null,
+                    'source'                 => 'weezevent',
+                    'date_creation'          => date('Y-m-d H:i:s'),
+                    'consentement_marketing' => false
+                ]);
+
+                $existing = $repository->findByEmail($contact->getEmail());
                 if ($existing === null) {
-                    $repository->create($contact);
                     $created++;
                 } else {
                     $updated++;
                 }
+                
+                $repository->save($contact);
             } catch (\Exception $e) {
                 $errors++;
             }
@@ -56,16 +72,14 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
 $app->post('/api/sync/brevo', function (Request $request, Response $response) {
     try {
         $data      = (array) $request->getParsedBody();
-        $segmentId = $data['segment'] ?? 'tous';
+        $segmentId = isset($data['segment']) ? (int)$data['segment'] : null;
 
-        $pdo = Database::getConnection();
+        $repository = new ContactRepository();
 
-        if ($segmentId === 'supporters-reguliers') {
-            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE source = 'weezevent'")->fetchAll();
-        } elseif ($segmentId === 'nouveaux-visiteurs') {
-            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE date_creation >= NOW() - INTERVAL '7 days'")->fetchAll();
+        if ($segmentId) {
+            $contacts = $repository->findBySegmentId($segmentId);
         } else {
-            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE email IS NOT NULL")->fetchAll();
+            $contacts = $repository->findAll(1000, 0);
         }
 
         $brevo   = new BrevoService();
@@ -80,7 +94,7 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
             } catch (\Exception $e) {
                 $errors++;
                 $details[] = [
-                    'email' => $contact['email'],
+                    'email' => $contact->getEmail(),
                     'error' => $e->getMessage()
                 ];
             }
@@ -89,7 +103,7 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         return jsonResponse($response, [
             'success' => true,
             'message' => 'Synchronisation Brevo terminée',
-            'segment' => $segmentId,
+            'segment' => $segmentId ?? 'tous',
             'data'    => [
                 'success' => $success,
                 'errors'  => $errors,
@@ -109,8 +123,7 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
 $app->post('/api/sync/brevo/import', function (Request $request, Response $response) {
     try {
         $brevo      = new BrevoService();
-        $pdo        = Database::getConnection();
-        $repository = new ContactRepository($pdo);
+        $repository = new ContactRepository();
 
         $created = 0;
         $updated = 0;
@@ -131,22 +144,25 @@ $app->post('/api/sync/brevo/import', function (Request $request, Response $respo
 
                     $attrs = $brevoContact['attributes'] ?? [];
 
-                    $contact = [
-                        'first_name' => $attrs['FIRSTNAME'] ?? $attrs['PRENOM'] ?? 'Inconnu',
-                        'last_name'  => $attrs['LASTNAME']  ?? $attrs['NOM']    ?? 'Inconnu',
-                        'email'      => $email,
-                        'phone'      => $attrs['SMS']       ?? $attrs['TELEPHONE'] ?? null,
-                        'source'     => 'brevo'
-                    ];
+                    $contact = Contact::fromArray([
+                        'nom'                    => $attrs['LASTNAME']  ?? $attrs['NOM']    ?? 'Inconnu',
+                        'prenom'                 => $attrs['FIRSTNAME'] ?? $attrs['PRENOM'] ?? 'Inconnu',
+                        'email'                  => $email,
+                        'phone'                  => $attrs['SMS']       ?? $attrs['TELEPHONE'] ?? null,
+                        'source'                 => 'brevo',
+                        'date_creation'          => date('Y-m-d H:i:s'),
+                        'consentement_marketing' => true
+                    ]);
 
                     $existing = $repository->findByEmail($email);
 
                     if ($existing === null) {
-                        $repository->create($contact);
                         $created++;
                     } else {
                         $updated++;
                     }
+                    
+                    $repository->save($contact);
 
                 } catch (\Exception $e) {
                     $errors++;

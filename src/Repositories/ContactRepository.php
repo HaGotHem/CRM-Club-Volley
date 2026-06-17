@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Contact;
-use Database;
 use PDO;
-
-require_once __DIR__ . '/../Database.php';
 
 /**
  * Repository pour la gestion des contacts.
@@ -19,7 +16,7 @@ final class ContactRepository
 
     public function __construct()
     {
-        $this->db = Database::getConnection();
+        $this->db = \Database::getConnection();
     }
 
     /**
@@ -50,6 +47,31 @@ final class ContactRepository
     public function countAll(): int
     {
         return (int) $this->db->query("SELECT COUNT(*) FROM contact")->fetchColumn();
+    }
+
+    /**
+     * Récupère les contacts appartenant à un segment.
+     * 
+     * @param int $idSegment
+     * @return Contact[]
+     */
+    public function findBySegmentId(int $idSegment): array
+    {
+        $sql = "SELECT c.* 
+                FROM contact c
+                JOIN contact_segment cs ON c.idContact = cs.idContact
+                WHERE cs.idSegment = :idSegment
+                ORDER BY c.date_creation DESC";
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['idSegment' => $idSegment]);
+        
+        $results = [];
+        while ($data = $stmt->fetch()) {
+            $results[] = Contact::fromArray($data);
+        }
+        
+        return $results;
     }
 
     /**

@@ -7,15 +7,24 @@ use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 
+use App\Models\Contact;
+use App\Models\Administrateur;
+use App\Repositories\AdminRepository;
+use App\Repositories\ContactRepository;
+use App\Repositories\SegmentRepository;
+use App\Repositories\EvenementRepository;
+use App\Repositories\BilletRepository;
+use App\Repositories\ConsentementRepository;
+use App\Middleware\AuthMiddleware;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 require __DIR__ . '/../src/Helpers.php';
 require __DIR__ . '/../src/Database.php';
-require __DIR__ . '/../src/Repositories/ContactRepository.php';
-require __DIR__ . '/../src/Repositories/AdminRepository.php';
-require __DIR__ . '/../src/Middleware/AuthMiddleware.php';
-require __DIR__ . '/../src/Services/WeezeventService.php';
-require __DIR__ . '/../src/Services/BrevoService.php';
+
+// Les modèles sont chargés via l'autoloader PSR-4 configuré dans composer.json
+// On peut garder les inclusions manuelles pour les services/repos si l'autoloader n'est pas utilisé partout,
+// mais avec PSR-4 "App\\" => "src/", l'autoloader vendor/autoload.php devrait tout gérer.
 
 // Chargement du fichier .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
@@ -76,7 +85,7 @@ $app->get('/', function ($request, $response) {
 });
 
 
-$authMiddleware = new \App\Middleware\AuthMiddleware();
+$authMiddleware = new AuthMiddleware();
 
 $app->get('/dashboard', function ($request, $response) {
     $view = Twig::fromRequest($request);
@@ -101,9 +110,9 @@ $app->post('/login', function ($request, $response) {
     $adminRepo = new AdminRepository();
     $admin = $adminRepo->findByEmail($email);
 
-    if ($admin && password_verify($password, $admin['mot_de_passe'])) {
-        $_SESSION['admin_id'] = $admin['idadministrateur'];
-        $_SESSION['admin_name'] = $admin['prenom'] . ' ' . $admin['nom'];
+    if ($admin && password_verify($password, $admin->getMotDePasse())) {
+        $_SESSION['admin_id'] = $admin->getIdAdministrateur();
+        $_SESSION['admin_name'] = $admin->getPrenom() . ' ' . $admin->getNom();
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }
 

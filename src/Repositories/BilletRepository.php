@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\Billet;
-use Database;
 use PDO;
-
-require_once __DIR__ . '/../Database.php';
 
 /**
  * Repository pour la gestion des billets Weezevent.
@@ -19,7 +16,7 @@ class BilletRepository
 
     public function __construct()
     {
-        $this->db = Database::getConnection();
+        $this->db = \Database::getConnection();
     }
 
     /**

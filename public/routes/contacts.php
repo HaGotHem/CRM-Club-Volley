@@ -5,6 +5,9 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+use App\Repositories\ContactRepository;
+use App\Models\Contact;
+
 // GET /api/contacts — liste tous les contacts (paginée)
 $app->get('/api/contacts', function (Request $request, Response $response) {
     try {
@@ -13,8 +16,7 @@ $app->get('/api/contacts', function (Request $request, Response $response) {
         $limit = max(1, min(1000, (int) ($queryParams['limit'] ?? 50)));
         $offset = ($page - 1) * $limit;
 
-        $pdo = Database::getConnection();
-        $repository = new ContactRepository($pdo);
+        $repository = new ContactRepository();
         
         $contacts = $repository->findAll($limit, $offset);
         $total    = $repository->countAll();
@@ -42,8 +44,7 @@ $app->get('/api/contacts', function (Request $request, Response $response) {
 $app->get('/api/contacts/{id}', function (Request $request, Response $response, array $args) {
     try {
         $id = (int) $args['id'];
-        $pdo = Database::getConnection();
-        $repository = new ContactRepository($pdo);
+        $repository = new ContactRepository();
         $contact = $repository->findById($id);
 
         if ($contact === null) {
@@ -85,8 +86,7 @@ $app->post('/api/contacts', function (Request $request, Response $response) {
             ], 400);
         }
 
-        $pdo = Database::getConnection();
-        $repository = new ContactRepository($pdo);
+        $repository = new ContactRepository();
 
         $existing = $repository->findByEmail($data['email']);
         if ($existing !== null) {
@@ -97,7 +97,21 @@ $app->post('/api/contacts', function (Request $request, Response $response) {
             ], 409);
         }
 
-        $contact = $repository->create($data);
+        // Utilisation du modèle Contact et de la méthode save du repository
+        $contact = Contact::fromArray([
+            'nom'                    => $data['last_name'],
+            'prenom'                 => $data['first_name'],
+            'email'                  => $data['email'],
+            'phone'                  => $data['phone'] ?? null,
+            'source'                 => 'manual',
+            'date_creation'          => date('Y-m-d H:i:s'),
+            'consentement_marketing' => false
+        ]);
+
+        $repository->save($contact);
+        
+        // On récupère l'objet fraîchement créé (ou mis à jour via le ON CONFLICT)
+        $contact = $repository->findByEmail($data['email']);
 
         return jsonResponse($response, [
             'success' => true,

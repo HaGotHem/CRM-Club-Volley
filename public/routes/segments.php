@@ -5,63 +5,46 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-$app->get('/api/segments', function (Request $request, Response $response) {
-    $segments = [
-        [
-            'id'          => 'nouveaux-visiteurs',
-            'label'       => 'Nouveaux visiteurs',
-            'description' => 'Contacts ajoutés ces 7 derniers jours'
-        ],
-        [
-            'id'          => 'supporters-reguliers',
-            'label'       => 'Supporters réguliers',
-            'description' => 'Contacts venus via Weezevent'
-        ],
-        [
-            'id'          => 'abonnes-potentiels',
-            'label'       => 'Abonnés potentiels',
-            'description' => 'Contacts avec email valide à fort potentiel'
-        ]
-    ];
+use App\Repositories\SegmentRepository;
+use App\Repositories\ContactRepository;
 
-    return jsonResponse($response, [
-        'success' => true,
-        'data'    => $segments
-    ]);
+$app->get('/api/segments', function (Request $request, Response $response) {
+    try {
+        $repository = new SegmentRepository();
+        $segments = $repository->findAll();
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => $segments
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les segments',
+            'details' => $e->getMessage()
+        ], 500);
+    }
 });
 
 $app->get('/api/segments/{id}/contacts', function (Request $request, Response $response, array $args) {
     try {
-        $segmentId = $args['id'];
-        $pdo = Database::getConnection();
+        $segmentId = (int) $args['id'];
+        $contactRepo = new ContactRepository();
+        $segmentRepo = new SegmentRepository();
 
-        if ($segmentId === 'nouveaux-visiteurs') {
-            $sql = "SELECT id, first_name, last_name, email, phone, source
-                    FROM contacts
-                    WHERE created_at >= NOW() - INTERVAL '7 days'
-                    ORDER BY created_at DESC";
-        } elseif ($segmentId === 'supporters-reguliers') {
-            $sql = "SELECT id, first_name, last_name, email, phone, source
-                    FROM contacts
-                    WHERE source = 'weezevent'
-                    ORDER BY created_at DESC";
-        } elseif ($segmentId === 'abonnes-potentiels') {
-            $sql = "SELECT id, first_name, last_name, email, phone, source
-                    FROM contacts
-                    WHERE email IS NOT NULL
-                    ORDER BY created_at DESC";
-        } else {
+        $segment = $segmentRepo->findById($segmentId);
+        if (!$segment) {
             return jsonResponse($response, [
                 'success' => false,
                 'error'   => 'Segment inconnu'
             ], 404);
         }
 
-        $contacts = $pdo->query($sql)->fetchAll();
+        $contacts = $contactRepo->findBySegmentId($segmentId);
 
         return jsonResponse($response, [
             'success' => true,
-            'segment' => $segmentId,
+            'segment' => $segment->getNomSegment(),
             'data'    => $contacts
         ]);
     } catch (Throwable $e) {
@@ -71,5 +54,4 @@ $app->get('/api/segments/{id}/contacts', function (Request $request, Response $r
             'details' => $e->getMessage()
         ], 500);
     }
-    
 });
