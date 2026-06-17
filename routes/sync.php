@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-// POST /api/sync/weezevent
 $app->post('/api/sync/weezevent', function (Request $request, Response $response) {
     try {
         $weezevent  = new WeezeventService();
@@ -21,13 +20,8 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
         foreach ($participants as $participant) {
             try {
                 $contact = $weezevent->formatContact($participant);
-
-                if (empty($contact['email'])) {
-                    continue;
-                }
-
+                if (empty($contact['email'])) continue;
                 $existing = $repository->findByEmail($contact['email']);
-
                 if ($existing === null) {
                     $repository->create($contact);
                     $created++;
@@ -43,7 +37,7 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
             'success' => true,
             'message' => 'Synchronisation Weezevent terminée',
             'data'    => [
-                'total_retrieved' => count($participants),
+                'total_retrieved'  => count($participants),
                 'contacts_created' => $created,
                 'contacts_updated' => $updated,
                 'errors'           => $errors
@@ -59,7 +53,6 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
     }
 });
 
-// POST /api/sync/brevo
 $app->post('/api/sync/brevo', function (Request $request, Response $response) {
     try {
         $data      = (array) $request->getParsedBody();
@@ -76,19 +69,109 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         }
 
         $brevo   = new BrevoService();
-        $results = $brevo->syncSegment($contacts);
+        $success = 0;
+        $errors  = 0;
+        $details = [];
+
+        foreach ($contacts as $contact) {
+            try {
+                $brevo->createOrUpdateContact($contact);
+                $success++;
+            } catch (\Exception $e) {
+                $errors++;
+                $details[] = [
+                    'email' => $contact['email'],
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
 
         return jsonResponse($response, [
             'success' => true,
             'message' => 'Synchronisation Brevo terminée',
             'segment' => $segmentId,
-            'data'    => $results
+            'data'    => [
+                'success' => $success,
+                'errors'  => $errors,
+                'details' => $details
+            ]
         ]);
 
     } catch (Throwable $e) {
         return jsonResponse($response, [
             'success' => false,
             'error'   => 'Erreur synchronisation Brevo',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});
+
+$app->post('/api/sync/brevo/import', function (Request $request, Response $response) {
+    try {
+        $brevo      = new BrevoService();
+        $pdo        = Database::getConnection();
+        $repository = new ContactRepository($pdo);
+
+        $created = 0;
+        $updated = 0;
+        $errors  = 0;
+        $offset  = 0;
+        $limit   = 500;
+        $total   = 0;
+
+        do {
+            $result   = $brevo->getContacts($limit, $offset);
+            $contacts = $result['contacts'] ?? [];
+            $total    = $result['count'] ?? 0;
+
+            foreach ($contacts as $brevoContact) {
+                try {
+                    $email = $brevoContact['email'] ?? '';
+                    if (empty($email)) continue;
+
+                    $attrs = $brevoContact['attributes'] ?? [];
+
+                    $contact = [
+                        'first_name' => $attrs['FIRSTNAME'] ?? $attrs['PRENOM'] ?? 'Inconnu',
+                        'last_name'  => $attrs['LASTNAME']  ?? $attrs['NOM']    ?? 'Inconnu',
+                        'email'      => $email,
+                        'phone'      => $attrs['SMS']       ?? $attrs['TELEPHONE'] ?? null,
+                        'source'     => 'brevo'
+                    ];
+
+                    $existing = $repository->findByEmail($email);
+
+                    if ($existing === null) {
+                        $repository->create($contact);
+                        $created++;
+                    } else {
+                        $updated++;
+                    }
+
+                } catch (\Exception $e) {
+                    $errors++;
+                }
+            }
+
+            $offset += $limit;
+
+        } while (count($contacts) === $limit);
+
+        return jsonResponse($response, [
+            'success' => true,
+            'message' => 'Import Brevo terminé',
+            'data'    => [
+                'total_brevo'      => $total,
+                'contacts_created' => $created,
+                'contacts_updated' => $updated,
+                'errors'           => $errors
+            ]
+        ]);
+
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Erreur import Brevo',
             'details' => $e->getMessage()
         ], 500);
     }

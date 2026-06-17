@@ -9,6 +9,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 require __DIR__ . '/../src/Helpers.php';
 require __DIR__ . '/../src/Database.php';
+require __DIR__ . '/../src/Repositories/ContactRepository.php';
+require __DIR__ . '/../src/Services/WeezeventService.php';
+require __DIR__ . '/../src/Services/BrevoService.php';
 
 // Chargement du fichier .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
@@ -21,11 +24,7 @@ $app = AppFactory::create();
 $app->addBodyParsingMiddleware();
 
 // Middleware erreurs
-$app->addErrorMiddleware(
-    ($_ENV['APP_DEBUG'] ?? 'false') === 'true',
-    true,
-    true
-);
+$app->addErrorMiddleware(true, true, true);
 
 // Middleware CORS
 $app->add(function ($request, $handler) {
@@ -54,7 +53,5 @@ require __DIR__ . '/../routes/contacts.php';
 require __DIR__ . '/../routes/stats.php';
 require __DIR__ . '/../routes/segments.php';
 require __DIR__ . '/../routes/sync.php';
-require __DIR__ . '/../src/Repositories/ContactRepository.php';
-require __DIR__ . '/../src/Services/WeezeventService.php';
-require __DIR__ . '/../src/Services/BrevoService.php';
+
 $app->run();
