@@ -186,11 +186,10 @@ async function testContacts() {
   clearResult();
 
   try {
-    const contacts = await callBrevo('/contacts?', apiKey);
-    console.log('[testContacts] Succès, contacts récupérés :', contacts);
-    setStatus(`${contacts.count ?? contacts.contacts?.length ?? 0} contact(s) récupéré(s).`);
-    renderContactsCards(contacts);
-    downloadJson(contacts, 'contacts.json');
+    const data = await callBrevo('/contacts?limit=10&offset=0', apiKey);
+    console.log('[testContacts] Succès, contacts récupérés :', data);
+    setStatus(`Aperçu : ${data.contacts?.length ?? 0} contact(s) affiché(s) sur ${data.count ?? '?'} au total.`);
+    renderContactsCards(data);
   } catch (err) {
     console.error('[testContacts] Échec :', err);
     setStatus(`Échec de la récupération des contacts : ${err.message}`, true);
@@ -198,15 +197,95 @@ async function testContacts() {
   }
 }
 
-// function downloadJson(data, filename) {
-//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-//   const url = URL.createObjectURL(blob);
-//   const a = document.createElement('a');
-//   a.href = url;
-//   a.download = filename;
-//   a.click();
-//   URL.revokeObjectURL(url);
-// }
+async function fetchAllContacts(apiKey) {
+  const PAGE_SIZE = 1000;
+  let offset = 0;
+  let total = null;
+  const allContacts = [];
+
+  do {
+    const data = await callBrevo(`/contacts?limit=${PAGE_SIZE}&offset=${offset}`, apiKey);
+    if (total === null) total = data.count ?? 0;
+    const page = data.contacts ?? [];
+    allContacts.push(...page);
+    offset += page.length;
+    setStatus(`Récupération… ${allContacts.length} / ${total} contacts`);
+    if (page.length < PAGE_SIZE) break;
+  } while (allContacts.length < total);
+
+  return allContacts;
+}
+
+async function downloadAllContacts() {
+  console.log('[downloadAllContacts] Démarrage...');
+  const apiKey = getApiKey();
+  if (!apiKey) return;
+
+  const btn = document.getElementById('btn-download-contacts');
+  btn.disabled = true;
+  setStatus('Récupération de tous les contacts en cours...');
+  clearResult();
+
+  try {
+    const contacts = await fetchAllContacts(apiKey);
+    setStatus(`${contacts.length} contact(s) récupéré(s). Téléchargement en cours...`);
+    renderContactsCards({ contacts });
+    downloadCsv(contacts, 'contacts_brevo.csv');
+    setTimeout(() => downloadJson({ count: contacts.length, contacts }, 'contacts_brevo.json'), 500);
+    setStatus(`${contacts.length} contact(s) téléchargé(s) (CSV + JSON).`);
+  } catch (err) {
+    console.error('[downloadAllContacts] Échec :', err);
+    setStatus(`Échec : ${err.message}`, true);
+    renderError(err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadJson(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  triggerDownload(blob, filename);
+}
+
+function downloadCsv(contacts, filename) {
+  if (!contacts.length) return;
+
+  const attrKeys = [...new Set(contacts.flatMap((c) => Object.keys(c.attributes || {})))];
+  const headers = ['email', 'id', 'createdAt', 'modifiedAt', 'listIds', ...attrKeys];
+
+  const escape = (v) => {
+    const s = String(v ?? '');
+    return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+
+  const rows = contacts.map((c) => {
+    const attrs = c.attributes || {};
+    return [
+      c.email,
+      c.id,
+      c.createdAt,
+      c.modifiedAt,
+      (c.listIds ?? []).join(';'),
+      ...attrKeys.map((k) => attrs[k]),
+    ].map(escape).join(',');
+  });
+
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  triggerDownload(blob, filename);
+}
 
 btnTestAccount.addEventListener('click', testAccount);
-btnTestContacts.addEventListener('click', testContacts);
+btnTestContacts.addEventListener('click', downloadAllContacts);
+document.getElementById('btn-download-contacts')?.addEventListener('click', downloadAllContacts);

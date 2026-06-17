@@ -13,5 +13,8 @@
     "daisyui": "^5.5.23",
     "tailwindcss": "^4.3.1",
     "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1"
   }
 }
