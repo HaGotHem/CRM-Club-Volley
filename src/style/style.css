@@ -1,10 +1,113 @@
 @import "tailwindcss";
- @plugin "daisyui" {
-   themes: light --default;
- }
-:root {
+@plugin "daisyui" {
+  themes: light --default;
 }
-*{
+:root {
+  --color-principal:#15277B;
+  --color-secondaire:#F5D804;
+  --color-background:#363636;
+  --color-cards:#FAF9F6;
+  --font-principal: 'inter', sans-serif;
+}
+body{
   margin: 0;
   padding: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-8px); }
+  30%       { transform: translateX(8px); }
+  45%       { transform: translateX(-6px); }
+  60%       { transform: translateX(6px); }
+  75%       { transform: translateX(-4px); }
+  90%       { transform: translateX(4px); }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes error-flash {
+  0%   { background-color: transparent; }
+  30%  { background-color: #fee2e2; }
+  100% { background-color: transparent; }
+}
+
+.input-error-flash {
+  animation: error-flash 0.8s ease-out forwards;
+}
+
+/* --- inputs --- */
+#identifiant,
+#mot-de-passe {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.3s ease;
+}
+
+/* --- bouton connexion --- */
+#login-form button[type="submit"] {
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+#login-form button[type="submit"]:hover  { transform: translateY(-2px); opacity: 0.92; }
+#login-form button[type="submit"]:active { transform: translateY(0px);  opacity: 1; }
+
+/* --- messages d'erreur (champs + global) --- */
+.error-msg {
+  opacity: 0;
+  transform: translateY(-4px);
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+  font-size: 0.875rem;
+  color: #dc2626;
+}
+
+.error-msg.visible {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 3rem;
+}
+
+/* --- bandeau erreur global --- */
+#error-global {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: #fee2e2;
+  border: 1px solid transparent;
+  color: #b91c1c;
+  font-weight: 500;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.35s ease,
+              padding 0.3s ease, border-color 0.3s ease;
+}
+
+#error-global.visible {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 3rem;
+  padding: 0.6rem 1rem;
+  border-color: #fca5a5;
+}
+
+/* --- menu burger --- */
+.burger_menu {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
+}
+
+.burger_menu.open {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 100vh;
 }

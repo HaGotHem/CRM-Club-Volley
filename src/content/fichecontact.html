@@ -6,10 +6,8 @@
     <title>Stats</title>
     <link rel="stylesheet" href="../style/style.css">
     <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
-
 </head>
-<body>
-
+<body class="flex flex-col min-h-screen p-6 gap-4">
 
 <div>
   <!-- navbar mobile -->
@@ -46,7 +44,29 @@
     </nav>
     <div class="p-4 flex">
     <!-- Page content ici -->
-      <h1 class="text-xl font-bold">Page stats</h1>
+      <h1 class="text-xl font-bold">Fiche Contact / test api brevo</h1>
+
+    <div class="card w-full max-w-md bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div class="card-body gap-3">
+
+            <label class="form-control">
+                <span class="label">Clé API Brevo</span>
+                <input type="password" id="brevo-api-key" placeholder="xkeysib-..." class="input input-bordered w-full" autocomplete="off" />
+            </label>
+
+            <div class="flex flex-wrap gap-2">
+                <button id="btn-test-account" class="btn btn-primary">Tester la connexion</button>
+                <button id="btn-test-contacts" class="btn btn-secondary">Aperçu contacts</button>
+                <button id="btn-download-contacts" class="btn btn-accent">Télécharger tous les contacts</button>
+            </div>
+
+            <div id="api-status" class="text-sm"></div>
+        </div>
+    </div>
+
+    <div id="api-result" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
+
+      
     
 
         <!-- Fin content -->
@@ -104,7 +124,19 @@
 
 
 
-<!-- footer -->
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- footer -->
     <footer class="bg-[var(--color-background)] text-white mt-auto">
 <!-- content footer mobile -->
       <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">

@@ -5,9 +5,107 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./src/style/style.css">
+    <link rel="icon" type="image/svg+xml" href="./src/assets/logo.svg" />
     <title>Login CRM volleyball</title>
   </head>
-  <body>
+  <body class="flex flex-col min-h-screen">
+
+    <!-- navbar mobile uniquement -->
+    <div class="lg:hidden bg-[var(--color-principal)]">
+      <div class="flex justify-center">
+        <img class="max-w-20 py-1" src="./src/assets/logo.svg" alt="Logo" />
+      </div>
+    </div>
+
+    <!-- contenu principal -->
+    <div class="flex-1 flex flex-col lg:flex-row relative">
+
+      <!-- panneau gauche : logo desktop uniquement -->
+      <div class="hidden lg:flex lg:w-1/2 bg-[var(--color-principal)] items-center justify-center">
+        <img src="./src/assets/logo.svg" alt="Logo NVB" class="w-72" />
+      </div>
+
+      <!-- panneau droit : formulaire -->
+      <div class="flex-1 flex flex-col justify-center px-6 py-10 lg:px-20 lg:pb-20 lg:w-1/2 bg-white">
+
+        <h2 class="text-2xl lg:text-3xl font-bold text-center lg:text-left font-[var(--font-principal)] mb-10">
+          Bienvenue sur la page de connexion
+        </h2>
+
+        <!-- formulaire unique responsive -->
+        <div class="card bg-base-100 w-full lg:max-w-md shadow-2xl">
+          <div class="card-body p-6 lg:p-8">
+            <form id="login-form" class="flex flex-col gap-4 lg:gap-6">
+              <div class="flex flex-col gap-2">
+                <label for="identifiant" class="label text-xl lg:text-base font-medium">Identifiant</label>
+                <input
+                  id="identifiant"
+                  type="text"
+                  class="input input-lg lg:input-md w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-lg lg:text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+                  placeholder="Entrer identifiant"
+                  autocomplete="username"
+                />
+                <span id="error-identifiant" class="error-msg"></span>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label for="mot-de-passe" class="label text-xl lg:text-base font-medium">Mot de passe</label>
+                <input
+                  id="mot-de-passe"
+                  type="password"
+                  class="input input-lg lg:input-md w-full border border-[var(--color-principal)] rounded-md px-4 py-3 text-lg lg:text-base focus:outline-none focus:ring-2 focus:ring-[var(--color-principal)]"
+                  placeholder="Entrer mot de passe"
+                  autocomplete="current-password"
+                />
+                <span id="error-mdp" class="error-msg"></span>
+              </div>
+              <p id="error-global" class="error-msg"></p>
+              <button
+                type="submit"
+                class="btn bg-[var(--color-principal)] text-white text-2xl lg:text-lg mt-2 h-16 lg:h-auto lg:px-14 lg:py-3 rounded-md hover:opacity-90"
+              >
+                Connexion
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- barre jaune -->
+      <div class="absolute bottom-0 left-0 right-0 h-16 bg-[var(--color-secondaire)] [clip-path:polygon(0_70%,100%_0,100%_100%,0_100%)] z-10"></div>
+    </div>
+
+    <!-- footer -->
+    <footer class="bg-[var(--color-background)] text-white">
+<!-- content footer mobile -->
+      <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">
+        <p>
+          Secretariat - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
+        </p>
+        <p>
+          Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+        </p>
+        <p>Nice Volley Ball © 2026.</p>
+      </div>
+<!-- content footer desktop -->
+      <div class="hidden lg:grid lg:grid-cols-3 items-center px-10 py-5 text-sm">
+
+        <div class="flex flex-col items-center gap-1 text-center">
+          <p>
+            Secretariat - <a class="link link-hover" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover" href="tel:0493871277">04 93 87 12 77</a>
+          </p>
+          <p>
+            Communication / Marketing - <a class="link link-hover" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+          </p>
+        </div>
+
+        <div class="flex justify-end">
+          <p>Nice Volley Ball © 2026.</p>
+        </div>
+
+      </div>
+    </footer>
     <script type="module" src="./src/script/main.js"></script>
+    <script type="module" src="./src/script/auth.js"></script>
   </body>
 </html>
