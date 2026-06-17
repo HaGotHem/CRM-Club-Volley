@@ -29,6 +29,14 @@ $app->get('/api/stats/dashboard', function (Request $request, Response $response
             ->query("SELECT COUNT(*) FROM contacts WHERE created_at >= NOW() - INTERVAL '7 days'")
             ->fetchColumn();
 
+        $invitedCount = (int) $pdo
+            ->query("SELECT COUNT(*) FROM contacts WHERE is_invited = true")
+            ->fetchColumn();
+
+        $ticketsSold = (int) $pdo
+            ->query("SELECT COALESCE(SUM(ticket_count), 0) FROM contacts")
+            ->fetchColumn();
+
         return jsonResponse($response, [
             'success' => true,
             'data'    => [
@@ -36,7 +44,10 @@ $app->get('/api/stats/dashboard', function (Request $request, Response $response
                 'weezevent_contacts' => $weezeventContacts,
                 'brevo_contacts'     => $brevoContacts,
                 'manual_contacts'    => $manualContacts,
-                'new_contacts_7days' => $newContacts
+                'new_contacts_7days' => $newContacts,
+                'invited_count'      => $invitedCount,
+                'tickets_sold'       => $ticketsSold,
+                'segment_count'      => 3
             ]
         ]);
     } catch (Throwable $e) {
