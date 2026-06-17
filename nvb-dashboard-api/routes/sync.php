@@ -105,3 +105,74 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         ], 500);
     }
 });
+
+$app->post('/api/sync/brevo/import', function (Request $request, Response $response) {
+    try {
+        $brevo      = new BrevoService();
+        $pdo        = Database::getConnection();
+        $repository = new ContactRepository($pdo);
+
+        $created = 0;
+        $updated = 0;
+        $errors  = 0;
+        $offset  = 0;
+        $limit   = 500;
+        $total   = 0;
+
+        do {
+            $result   = $brevo->getContacts($limit, $offset);
+            $contacts = $result['contacts'] ?? [];
+            $total    = $result['count'] ?? 0;
+
+            foreach ($contacts as $brevoContact) {
+                try {
+                    $email = $brevoContact['email'] ?? '';
+                    if (empty($email)) continue;
+
+                    $attrs = $brevoContact['attributes'] ?? [];
+
+                    $contact = [
+                        'first_name' => $attrs['FIRSTNAME'] ?? $attrs['PRENOM'] ?? 'Inconnu',
+                        'last_name'  => $attrs['LASTNAME']  ?? $attrs['NOM']    ?? 'Inconnu',
+                        'email'      => $email,
+                        'phone'      => $attrs['SMS']       ?? $attrs['TELEPHONE'] ?? null,
+                        'source'     => 'brevo'
+                    ];
+
+                    $existing = $repository->findByEmail($email);
+
+                    if ($existing === null) {
+                        $repository->create($contact);
+                        $created++;
+                    } else {
+                        $updated++;
+                    }
+
+                } catch (\Exception $e) {
+                    $errors++;
+                }
+            }
+
+            $offset += $limit;
+
+        } while (count($contacts) === $limit);
+
+        return jsonResponse($response, [
+            'success' => true,
+            'message' => 'Import Brevo terminé',
+            'data'    => [
+                'total_brevo'      => $total,
+                'contacts_created' => $created,
+                'contacts_updated' => $updated,
+                'errors'           => $errors
+            ]
+        ]);
+
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Erreur import Brevo',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});

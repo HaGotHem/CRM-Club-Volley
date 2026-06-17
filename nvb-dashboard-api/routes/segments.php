@@ -71,4 +71,5 @@ $app->get('/api/segments/{id}/contacts', function (Request $request, Response $r
             'details' => $e->getMessage()
         ], 500);
     }
+    
 });
