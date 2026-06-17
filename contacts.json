@@ -1,0 +1,758 @@
+{
+  "contacts": [
+    {
+      "id": 15029,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.929+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "yoniyop.montecot@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15028,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "val.marty06@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15027,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "titouanhalle@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15026,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "teodorbria@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15025,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "rodrigotorres86@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15024,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "ristowjjacomo@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15023,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "qsjt1402@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15022,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "neila.mouhsine@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15021,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "nadiatalha29@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15020,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "matteop1007@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15019,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.928+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "ludonoisetiers@icloud.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15018,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.927+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "iaiaguzek@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15017,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.927+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "gjokhilaj@hotmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15016,
+      "emailBlacklisted": true,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.927+02:00",
+      "modifiedAt": "2026-05-18T13:28:18.216+02:00",
+      "email": "dukingmachine@hotmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15015,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "calexandrem11@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15014,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "baptisteauzizeau@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15013,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "axeljeanson@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15012,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "axel.rennou@icloud.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15011,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "artem@chahovsky.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15010,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-05-18T12:15:39.926+02:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "amiotnathan@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15009,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-31T12:39:12.555+02:00",
+      "modifiedAt": "2026-05-11T15:43:28.405+02:00",
+      "email": "olivier.orsini@francetv.fr",
+      "listIds": [
+        50
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15008,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-31T12:39:12.555+02:00",
+      "modifiedAt": "2026-05-11T15:43:28.384+02:00",
+      "email": "daniel.gerner@francetv.fr",
+      "listIds": [
+        50
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15007,
+      "emailBlacklisted": true,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-05T21:56:24.879+02:00",
+      "email": "victor_vince@orange.fr",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15006,
+      "emailBlacklisted": true,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-05T18:51:57.505+02:00",
+      "email": "tom.mollaret@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15005,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.485+02:00",
+      "email": "titouangroc@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15004,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.485+02:00",
+      "email": "t.torterolo@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15003,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.405+02:00",
+      "email": "ruggero1952@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15002,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.404+02:00",
+      "email": "petitac@yahoo.fr",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15001,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.404+02:00",
+      "email": "palardanna@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 15000,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.409+02:00",
+      "email": "nielsou18@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14999,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.409+02:00",
+      "email": "maxski74@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14998,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.409+02:00",
+      "email": "matteopilchnvb@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14997,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.409+02:00",
+      "email": "mathiscastilla07@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14996,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.413+02:00",
+      "email": "mathildelaps@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14995,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.409+02:00",
+      "email": "marczyschole@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14994,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.439+02:00",
+      "email": "malobegue06@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14993,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.439+02:00",
+      "email": "keemink.henk@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14992,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.439+02:00",
+      "email": "gasphurtevent@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14991,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.405+02:00",
+      "email": "gabrielfrstfr@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14990,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.439+02:00",
+      "email": "florian1372629@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14989,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.439+02:00",
+      "email": "clintonlandim@yahoo.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14988,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-03-11T09:35:15.867+01:00",
+      "modifiedAt": "2026-05-11T15:43:28.404+02:00",
+      "email": "capucine.castelnau@gmail.com",
+      "listIds": [
+        64
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14987,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2026-01-19T09:15:36.845+01:00",
+      "modifiedAt": "2026-05-15T08:00:40.240+02:00",
+      "email": "guillaume-gigliotti@camifhabitat.fr",
+      "listIds": [
+        30
+      ],
+      "listUnsubscribed": null,
+      "attributes": {
+        "NOM": "Gigliotti",
+        "PRENOM": "Guillaume"
+      },
+      "subscriptions": {}
+    },
+    {
+      "id": 14986,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "walidaloui5@hotmail.fr",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14985,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "vic.dup05@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14984,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "thomas.perles@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14983,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "thomas.goaderoch@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14982,
+      "emailBlacklisted": true,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2025-12-05T12:11:09.215+01:00",
+      "email": "taderosyananahit918@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14981,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "tabaijad@gmail.com",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    },
+    {
+      "id": 14980,
+      "emailBlacklisted": false,
+      "smsBlacklisted": false,
+      "whatsappBlacklisted": false,
+      "createdAt": "2025-12-05T12:01:00.045+01:00",
+      "modifiedAt": "2026-05-18T12:20:04.866+02:00",
+      "email": "souhila.souska@hotmail.fr",
+      "listIds": [
+        63
+      ],
+      "listUnsubscribed": null,
+      "attributes": {},
+      "subscriptions": {}
+    }
+  ],
+  "count": 12169
+}
