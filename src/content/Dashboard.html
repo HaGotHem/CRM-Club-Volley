@@ -50,8 +50,8 @@
 
 
 
-
-    <div class=" flex flex-row flex-wrap gap-5 bg-[#FAF9F6] rounded p-3 m-3 shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-230">
+<div class="flex p-3 m-3  gap-20">
+    <div class=" flex flex-row flex-wrap gap-5 bg-[#FAF9F6] rounded p-5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-140">
       <div class="card max-w-67 bg-[var(--color-principal)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-white">
         <div class="card-body">
           <h2 class="card-title">Total contacts</h2>
@@ -64,13 +64,25 @@
         <p id="total-groupes" class="text-3xl font-bold">…</p>
       </div>
     </div>
-      <a href="./fichecontact.html" class="btn btn-primary">Voir les contacts</a>
+      
+      <a href="./fichecontact.html" class="btn bg-[var(--color-principal)] text-white">Voir les contacts</a>
+    </div>
+    <div>
+    <a href="./stats.html" class="btn bg-[var(--color-principal)] ml-50 m-2 text-white">Voir les stats</a>
+      <div class="card card-body flex h-50 w-100 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#FAF9F6] ">
+        <div class="clard-text">
+        <p>  <p id="invites-count">...</p> <br>
+        Nombre d'invitations
+      </p>
+      <p id="invites-stats">
+        ...
+      </p>
+        </div>
+        <canvas id="StatsChart"></canvas>
+      </div>
     </div>
 
-
-
-
-
+</div>
 
 
 
@@ -198,8 +210,11 @@
 
       </div>
     </footer>
-    <script type="module" src ="../script/total-contact.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../script/main.js"></script>
+    <script type="module" src ="../script/total-contact.js"></script>
     <script type="module" src="../script/burgermenu.js"></script>
+    <script type="module" src="../script/Charts.js"></script>   
+    <script type="module" src="../script/acquisitions.js"></script>
 </body>
 </html>
