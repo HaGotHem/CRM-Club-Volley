@@ -25,3 +25,6 @@ dist-ssr
 
 /vendor
 .env
+
+/'docker compose'
+.env
