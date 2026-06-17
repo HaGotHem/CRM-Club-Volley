@@ -50,35 +50,80 @@
 
 
 
-<div class="flex p-3 m-3  gap-20">
-    <div class=" flex flex-row flex-wrap gap-5 bg-[#FAF9F6] rounded p-5 shadow-[0_10px_30px_rgba(0,0,0,0.5)] max-w-140">
-      <div class="card max-w-67 bg-[var(--color-principal)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-white">
-        <div class="card-body">
-          <h2 class="card-title">Total contacts</h2>
-          <p id="total-contacts" class="text-3xl font-bold">…</p>
+<div class="w-full grid grid-cols-1 xl:grid-cols-2 auto-rows-fr gap-8 p-3 m-3 min-h-[calc(100vh-160px)]">
+
+    <!-- Carte 1 : Contacts & Groupes -->
+    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col">
+      <div class="flex justify-end mb-4">
+        <a href="./fichecontact.html" class="font-bold text-[var(--color-principal)] flex items-center gap-2 hover:underline">
+          Aller sur contacts
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+      <div class="grid grid-cols-2 gap-5 flex-1">
+        <div class="bg-[var(--color-principal)] rounded-2xl p-6 text-white text-center flex flex-col items-center justify-center gap-2">
+          <p id="total-contacts" class="text-5xl font-extrabold">10,128</p>
+          <p class="text-xl">Nombre de contact</p>
+          <p class="text-[var(--color-secondaire)] font-bold mt-2">+ 10% Du Dernier Mois</p>
+        </div>
+        <div class="bg-[var(--color-principal)] rounded-2xl p-6 text-white text-center flex flex-col items-center justify-center gap-2">
+          <p id="total-groupes" class="text-5xl font-extrabold">19</p>
+          <p class="text-xl">Nombre de Groupes</p>
+          <p class="text-[var(--color-secondaire)] font-bold mt-2">+ 10% Du Dernier Mois</p>
         </div>
       </div>
-    <div class="card max-w-67 bg-[var(--color-principal)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)] text-white">
-      <div class="card-body">
-        <h2 class="card-title">Total Groupe</h2>
-        <p id="total-groupes" class="text-3xl font-bold">…</p>
+    </div>
+
+    <!-- Carte 2 : Invitations + donut -->
+    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
+      <div class="flex justify-end mb-2">
+        <a href="./stats.html" class="font-bold text-[var(--color-principal)] flex items-center gap-2 hover:underline">
+          Aller sur statistiques
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+      </div>
+      <div class="flex flex-row items-center justify-between gap-4 flex-1">
+        <div>
+          <p id="invites-count" class="text-6xl font-extrabold text-[var(--color-principal)]">10,128</p>
+          <p class="text-2xl text-[var(--color-principal)] mt-1">Nombre d'invitations</p>
+          <p class="text-sky-500 font-bold mt-6">&uarr; + 10% Du Dernier Mois</p>
+        </div>
+        <div class="relative h-full min-h-52 aspect-square shrink-0">
+          <canvas id="StatsChart"></canvas>
+        </div>
       </div>
     </div>
-      
-      <a href="./fichecontact.html" class="btn bg-[var(--color-principal)] text-white">Voir les contacts</a>
+
+    <!-- Carte 3 : Taux d'affluence -->
+    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
+      <div class="bg-[var(--color-principal)] text-white text-center text-xl font-bold rounded-full py-3 mb-6">
+        Taux d'affluence
+      </div>
+      <div class="relative flex-1 min-h-56 w-full">
+        <canvas id="affluenceChart"></canvas>
+      </div>
     </div>
-    <div>
-    <a href="./stats.html" class="btn bg-[var(--color-principal)] ml-50 m-2 text-white">Voir les stats</a>
-      <div class="card card-body flex h-50 w-100 shadow-[0_10px_30px_rgba(0,0,0,0.5)] bg-[#FAF9F6] ">
-        <div class="clard-text">
-        <p>  <p id="invites-count">...</p> <br>
-        Nombre d'invitations
-      </p>
-      <p id="invites-stats">
-        ...
-      </p>
+
+    <!-- Carte 4 : Places vendues -->
+    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col justify-center">
+      <div class="flex flex-row items-end justify-between gap-4 flex-1">
+        <div class="flex flex-col justify-center">
+          <p id="places-count" class="text-6xl font-extrabold text-[var(--color-principal)]">3,128</p>
+          <p class="text-2xl text-[var(--color-principal)] mt-1">Nombre de<br>places vendu</p>
+          <p class="text-sky-500 font-bold mt-6">&uarr; + 10% Du Dernier Mois</p>
         </div>
-        <canvas id="StatsChart"></canvas>
+        <div class="flex flex-row items-end gap-6 h-full pb-2">
+          <div class="flex flex-col items-center justify-end h-full">
+            <p class="text-2xl font-extrabold text-[var(--color-principal)]">3,128</p>
+            <p class="text-sm text-gray-600 mb-2">ce mois ci</p>
+            <div class="w-16 grow max-h-48 bg-[var(--color-principal)] rounded-t-2xl"></div>
+          </div>
+          <div class="flex flex-col items-center justify-end h-full">
+            <p class="text-2xl font-extrabold text-[var(--color-principal)]">2,420</p>
+            <p class="text-sm text-gray-600 mb-2">mois dernier</p>
+            <div class="w-16 grow max-h-36 bg-gray-400 rounded-t-2xl"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -212,9 +257,9 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../script/main.js"></script>
-    <script type="module" src ="../script/total-contact.js"></script>
+    <!-- Valeurs fictives pour l'instant : réactiver quand l'API fournira les vraies données
+    <script type="module" src="../script/total-contact.js"></script> -->
     <script type="module" src="../script/burgermenu.js"></script>
-    <script type="module" src="../script/Charts.js"></script>   
-    <script type="module" src="../script/acquisitions.js"></script>
+    <script type="module" src="../script/Charts.js"></script>
 </body>
 </html>
