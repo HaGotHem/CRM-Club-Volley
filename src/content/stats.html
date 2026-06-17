@@ -10,9 +10,9 @@
 </head>
 <body>
 
-    <body class="flex flex-col min-h-screen p-6 gap-4">
 
-              <!-- navbar mobile -->
+<div>
+  <!-- navbar mobile -->
   <div class="lg:hidden">
     <div class="navbar bg-[var(--color-principal)] h-25 text-white relative">
       <a class="normal-case text-xl absolute left-1/2 -translate-x-1/2" href="../index.html"><img src="../assets/logo.svg" alt="Logo" class="w-20 py-1"></a>
@@ -31,27 +31,28 @@
   <li><a href="../../index.html">Déconnexion</a></li>
 </ul>
   </div>
+  
+
   </div>
 
-<div class="hidden lg:block">
+
+<div class="">
   <div class="drawer lg:drawer-open ">
   <input id="my-drawer-4" type="checkbox" class="drawer-toggle" checked />
   <div class="drawer-content">
     <!-- Navbar -->
-    <nav class="navbar w-full bg-[var(--color-principal)] text-white">
+    <nav class="navbar w-full bg-[var(--color-principal)] text-white hidden lg:block">
       <div class="px-4"> <img src="../assets/logo.png" alt="Logo" class="h-13" /> </div>
     </nav>
-    <!-- Page content ici -->
     <div class="p-4 flex">
-
+    <div class="p-4 flex">
+      <!-- Page content ici -->
       <h1 class="text-xl font-bold">Page Stats</h1>
-    
-    
-    <!-- Fin content -->
+        <!-- Fin content -->
     </div>
   </div>
-  <!-- Fin content -->
-  <div class="drawer-side is-drawer-close:overflow-visible text-white">
+
+  <div class="drawer-side is-drawer-close:overflow-visible text-white hidden lg:block">
     <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
     <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
       <!-- Sidebar content here -->
@@ -89,32 +90,14 @@
           <a href="../../index.html" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Déconnexion">
             <!-- Logout icon -->
             <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-            <span class="is-drawer-close:hidden">Déconnexion</span>
+            <span class="is-drawer-close:hidden">déconexion</span>
           </a>
         </li>
       </ul>
     </div>
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- footer -->
+<!-- footer -->
     <footer class="bg-[var(--color-background)] text-white mt-auto">
 <!-- content footer mobile -->
       <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">
