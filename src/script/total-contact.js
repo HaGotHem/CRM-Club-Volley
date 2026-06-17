@@ -46,15 +46,6 @@ async function afficherTotalContacts() {
     totalEl.textContent = 'Erreur';
   }
 }
-// function downloadJson(data, filename) {
-//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-//   const url = URL.createObjectURL(blob);
-//   const a = document.createElement('a');
-//   a.href = url;
-//   a.download = filename;
-//   a.click();
-//   URL.revokeObjectURL(url);
-// }
 
 async function afficherTotalGroupes() {
   const totalGroupesEl = document.getElementById('total-groupes');
@@ -66,7 +57,6 @@ async function afficherTotalGroupes() {
     console.log('Nombre de groupes :', total);
     console.log(res.lists);
     totalGroupesEl.textContent = total;
-    downloadJson(res, 'groupes.json');
   } catch (err) {
     console.error('[total-groupes] Échec de la récupération du total :', err);
     totalGroupesEl.textContent = 'Erreur';

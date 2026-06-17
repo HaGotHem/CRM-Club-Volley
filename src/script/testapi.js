@@ -231,8 +231,7 @@ async function downloadAllContacts() {
     setStatus(`${contacts.length} contact(s) récupéré(s). Téléchargement en cours...`);
     renderContactsCards({ contacts });
     downloadCsv(contacts, 'contacts_brevo.csv');
-    setTimeout(() => downloadJson({ count: contacts.length, contacts }, 'contacts_brevo.json'), 500);
-    setStatus(`${contacts.length} contact(s) téléchargé(s) (CSV + JSON).`);
+    setStatus(`${contacts.length} contact(s) téléchargé(s) (CSV).`);
   } catch (err) {
     console.error('[downloadAllContacts] Échec :', err);
     setStatus(`Échec : ${err.message}`, true);
@@ -251,11 +250,6 @@ function triggerDownload(blob, filename) {
   a.click();
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function downloadJson(data, filename) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  triggerDownload(blob, filename);
 }
 
 function downloadCsv(contacts, filename) {
