@@ -34,14 +34,14 @@
 
 
 <div class="">
-  <div class="drawer lg:drawer-open ">
+  <div class="drawer drawer-open">
   <input id="my-drawer-4" type="checkbox" class="drawer-toggle" checked />
   <div class="drawer-content">
     <!-- Navbar -->
     <nav class="navbar w-full bg-[var(--color-principal)] text-white hidden lg:block">
       <div class="px-4"> <img src="../assets/logo.png" alt="Logo" class="h-13" /> </div>
     </nav>
-    <div class="p-4 flex">
+    <div class="p-3 sm:p-4 lg:p-6 flex">
     <!-- Page content ici -->
 
 
@@ -50,78 +50,78 @@
 
 
 
-<div class="w-full grid grid-cols-1 xl:grid-cols-2 auto-rows-fr gap-8 p-3 m-3 min-h-[calc(100vh-160px)]">
+<div class="w-full grid grid-cols-1 xl:grid-cols-2 gap-5 sm:gap-6 xl:gap-8 p-0 sm:p-3 m-0 sm:m-3 xl:auto-rows-fr xl:min-h-[calc(100vh-160px)]">
 
     <!-- Carte 1 : Contacts & Groupes -->
-    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col">
-      <div class="flex justify-end mb-4">
-        <a href="./fichecontact.html" class="font-bold text-[var(--color-principal)] flex items-center gap-2 hover:underline">
+    <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col">
+      <div class="flex justify-end mb-3 sm:mb-4">
+        <a href="./fichecontact.html" class="font-bold text-sm sm:text-base text-[var(--color-principal)] flex items-center gap-2 hover:underline">
           Aller sur contacts
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
       </div>
-      <div class="grid grid-cols-2 gap-5 flex-1">
-        <div class="bg-[var(--color-principal)] rounded-2xl p-6 text-white text-center flex flex-col items-center justify-center gap-2">
-          <p id="total-contacts" class="text-5xl font-extrabold">10,128</p>
-          <p class="text-xl">Nombre de contact</p>
-          <p class="text-[var(--color-secondaire)] font-bold mt-2">+ 10% Du Dernier Mois</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 flex-1">
+        <div class="bg-[var(--color-principal)] rounded-2xl p-5 sm:p-6 text-white text-center flex flex-col items-center justify-center gap-1 sm:gap-2">
+          <p id="total-contacts" class="text-4xl xl:text-5xl font-extrabold">10,128</p>
+          <p class="text-lg xl:text-xl">Nombre de contact</p>
+          <p class="text-[var(--color-secondaire)] text-sm sm:text-base font-bold mt-1 sm:mt-2">+ 10% Du Dernier Mois</p>
         </div>
-        <div class="bg-[var(--color-principal)] rounded-2xl p-6 text-white text-center flex flex-col items-center justify-center gap-2">
-          <p id="total-groupes" class="text-5xl font-extrabold">19</p>
-          <p class="text-xl">Nombre de Groupes</p>
-          <p class="text-[var(--color-secondaire)] font-bold mt-2">+ 10% Du Dernier Mois</p>
+        <div class="bg-[var(--color-principal)] rounded-2xl p-5 sm:p-6 text-white text-center flex flex-col items-center justify-center gap-1 sm:gap-2">
+          <p id="total-groupes" class="text-4xl xl:text-5xl font-extrabold">19</p>
+          <p class="text-lg xl:text-xl">Nombre de Groupes</p>
+          <p class="text-[var(--color-secondaire)] text-sm sm:text-base font-bold mt-1 sm:mt-2">+ 10% Du Dernier Mois</p>
         </div>
       </div>
     </div>
 
     <!-- Carte 2 : Invitations + donut -->
-    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
+    <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
       <div class="flex justify-end mb-2">
-        <a href="./stats.html" class="font-bold text-[var(--color-principal)] flex items-center gap-2 hover:underline">
+        <a href="./stats.html" class="font-bold text-sm sm:text-base text-[var(--color-principal)] flex items-center gap-2 hover:underline">
           Aller sur statistiques
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </a>
       </div>
-      <div class="flex flex-row items-center justify-between gap-4 flex-1">
-        <div>
-          <p id="invites-count" class="text-6xl font-extrabold text-[var(--color-principal)]">10,128</p>
-          <p class="text-2xl text-[var(--color-principal)] mt-1">Nombre d'invitations</p>
-          <p class="text-sky-500 font-bold mt-6">&uarr; + 10% Du Dernier Mois</p>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 flex-1">
+        <div class="text-center sm:text-left">
+          <p id="invites-count" class="text-5xl xl:text-6xl font-extrabold text-[var(--color-principal)]">10,128</p>
+          <p class="text-xl xl:text-2xl text-[var(--color-principal)] mt-1">Nombre d'invitations</p>
+          <p class="text-sky-500 font-bold mt-4 sm:mt-6">&uarr; + 10% Du Dernier Mois</p>
         </div>
-        <div class="relative h-full min-h-52 aspect-square shrink-0">
+        <div class="relative w-40 sm:w-auto sm:h-full min-h-44 sm:min-h-52 aspect-square shrink-0">
           <canvas id="StatsChart"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Carte 3 : Taux d'affluence -->
-    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
-      <div class="bg-[var(--color-principal)] text-white text-center text-xl font-bold rounded-full py-3 mb-6">
+    <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col">
+      <div class="bg-[var(--color-principal)] text-white text-center text-base sm:text-xl font-bold rounded-full py-2.5 sm:py-3 mb-4 sm:mb-6">
         Taux d'affluence
       </div>
-      <div class="relative flex-1 min-h-56 w-full">
+      <div class="relative flex-1 min-h-48 sm:min-h-56 w-full">
         <canvas id="affluenceChart"></canvas>
       </div>
     </div>
 
     <!-- Carte 4 : Places vendues -->
-    <div class="bg-[var(--color-cards)] rounded-2xl p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col justify-center">
-      <div class="flex flex-row items-end justify-between gap-4 flex-1">
-        <div class="flex flex-col justify-center">
-          <p id="places-count" class="text-6xl font-extrabold text-[var(--color-principal)]">3,128</p>
-          <p class="text-2xl text-[var(--color-principal)] mt-1">Nombre de<br>places vendu</p>
-          <p class="text-sky-500 font-bold mt-6">&uarr; + 10% Du Dernier Mois</p>
+    <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] flex flex-col justify-center">
+      <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 flex-1">
+        <div class="flex flex-col justify-center text-center sm:text-left">
+          <p id="places-count" class="text-5xl xl:text-6xl font-extrabold text-[var(--color-principal)]">3,128</p>
+          <p class="text-xl xl:text-2xl text-[var(--color-principal)] mt-1">Nombre de<br>places vendu</p>
+          <p class="text-sky-500 font-bold mt-4 sm:mt-6">&uarr; + 10% Du Dernier Mois</p>
         </div>
-        <div class="flex flex-row items-end gap-6 h-full pb-2">
+        <div class="flex flex-row items-end gap-6 h-40 sm:h-full pb-2">
           <div class="flex flex-col items-center justify-end h-full">
-            <p class="text-2xl font-extrabold text-[var(--color-principal)]">3,128</p>
-            <p class="text-sm text-gray-600 mb-2">ce mois ci</p>
-            <div class="w-16 grow max-h-48 bg-[var(--color-principal)] rounded-t-2xl"></div>
+            <p class="text-xl sm:text-2xl font-extrabold text-[var(--color-principal)]">3,128</p>
+            <p class="text-xs sm:text-sm text-gray-600 mb-2">ce mois ci</p>
+            <div class="w-12 sm:w-16 grow max-h-48 bg-[var(--color-principal)] rounded-t-2xl"></div>
           </div>
           <div class="flex flex-col items-center justify-end h-full">
-            <p class="text-2xl font-extrabold text-[var(--color-principal)]">2,420</p>
-            <p class="text-sm text-gray-600 mb-2">mois dernier</p>
-            <div class="w-16 grow max-h-36 bg-gray-400 rounded-t-2xl"></div>
+            <p class="text-xl sm:text-2xl font-extrabold text-[var(--color-principal)]">2,420</p>
+            <p class="text-xs sm:text-sm text-gray-600 mb-2">mois dernier</p>
+            <div class="w-12 sm:w-16 grow max-h-36 bg-gray-400 rounded-t-2xl"></div>
           </div>
         </div>
       </div>

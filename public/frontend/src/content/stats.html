@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stats - Nice Volley Ball</title>
+    <title>Statistiques - Nice Volley Ball</title>
     <link rel="stylesheet" href="../style/style.css">
     <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
-
 </head>
-<body class="bg-gray-50">
-
+<body class="flex flex-col min-h-screen">
 <div>
   <!-- navbar mobile -->
   <div class="lg:hidden">
-    <div class="navbar bg-[#15277B] h-25 text-white relative">
-      <a class="normal-case text-xl left-1/2 -translate-x-1/2" href="../index.html">
-        <img src="../assets/logo.svg" alt="Logo" class="w-20 py-1">
-      </a>
+    <div class="navbar bg-[var(--color-principal)] h-25 text-white relative">
+      <a class="normal-case text-xl absolute left-1/2 -translate-x-1/2" href="../index.html"><img src="../assets/logo.svg" alt="Logo" class="w-20 py-1"></a>
       <div class="flex-none ml-auto">
         <button class="btn btn-square btn-ghost" id="menu-toggle">
           <img src="../assets/burger-menu-svgrepo-com (1).svg" alt="Menu" class="w-6 h-6">
@@ -24,8 +20,8 @@
       </div>
     </div>
     <!-- menu burger -->
-    <div class="burger_menu bg-[#15277B] text-white z-100 rounded-box m-3 hidden" id="burger-menu">
-      <ul class="menu rounded-box w-56 p-2">
+    <div class="burger_menu bg-[var(--color-principal)] text-white z-100 rounded-box m-3" id="burger-menu">
+      <ul class="menu rounded-box w-56">
         <li><a href="./Dashboard.html">Dashboard</a></li>
         <li><a href="./fichecontact.html">Fiche contact</a></li>
         <li><a href="./stats.html">Stats</a></li>
@@ -34,242 +30,326 @@
     </div>
   </div>
 
-  <div class="drawer lg:drawer-open">
-    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" checked />
-    <div class="drawer-content flex flex-col min-h-screen">
-      <!-- Navbar Desktop -->
-      <nav class="navbar w-full bg-[#15277B] text-white hidden lg:flex items-center">
-        <div class="px-4"> 
-          <img src="../assets/logo.png" alt="Logo" class="h-13" /> 
-        </div>
-      </nav>
+<div class="">
+  <div class="drawer drawer-open">
+  <input id="my-drawer-4" type="checkbox" class="drawer-toggle" checked />
+  <div class="drawer-content">
+    <!-- Navbar -->
+    <nav class="navbar w-full bg-[var(--color-principal)] text-white hidden lg:block">
+      <div class="px-4"> <img src="../assets/logo.png" alt="Logo" class="h-13" /> </div>
+    </nav>
 
-      <!-- PAGE CONTENT -->
-      <main class="p-4 lg:p-8 flex-grow">
-        <!-- Main Grid Container -->
-        <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[1400px] mx-auto w-full">
+    <!-- Page content ici -->
+    <div class="p-3 sm:p-4 lg:p-6">
+      <div class="max-w-[1400px] mx-auto w-full flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-8">
 
-          <!-- COLONNE GAUCHE (60%) -->
-          <div class="flex flex-col gap-6 lg:gap-8 w-full lg:w-3/5">
-            
-            <!-- Ligne 1: Supporters -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
-              <!-- Supporters Totaux -->
-              <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2">
-                <div class="flex items-center gap-4">
-                  <svg class="w-10 h-10 text-[#15277B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                  <span class="text-3xl font-bold text-[#15277B]">1,920</span>
-                </div>
-                <p class="text-base font-medium text-[#15277B] leading-snug mt-2">Supporters<br>totaux</p>
-                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ 10,90 % de ce Mois</p>
+        <!-- COLONNE GAUCHE (60%) -->
+        <div class="flex flex-col gap-5 sm:gap-6 lg:gap-8 w-full lg:w-3/5">
+
+          <!-- Supporters (2 cartes) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+            <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col gap-2">
+              <div class="flex items-center gap-3 sm:gap-4">
+                <svg class="w-9 h-9 sm:w-10 sm:h-10 text-[var(--color-principal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span class="text-2xl sm:text-3xl font-extrabold text-[var(--color-principal)]">1,920</span>
               </div>
-              
-              <!-- Nouveau supporters -->
-              <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2">
-                <div class="flex items-center gap-4">
-                  <svg class="w-10 h-10 text-[#15277B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                  </svg>
-                  <span class="text-3xl font-bold text-[#15277B]">1,920</span>
-                </div>
-                <p class="text-base font-medium text-[#15277B] leading-snug mt-2">Nouveau<br>supporters</p>
-                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ 10,90 % de ce Mois</p>
-              </div>
+              <p class="text-base font-bold text-[var(--color-principal)] leading-snug mt-1 sm:mt-2">Supporters<br>totaux</p>
+              <p class="text-xs sm:text-sm text-sky-500 font-bold mt-1">&uarr; 10,90 % de ce Mois</p>
             </div>
 
-            <!-- Ligne 2: Clients Totaux -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-              <div class="flex flex-col gap-1">
-                <p class="text-3xl font-bold text-[#15277B]">10,128</p>
-                <p class="text-base font-bold text-[#15277B] leading-snug">Clients Totaux</p>
-                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
+            <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col gap-2">
+              <div class="flex items-center gap-3 sm:gap-4">
+                <svg class="w-9 h-9 sm:w-10 sm:h-10 text-[var(--color-principal)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span class="text-2xl sm:text-3xl font-extrabold text-[var(--color-principal)]">1,920</span>
               </div>
-              <!-- Icônes des clients -->
-              <div class="flex flex-col gap-2 items-center justify-center">
-                <div class="flex gap-2">
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                </div>
-                <div class="flex gap-2">
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#F5C842]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                  <svg class="w-6 h-6 text-[#F5C842]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
-                </div>
+              <p class="text-base font-bold text-[var(--color-principal)] leading-snug mt-1 sm:mt-2">Nouveau<br>supporters</p>
+              <p class="text-xs sm:text-sm text-sky-500 font-bold mt-1">&uarr; 10,90 % de ce Mois</p>
+            </div>
+          </div>
+
+          <!-- Clients Totaux -->
+          <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col sm:flex-row items-center sm:items-center justify-between gap-5">
+            <div class="flex flex-col gap-1 text-center sm:text-left">
+              <p class="text-3xl sm:text-4xl font-extrabold text-[var(--color-principal)]">10,128</p>
+              <p class="text-base font-bold text-[var(--color-principal)] leading-snug">Clients Totaux</p>
+              <p class="text-xs sm:text-sm text-sky-500 font-bold mt-1">&uarr; + 10% Du Dernier Mois</p>
+              <a href="#modal-clients" class="mt-2 inline-flex items-center justify-center sm:justify-start gap-1 text-xs sm:text-sm font-bold text-[var(--color-principal)] hover:underline">
+                Détails
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
+            </div>
+            <div class="flex flex-col gap-2 items-center justify-center">
+              <div class="flex gap-2">
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+              </div>
+              <div class="flex gap-2">
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-principal)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-secondaire)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                <svg class="w-6 h-6 text-[var(--color-secondaire)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
               </div>
             </div>
+          </div>
 
-            <!-- Ligne 3: Places vendues -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-  <div class="flex flex-col gap-1">
-    <p class="text-3xl font-bold text-[#15277B]">3,128</p>
-    <p class="text-base font-bold text-[#15277B] leading-snug">Nombre de<br>places vendu</p>
-    <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
-  </div>
-  <div class="w-full max-w-[240px] h-32" id="bar-places"></div>
-</div>
+          <!-- Places vendues -->
+          <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6">
+            <div class="flex flex-col gap-1 text-center sm:text-left">
+              <p class="text-3xl sm:text-4xl font-extrabold text-[var(--color-principal)]">3,128</p>
+              <p class="text-base font-bold text-[var(--color-principal)] leading-snug">Nombre de<br>places vendu</p>
+              <p class="text-xs sm:text-sm text-sky-500 font-bold mt-1">&uarr; + 10% Du Dernier Mois</p>
+              <a href="#modal-places" class="mt-2 inline-flex items-center justify-center sm:justify-start gap-1 text-xs sm:text-sm font-bold text-[var(--color-principal)] hover:underline">
+                Voir l'historique
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
+            </div>
+            <div class="flex flex-row items-end gap-6 h-40 pb-1">
+              <div class="flex flex-col items-center justify-end h-full">
+                <p class="text-lg sm:text-xl font-extrabold text-[var(--color-principal)]">3,128</p>
+                <p class="text-xs text-gray-500 mb-2">ce mois ci</p>
+                <div class="w-14 sm:w-16 grow max-h-40 bg-[var(--color-principal)] rounded-t-2xl"></div>
+              </div>
+              <div class="flex flex-col items-center justify-end h-full">
+                <p class="text-lg sm:text-xl font-extrabold text-[var(--color-principal)]">2,420</p>
+                <p class="text-xs text-gray-500 mb-2">mois dernier</p>
+                <div class="w-14 sm:w-16 grow max-h-32 bg-gray-400 rounded-t-2xl"></div>
+              </div>
+            </div>
+          </div>
 
-            <!-- Ligne 4: Taux d'affluence (La card rajoutée/complétée) -->
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col gap-4">
-              <div class="bg-[#15277B] text-white text-center py-3 px-6 mx-2 mt-2 rounded-full font-bold text-lg">
+          <!-- Taux d'affluence -->
+          <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col gap-4">
+            <div class="flex items-center gap-2">
+              <div class="bg-[var(--color-principal)] text-white text-center py-2.5 sm:py-3 px-6 rounded-full font-bold text-base sm:text-lg flex-1">
                 Taux d'affluence
               </div>
-              <div class="w-full h-48 p-2" id="chart-affluence">
-                <!-- Fallback Graphique en SVG (en attendant le rendu ApexCharts) -->
-                <svg viewBox="0 0 500 120" class="w-full h-full" preserveAspectRatio="none">
-                  <!-- Ligne de fond/grille -->
-                  <line x1="0" y1="20" x2="500" y2="20" stroke="#f3f4f6" stroke-width="1" />
-                  <line x1="0" y1="50" x2="500" y2="50" stroke="#f3f4f6" stroke-width="1" />
-                  <line x1="0" y1="80" x2="500" y2="80" stroke="#f3f4f6" stroke-width="1" />
-                  <!-- Courbe principale -->
-                  <polyline fill="none" stroke="#3393CB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5" />
-                  <!-- Zone sous la courbe -->
-                  <polygon fill="#3393CB" fill-opacity="0.1" points="0,120 0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5 500,120" />
-                </svg>
-                <div class="flex justify-between text-xs text-gray-500 font-bold mt-3 px-1">
-                  <span>Sep</span><span>Oct</span><span>Nov</span><span>Déc</span><span>Jan</span><span>Fév</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Juin</span><span>Juil</span><span>Août</span>
-                </div>
-              </div>
+              <a href="#modal-affluence" class="btn btn-ghost btn-sm btn-square text-[var(--color-principal)]" aria-label="Détails du taux d'affluence">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15"></path></svg>
+              </a>
             </div>
-
+            <div class="relative w-full h-48 sm:h-56">
+              <canvas id="affluenceChart"></canvas>
+            </div>
           </div>
 
-          <!-- COLONNE DROITE (40%) -->
-          <div class="flex flex-col gap-6 lg:gap-8 w-full lg:w-2/5">
-            
-            <!-- Ligne 1: Mails envoyés (Grand format) -->
-            <div class="bg-white rounded-2xl p-6 lg:p-8 w-full shadow-sm border border-gray-100 flex flex-col items-center">
-              <h2 class="text-2xl font-bold text-[#15277B] text-center mb-6">
-                Nombre de mails envoyés
-              </h2>
-              <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl w-full">
-                <div class="border-2 border-[#15277B] rounded-lg p-2 flex-shrink-0 bg-white">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#15277B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
-                  </svg>
-                </div>
-                <p class="text-lg font-bold text-[#15277B] leading-snug">
-                  27,239 sur 40k Mails Envoyés depuis brevo
-                </p>
-              </div>
-              <div class="w-full h-64 flex justify-center items-center" id="pie-chart"></div>
-            </div>
+        </div>
 
-            <!-- Ligne 2: Statistiques Additionnelles (2 colonnes) -->
-            <div class="grid grid-cols-2 gap-4 sm:gap-6">
-              <!-- De Place invités -->
-              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-1">
-                <span class="text-3xl font-bold text-[#15277B]">783</span>
-                <span class="text-sm font-bold text-[#15277B] leading-tight">De Place invités<br>des derniers Mois</span>
-                <span class="text-[10px] sm:text-xs font-semibold text-[#3393CB] mt-2">+ 10% Du Dernier Mois</span>
-              </div>
-              <!-- Nombre de Groupes -->
-              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-1">
-                <span class="text-3xl font-bold text-[#15277B]">6</span>
-                <span class="text-sm font-bold text-[#15277B] leading-tight">Nombre de<br>Groupes</span>
-                <span class="text-[10px] sm:text-xs font-semibold text-[#3393CB] mt-2">↑ + 10% Du Dernier Mois</span>
-              </div>
-            </div>
+        <!-- COLONNE DROITE (40%) -->
+        <div class="flex flex-col gap-5 sm:gap-6 lg:gap-8 w-full lg:w-2/5">
 
-            <!-- Ligne 3: Invitations (Horizontal avec donut) -->
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-between gap-4">
-              <div class="flex flex-col gap-1">
-                <p class="text-3xl font-bold text-[#15277B]">10,128</p>
-                <p class="text-sm font-bold text-[#15277B] leading-snug">Nombre<br>d'invitations</p>
-                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
-              </div>
-              <div class="w-24 h-24 relative" id="pie-invitations">
-                <!-- SVG Donut de remplacement -->
-                <svg viewBox="0 0 36 36" class="w-full h-full">
-                  <path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="6"/>
-                  <path class="text-[#15277B]" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="6"/>
+          <!-- Mails envoyés -->
+          <div class="relative bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 lg:p-8 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col items-center">
+            <a href="#modal-mails" class="btn btn-ghost btn-sm btn-square absolute top-3 right-3 text-[var(--color-principal)]" aria-label="Détails des mails">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15"></path></svg>
+            </a>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-[var(--color-principal)] text-center mb-4 sm:mb-6">
+              Nombre de mails envoyés
+            </h2>
+            <div class="flex items-center gap-3 bg-white p-3 sm:p-4 rounded-xl w-full border border-gray-100">
+              <div class="border-2 border-[var(--color-principal)] rounded-lg p-2 shrink-0 bg-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-8 sm:h-8 text-[var(--color-principal)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
                 </svg>
               </div>
+              <p class="text-base sm:text-lg font-bold text-[var(--color-principal)] leading-snug">
+                27,239 sur 40k Mails Envoyés depuis brevo
+              </p>
             </div>
+            <div class="relative w-full h-56 sm:h-64 mt-4 flex justify-center items-center">
+              <canvas id="mailsChart"></canvas>
+            </div>
+          </div>
 
+          <!-- Statistiques additionnelles (2 cartes) -->
+          <div class="grid grid-cols-2 gap-4 sm:gap-6">
+            <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col justify-center items-center text-center gap-1">
+              <span class="text-3xl sm:text-4xl font-extrabold text-[var(--color-principal)]">783</span>
+              <span class="text-xs sm:text-sm font-bold text-[var(--color-principal)] leading-tight">De Place invités<br>des derniers Mois</span>
+              <span class="text-[10px] sm:text-xs text-sky-500 font-bold mt-1">+ 10% Du Dernier Mois</span>
+            </div>
+            <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col justify-center items-center text-center gap-1">
+              <span class="text-3xl sm:text-4xl font-extrabold text-[var(--color-principal)]">6</span>
+              <span class="text-xs sm:text-sm font-bold text-[var(--color-principal)] leading-tight">Nombre de<br>Groupes</span>
+              <span class="text-[10px] sm:text-xs text-sky-500 font-bold mt-1">&uarr; + 10% Du Dernier Mois</span>
+            </div>
+          </div>
+
+          <!-- Invitations -->
+          <div class="bg-[var(--color-cards)] rounded-2xl p-4 sm:p-6 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex items-center justify-between gap-4">
+            <div class="flex flex-col gap-1">
+              <p class="text-3xl sm:text-4xl font-extrabold text-[var(--color-principal)]">10,128</p>
+              <p class="text-sm sm:text-base font-bold text-[var(--color-principal)] leading-snug">Nombre<br>d'invitations</p>
+              <p class="text-xs sm:text-sm text-sky-500 font-bold mt-1">&uarr; + 10% Du Dernier Mois</p>
+              <a href="#modal-invitations" class="mt-2 inline-flex items-center gap-1 text-xs sm:text-sm font-bold text-[var(--color-principal)] hover:underline">
+                Détails
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </a>
+            </div>
+            <div class="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0">
+              <canvas id="invitationsChart"></canvas>
+            </div>
           </div>
 
         </div>
-      </main>
-      <!-- Fin Content -->
 
-      <!-- Footer -->
-      <footer class="bg-[#15277B] text-white mt-auto">
-        <!-- content footer mobile -->
-        <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">
-          <p>
-            Secretariat - <a class="link link-hover text-gray-200" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover text-gray-200" href="tel:0493871277">04 93 87 12 77</a>
-          </p>
-          <p>
-            Communication / Marketing - <a class="link link-hover text-gray-200" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
-          </p>
-          <p class="mt-2 text-gray-300">Nice Volley Ball © 2026.</p>
-        </div>
-        <!-- content footer desktop -->
-        <div class="hidden lg:grid lg:grid-cols-3 items-center px-10 py-5 text-sm">
-          <div class="flex flex-col items-start gap-1 text-left col-span-2">
-            <p>
-              Secretariat - <a class="link link-hover text-gray-200" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover text-gray-200" href="tel:0493871277">04 93 87 12 77</a>
-            </p>
-            <p>
-              Communication / Marketing - <a class="link link-hover text-gray-200" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
-            </p>
-          </div>
-          <div class="flex justify-end">
-            <p class="text-gray-300">Nice Volley Ball © 2026.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-    
-    <!-- Sidebar Desktop -->
-    <div class="drawer-side is-drawer-close:overflow-visible text-white hidden lg:block z-10">
-      <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
-      <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
-        <!-- Sidebar content here -->
-        <ul class="menu w-full grow bg-[#15277B]">
-          <li>
-            <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost hover:bg-white/10">
-              <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block w-6 h-6"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
-            </label>
-            <a href="./Dashboard.html" class="hover:bg-white/10">
-              <span class="is-drawer-close:hidden">Dashboard</span>
-            </a>
-          </li>
-          <li>
-            <a href="./stats.html" class="hover:bg-white/10">
-              <span class="is-drawer-close:hidden">Stats</span>
-            </a>
-          </li>
-          <li>
-            <a href="./fichecontact.html" class="hover:bg-white/10">
-              <span class="is-drawer-close:hidden">Fiche Contact</span>
-            </a>
-          </li>
-          <li class="mt-auto">
-            <a href="../../index.html" class="hover:bg-white/10">
-              <span class="is-drawer-close:hidden">Déconnexion</span>
-            </a>
-          </li>
-        </ul>
       </div>
+    </div>
+    <!-- Fin content -->
+  </div>
+
+  <!-- Sidebar Desktop -->
+  <div class="drawer-side is-drawer-close:overflow-visible text-white hidden lg:block">
+    <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+    <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+      <ul class="menu w-full grow bg-[var(--color-principal)]">
+        <li>
+          <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost">
+            <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
+          </label>
+          <a href="./Dashboard.html" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+            <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            <span class="is-drawer-close:hidden">Dashboard</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="./stats.html" class="is-drawer-close:tooltip is-drawer-close:tooltip-right bg-[var(--color-secondaire)] text-[var(--color-principal)] font-bold hover:bg-[var(--color-secondaire)]" data-tip="Stats">
+            <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M3 3v18h18"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>
+            <span class="is-drawer-close:hidden">Stats</span>
+          </a>
+        </li>
+        <li>
+          <a href="./fichecontact.html" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Fiche contact">
+            <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><circle cx="12" cy="8" r="4"></circle><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg>
+            <span class="is-drawer-close:hidden">Fiche Contact</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="../../index.html" class="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Déconnexion">
+            <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block size-4"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span class="is-drawer-close:hidden">déconexion</span>
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
 </div>
+</div>
+</div>
 
-<script type="module" src="../script/burgermenu.js"></script>
-<script type="module" src="../script/testapi.js"></script>
+<!-- ====================== MODALS ====================== -->
+
+<!-- Modal : Clients Totaux -->
+<div class="modal" role="dialog" id="modal-clients">
+  <div class="modal-box bg-[var(--color-cards)]">
+    <h3 class="text-lg font-extrabold text-[var(--color-principal)]">Répartition des clients</h3>
+    <p class="text-sm text-gray-500 mt-1">10 128 clients au total</p>
+    <div class="mt-4 flex flex-col divide-y divide-gray-200">
+      <div class="flex justify-between py-2"><span class="text-gray-600">Abonnés saison</span><span class="font-bold text-[var(--color-principal)]">6,540</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Billetterie ponctuelle</span><span class="font-bold text-[var(--color-principal)]">2,830</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Invités / VIP</span><span class="font-bold text-[var(--color-secondaire)]">758</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Nouveaux ce mois</span><span class="font-bold text-sky-500">+ 1,012</span></div>
+    </div>
+    <div class="modal-action">
+      <a href="#" class="btn bg-[var(--color-principal)] text-white border-none hover:opacity-90">Fermer</a>
+    </div>
+  </div>
+  <a href="#" class="modal-backdrop">Fermer</a>
+</div>
+
+<!-- Modal : Places vendues -->
+<div class="modal" role="dialog" id="modal-places">
+  <div class="modal-box bg-[var(--color-cards)]">
+    <h3 class="text-lg font-extrabold text-[var(--color-principal)]">Historique des places vendues</h3>
+    <p class="text-sm text-gray-500 mt-1">6 derniers mois</p>
+    <div class="mt-4 flex flex-col divide-y divide-gray-200">
+      <div class="flex justify-between py-2"><span class="text-gray-600">Ce mois ci</span><span class="font-bold text-[var(--color-principal)]">3,128</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Mois dernier</span><span class="font-bold text-[var(--color-principal)]">2,420</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Il y a 2 mois</span><span class="font-bold text-[var(--color-principal)]">2,710</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Il y a 3 mois</span><span class="font-bold text-[var(--color-principal)]">2,180</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Évolution mensuelle</span><span class="font-bold text-sky-500">&uarr; + 10%</span></div>
+    </div>
+    <div class="modal-action">
+      <a href="#" class="btn bg-[var(--color-principal)] text-white border-none hover:opacity-90">Fermer</a>
+    </div>
+  </div>
+  <a href="#" class="modal-backdrop">Fermer</a>
+</div>
+
+<!-- Modal : Taux d'affluence -->
+<div class="modal" role="dialog" id="modal-affluence">
+  <div class="modal-box bg-[var(--color-cards)] max-w-2xl">
+    <h3 class="text-lg font-extrabold text-[var(--color-principal)]">Taux d'affluence détaillé</h3>
+    <p class="text-sm text-gray-500 mt-1">Taux de remplissage moyen par mois</p>
+    <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Sep</p><p class="font-bold text-[var(--color-principal)]">30%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Oct</p><p class="font-bold text-[var(--color-principal)]">28%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Nov</p><p class="font-bold text-[var(--color-principal)]">35%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Déc</p><p class="font-bold text-[var(--color-principal)]">33%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Jan</p><p class="font-bold text-[var(--color-principal)]">45%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Fév</p><p class="font-bold text-[var(--color-principal)]">42%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Mar</p><p class="font-bold text-[var(--color-principal)]">48%</p></div>
+      <div class="bg-white rounded-xl p-3 text-center border border-gray-100"><p class="text-xs text-gray-500">Avr</p><p class="font-bold text-[var(--color-principal)]">52%</p></div>
+    </div>
+    <p class="text-xs sm:text-sm text-sky-500 font-bold mt-4">&uarr; Tendance en hausse continue sur la saison</p>
+    <div class="modal-action">
+      <a href="#" class="btn bg-[var(--color-principal)] text-white border-none hover:opacity-90">Fermer</a>
+    </div>
+  </div>
+  <a href="#" class="modal-backdrop">Fermer</a>
+</div>
+
+<!-- Modal : Mails envoyés -->
+<div class="modal" role="dialog" id="modal-mails">
+  <div class="modal-box bg-[var(--color-cards)]">
+    <h3 class="text-lg font-extrabold text-[var(--color-principal)]">Détail des mails — Brevo</h3>
+    <p class="text-sm text-gray-500 mt-1">Campagnes des 30 derniers jours</p>
+    <div class="mt-4 flex flex-col divide-y divide-gray-200">
+      <div class="flex justify-between py-2"><span class="text-gray-600">Mails envoyés</span><span class="font-bold text-[var(--color-principal)]">27,239</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Quota mensuel</span><span class="font-bold text-[var(--color-principal)]">40,000</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Taux d'ouverture</span><span class="font-bold text-sky-500">38,4 %</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Taux de clic</span><span class="font-bold text-sky-500">12,1 %</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Non délivrés (bounces)</span><span class="font-bold text-[var(--color-secondaire)]">2,9 %</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Désabonnements</span><span class="font-bold text-gray-600">0,4 %</span></div>
+    </div>
+    <div class="modal-action">
+      <a href="#" class="btn bg-[var(--color-principal)] text-white border-none hover:opacity-90">Fermer</a>
+    </div>
+  </div>
+  <a href="#" class="modal-backdrop">Fermer</a>
+</div>
+
+<!-- Modal : Invitations -->
+<div class="modal" role="dialog" id="modal-invitations">
+  <div class="modal-box bg-[var(--color-cards)]">
+    <h3 class="text-lg font-extrabold text-[var(--color-principal)]">Détail des invitations</h3>
+    <p class="text-sm text-gray-500 mt-1">10 128 invitations émises</p>
+    <div class="mt-4 flex flex-col divide-y divide-gray-200">
+      <div class="flex justify-between py-2"><span class="text-gray-600">Invitations envoyées</span><span class="font-bold text-[var(--color-principal)]">10,128</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Acceptées</span><span class="font-bold text-[var(--color-principal)]">7,790</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Converties en places</span><span class="font-bold text-sky-500">2,338</span></div>
+      <div class="flex justify-between py-2"><span class="text-gray-600">Part places vendues</span><span class="font-bold text-[var(--color-principal)]">23,1 %</span></div>
+    </div>
+    <div class="modal-action">
+      <a href="#" class="btn bg-[var(--color-principal)] text-white border-none hover:opacity-90">Fermer</a>
+    </div>
+  </div>
+  <a href="#" class="modal-backdrop">Fermer</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="module" src="../script/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script src="../script/chart-mail.js"></script>
-<script src="../script/chart-invitations.js"></script>
-<script src="../script/chart-places.js"></script>
+<script type="module" src="../script/burgermenu.js"></script>
+<script type="module" src="../script/stats-charts.js"></script>
 
 </body>
 </html>
