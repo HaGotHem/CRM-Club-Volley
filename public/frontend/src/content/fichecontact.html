@@ -42,32 +42,72 @@
     <nav class="navbar w-full bg-[var(--color-principal)] text-white hidden lg:block">
       <div class="px-4"> <img src="../assets/logo.png" alt="Logo" class="h-13" /> </div>
     </nav>
-    <div class="p-4 flex">
+    <div class="p-4 lg:p-6 w-full">
     <!-- Page content ici -->
-      <h1 class="text-xl font-bold">Fiche Contact / test api brevo</h1>
+      <h1 class="text-2xl font-bold text-[var(--color-principal)] mb-4">Page Contact</h1>
 
-    <div class="card w-full max-w-md bg-[var(--color-cards)] card-xl shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-        <div class="card-body gap-3">
+      <!-- bandeau d'état (connexion / chargement / erreur) -->
+      <div id="api-status" class="text-sm mb-3 text-gray-600"></div>
 
-            <label class="form-control">
-                <span class="label">Clé API Brevo</span>
-                <input type="password" id="brevo-api-key" placeholder="xkeysib-..." class="input input-bordered w-full" autocomplete="off" />
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-[calc(100vh-260px)]">
+
+        <!-- ============ Les Groupes ============ -->
+        <section class="lg:col-span-3 bg-[var(--color-cards)] rounded-2xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200">
+          <h2 class="text-xl font-bold text-[var(--color-principal)] mb-4">Les Groupes</h2>
+          <div id="groupes-list" class="flex flex-col gap-3">
+            <!-- les groupes Brevo sont injectés ici -->
+            <div class="skeleton h-10 w-full rounded-full"></div>
+            <div class="skeleton h-10 w-full rounded-full"></div>
+            <div class="skeleton h-10 w-full rounded-full"></div>
+          </div>
+        </section>
+
+        <!-- ============ Liste des contacts ============ -->
+        <section class="lg:col-span-6 bg-[var(--color-cards)] rounded-2xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 flex flex-col">
+          <h2 class="text-xl font-bold text-[var(--color-principal)] text-center mb-3" id="contacts-title">Listes de tous les contacts</h2>
+
+          <div class="flex items-center justify-between mb-3">
+            <button type="button" id="btn-ajouter" class="btn btn-sm bg-[var(--color-principal)] text-white rounded-full border-0 px-4">Ajouter</button>
+            <button type="button" id="btn-filtre-toggle" class="btn btn-sm btn-ghost btn-square" title="Afficher / masquer les filtres">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-[var(--color-principal)]"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            </button>
+          </div>
+
+          <div id="contacts-list" class="flex flex-col gap-2 flex-1 overflow-y-auto max-h-[70vh] pr-1">
+            <!-- les contacts Brevo sont injectés ici -->
+          </div>
+
+          <div class="flex items-center justify-center gap-3 mt-4">
+            <button type="button" id="btn-precedent" class="btn btn-sm bg-[var(--color-principal)] text-white rounded-full border-0 px-5">Précédent</button>
+            <span id="page-info" class="text-sm text-gray-500"></span>
+            <button type="button" id="btn-suivant" class="btn btn-sm bg-[var(--color-principal)] text-white rounded-full border-0 px-5">Suivant</button>
+          </div>
+        </section>
+
+        <!-- ============ Colonne 3 : Filtre ============ -->
+        <section id="filtre-panel" class="lg:col-span-3 bg-[var(--color-cards)] rounded-2xl p-5 shadow-[0_10px_30px_rgba(0,0,0,0.15)] border border-gray-200 h-fit">
+          <h2 class="text-xl font-bold text-[var(--color-principal)] mb-4">Filtre</h2>
+          <div class="flex flex-col gap-3">
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Alphabétique</span>
+              <input type="checkbox" class="checkbox" data-filtre="alpha" />
             </label>
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Récent</span>
+              <input type="checkbox" class="checkbox" data-filtre="recent" />
+            </label>
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Weezevent</span>
+              <input type="checkbox" class="checkbox" data-filtre="weezevent" />
+            </label>
+            <label class="flex items-center justify-between cursor-pointer">
+              <span>Brevo</span>
+              <input type="checkbox" class="checkbox" data-filtre="brevo" />
+            </label>
+          </div>
+        </section>
 
-            <div class="flex flex-wrap gap-2">
-                <button id="btn-test-account" class="btn btn-primary">Tester la connexion</button>
-                <button id="btn-test-contacts" class="btn btn-secondary">Aperçu contacts</button>
-                <button id="btn-download-contacts" class="btn btn-accent">Télécharger tous les contacts</button>
-            </div>
-
-            <div id="api-status" class="text-sm"></div>
-        </div>
-    </div>
-
-    <div id="api-result" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full"></div>
-
-      
-    
+      </div>
 
         <!-- Fin content -->
     </div>
@@ -168,7 +208,7 @@
     </footer>
 
     <script type="module" src="../script/burgermenu.js"></script>
-    <script type="module" src="../script/testapi.js"></script>
+    <script type="module" src="../script/fichecontact.js"></script>
     <script type="module" src="../script/main.js"></script>
 </body>
 </html>

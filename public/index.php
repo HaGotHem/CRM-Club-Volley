@@ -5,8 +5,7 @@ declare(strict_types=1);
 use Dotenv\Dotenv;
 use Slim\Factory\AppFactory;
 
-// Autoloader Composer (composer.json se trouve dans src/, donc vendor dans src/vendor)
-require __DIR__ . '/../src/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 require __DIR__ . '/../src/Helpers.php';
 require __DIR__ . '/../src/Database.php';
@@ -14,7 +13,7 @@ require __DIR__ . '/../src/Repositories/ContactRepository.php';
 require __DIR__ . '/../src/Services/WeezeventService.php';
 require __DIR__ . '/../src/Services/BrevoService.php';
 
-// Chargement du fichier .env (optionnel : en Docker les variables viennent de l'environnement)
+// Chargement du fichier .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
 $dotenv->safeLoad();
 
@@ -49,10 +48,10 @@ $app->get('/api/health', function ($request, $response) {
     ]);
 });
 
-// Chargement des routes (les fichiers de routes sont dans src/routes)
-require __DIR__ . '/../src/routes/contacts.php';
-require __DIR__ . '/../src/routes/stats.php';
-require __DIR__ . '/../src/routes/segments.php';
-require __DIR__ . '/../src/routes/sync.php';
+// Chargement des routes
+require __DIR__ . '/routes/contacts.php';
+require __DIR__ . '/routes/stats.php';
+require __DIR__ . '/routes/segments.php';
+require __DIR__ . '/routes/sync.php';
 
 $app->run();

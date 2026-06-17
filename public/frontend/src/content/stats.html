@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stats - Nice Volley Ball</title>
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+
+</head>
+<body class="bg-gray-50">
+
+<div>
+  <!-- navbar mobile -->
+  <div class="lg:hidden">
+    <div class="navbar bg-[#15277B] h-25 text-white relative">
+      <a class="normal-case text-xl left-1/2 -translate-x-1/2" href="../index.html">
+        <img src="../assets/logo.svg" alt="Logo" class="w-20 py-1">
+      </a>
+      <div class="flex-none ml-auto">
+        <button class="btn btn-square btn-ghost" id="menu-toggle">
+          <img src="../assets/burger-menu-svgrepo-com (1).svg" alt="Menu" class="w-6 h-6">
+        </button>
+      </div>
+    </div>
+    <!-- menu burger -->
+    <div class="burger_menu bg-[#15277B] text-white z-100 rounded-box m-3 hidden" id="burger-menu">
+      <ul class="menu rounded-box w-56 p-2">
+        <li><a href="./Dashboard.html">Dashboard</a></li>
+        <li><a href="./fichecontact.html">Fiche contact</a></li>
+        <li><a href="./stats.html">Stats</a></li>
+        <li><a href="../../index.html">Déconnexion</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="drawer lg:drawer-open">
+    <input id="my-drawer-4" type="checkbox" class="drawer-toggle" checked />
+    <div class="drawer-content flex flex-col min-h-screen">
+      <!-- Navbar Desktop -->
+      <nav class="navbar w-full bg-[#15277B] text-white hidden lg:flex items-center">
+        <div class="px-4"> 
+          <img src="../assets/logo.png" alt="Logo" class="h-13" /> 
+        </div>
+      </nav>
+
+      <!-- PAGE CONTENT -->
+      <main class="p-4 lg:p-8 flex-grow">
+        <!-- Main Grid Container -->
+        <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 max-w-[1400px] mx-auto w-full">
+
+          <!-- COLONNE GAUCHE (60%) -->
+          <div class="flex flex-col gap-6 lg:gap-8 w-full lg:w-3/5">
+            
+            <!-- Ligne 1: Supporters -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+              <!-- Supporters Totaux -->
+              <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2">
+                <div class="flex items-center gap-4">
+                  <svg class="w-10 h-10 text-[#15277B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span class="text-3xl font-bold text-[#15277B]">1,920</span>
+                </div>
+                <p class="text-base font-medium text-[#15277B] leading-snug mt-2">Supporters<br>totaux</p>
+                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ 10,90 % de ce Mois</p>
+              </div>
+              
+              <!-- Nouveau supporters -->
+              <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2">
+                <div class="flex items-center gap-4">
+                  <svg class="w-10 h-10 text-[#15277B]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  <span class="text-3xl font-bold text-[#15277B]">1,920</span>
+                </div>
+                <p class="text-base font-medium text-[#15277B] leading-snug mt-2">Nouveau<br>supporters</p>
+                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ 10,90 % de ce Mois</p>
+              </div>
+            </div>
+
+            <!-- Ligne 2: Clients Totaux -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div class="flex flex-col gap-1">
+                <p class="text-3xl font-bold text-[#15277B]">10,128</p>
+                <p class="text-base font-bold text-[#15277B] leading-snug">Clients Totaux</p>
+                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
+              </div>
+              <!-- Icônes des clients -->
+              <div class="flex flex-col gap-2 items-center justify-center">
+                <div class="flex gap-2">
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                </div>
+                <div class="flex gap-2">
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#15277B]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#F5C842]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                  <svg class="w-6 h-6 text-[#F5C842]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ligne 3: Places vendues -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+  <div class="flex flex-col gap-1">
+    <p class="text-3xl font-bold text-[#15277B]">3,128</p>
+    <p class="text-base font-bold text-[#15277B] leading-snug">Nombre de<br>places vendu</p>
+    <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
+  </div>
+  <div class="w-full max-w-[240px] h-32" id="bar-places"></div>
+</div>
+
+            <!-- Ligne 4: Taux d'affluence (La card rajoutée/complétée) -->
+            <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col gap-4">
+              <div class="bg-[#15277B] text-white text-center py-3 px-6 mx-2 mt-2 rounded-full font-bold text-lg">
+                Taux d'affluence
+              </div>
+              <div class="w-full h-48 p-2" id="chart-affluence">
+                <!-- Fallback Graphique en SVG (en attendant le rendu ApexCharts) -->
+                <svg viewBox="0 0 500 120" class="w-full h-full" preserveAspectRatio="none">
+                  <!-- Ligne de fond/grille -->
+                  <line x1="0" y1="20" x2="500" y2="20" stroke="#f3f4f6" stroke-width="1" />
+                  <line x1="0" y1="50" x2="500" y2="50" stroke="#f3f4f6" stroke-width="1" />
+                  <line x1="0" y1="80" x2="500" y2="80" stroke="#f3f4f6" stroke-width="1" />
+                  <!-- Courbe principale -->
+                  <polyline fill="none" stroke="#3393CB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5" />
+                  <!-- Zone sous la courbe -->
+                  <polygon fill="#3393CB" fill-opacity="0.1" points="0,120 0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5 500,120" />
+                </svg>
+                <div class="flex justify-between text-xs text-gray-500 font-bold mt-3 px-1">
+                  <span>Sep</span><span>Oct</span><span>Nov</span><span>Déc</span><span>Jan</span><span>Fév</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Juin</span><span>Juil</span><span>Août</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- COLONNE DROITE (40%) -->
+          <div class="flex flex-col gap-6 lg:gap-8 w-full lg:w-2/5">
+            
+            <!-- Ligne 1: Mails envoyés (Grand format) -->
+            <div class="bg-white rounded-2xl p-6 lg:p-8 w-full shadow-sm border border-gray-100 flex flex-col items-center">
+              <h2 class="text-2xl font-bold text-[#15277B] text-center mb-6">
+                Nombre de mails envoyés
+              </h2>
+              <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl w-full">
+                <div class="border-2 border-[#15277B] rounded-lg p-2 flex-shrink-0 bg-white">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-[#15277B]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/>
+                  </svg>
+                </div>
+                <p class="text-lg font-bold text-[#15277B] leading-snug">
+                  27,239 sur 40k Mails Envoyés depuis brevo
+                </p>
+              </div>
+              <div class="w-full h-64 flex justify-center items-center" id="pie-chart"></div>
+            </div>
+
+            <!-- Ligne 2: Statistiques Additionnelles (2 colonnes) -->
+            <div class="grid grid-cols-2 gap-4 sm:gap-6">
+              <!-- De Place invités -->
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-1">
+                <span class="text-3xl font-bold text-[#15277B]">783</span>
+                <span class="text-sm font-bold text-[#15277B] leading-tight">De Place invités<br>des derniers Mois</span>
+                <span class="text-[10px] sm:text-xs font-semibold text-[#3393CB] mt-2">+ 10% Du Dernier Mois</span>
+              </div>
+              <!-- Nombre de Groupes -->
+              <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center gap-1">
+                <span class="text-3xl font-bold text-[#15277B]">6</span>
+                <span class="text-sm font-bold text-[#15277B] leading-tight">Nombre de<br>Groupes</span>
+                <span class="text-[10px] sm:text-xs font-semibold text-[#3393CB] mt-2">↑ + 10% Du Dernier Mois</span>
+              </div>
+            </div>
+
+            <!-- Ligne 3: Invitations (Horizontal avec donut) -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-between gap-4">
+              <div class="flex flex-col gap-1">
+                <p class="text-3xl font-bold text-[#15277B]">10,128</p>
+                <p class="text-sm font-bold text-[#15277B] leading-snug">Nombre<br>d'invitations</p>
+                <p class="text-xs font-semibold text-[#3393CB] mt-1">↑ + 10% Du Dernier Mois</p>
+              </div>
+              <div class="w-24 h-24 relative" id="pie-invitations">
+                <!-- SVG Donut de remplacement -->
+                <svg viewBox="0 0 36 36" class="w-full h-full">
+                  <path class="text-gray-100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="6"/>
+                  <path class="text-[#15277B]" stroke-dasharray="75, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="6"/>
+                </svg>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </main>
+      <!-- Fin Content -->
+
+      <!-- Footer -->
+      <footer class="bg-[#15277B] text-white mt-auto">
+        <!-- content footer mobile -->
+        <div class="lg:hidden flex flex-col items-center gap-2 py-4 px-4 text-sm text-center">
+          <p>
+            Secretariat - <a class="link link-hover text-gray-200" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover text-gray-200" href="tel:0493871277">04 93 87 12 77</a>
+          </p>
+          <p>
+            Communication / Marketing - <a class="link link-hover text-gray-200" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+          </p>
+          <p class="mt-2 text-gray-300">Nice Volley Ball © 2026.</p>
+        </div>
+        <!-- content footer desktop -->
+        <div class="hidden lg:grid lg:grid-cols-3 items-center px-10 py-5 text-sm">
+          <div class="flex flex-col items-start gap-1 text-left col-span-2">
+            <p>
+              Secretariat - <a class="link link-hover text-gray-200" href="mailto:secretariat@nicevolleyball.fr">secretariat@nicevolleyball.fr</a> - <a class="link link-hover text-gray-200" href="tel:0493871277">04 93 87 12 77</a>
+            </p>
+            <p>
+              Communication / Marketing - <a class="link link-hover text-gray-200" href="mailto:info@nicevolleyball.fr">info@nicevolleyball.fr</a>
+            </p>
+          </div>
+          <div class="flex justify-end">
+            <p class="text-gray-300">Nice Volley Ball © 2026.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <!-- Sidebar Desktop -->
+    <div class="drawer-side is-drawer-close:overflow-visible text-white hidden lg:block z-10">
+      <label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+      <div class="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+        <!-- Sidebar content here -->
+        <ul class="menu w-full grow bg-[#15277B]">
+          <li>
+            <label for="my-drawer-4" aria-label="open sidebar" class="btn btn-square btn-ghost hover:bg-white/10">
+              <svg viewBox="0 0 24 24" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor" class="my-1.5 inline-block w-6 h-6"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
+            </label>
+            <a href="./Dashboard.html" class="hover:bg-white/10">
+              <span class="is-drawer-close:hidden">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="./stats.html" class="hover:bg-white/10">
+              <span class="is-drawer-close:hidden">Stats</span>
+            </a>
+          </li>
+          <li>
+            <a href="./fichecontact.html" class="hover:bg-white/10">
+              <span class="is-drawer-close:hidden">Fiche Contact</span>
+            </a>
+          </li>
+          <li class="mt-auto">
+            <a href="../../index.html" class="hover:bg-white/10">
+              <span class="is-drawer-close:hidden">Déconnexion</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../script/burgermenu.js"></script>
+<script type="module" src="../script/testapi.js"></script>
+<script type="module" src="../script/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="../script/chart-mail.js"></script>
+<script src="../script/chart-invitations.js"></script>
+<script src="../script/chart-places.js"></script>
+
+</body>
+</html>
