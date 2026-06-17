@@ -1,7 +1,7 @@
-@import "tailwindcss";
-@plugin "daisyui" {
+/* @import "tailwindcss"; */
+/* @plugin "daisyui" {
   themes: light --default;
-}
+} */
 :root {
   --color-principal:#15277B;
   --color-secondaire:#F5D804;

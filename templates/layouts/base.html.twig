@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Nice Volley Ball{% endblock %}</title>
+
+    <!-- Tailwind CSS & DaisyUI CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Configuration Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        principal: '#15277B',
+                        secondaire: '#F5D804',
+                        background: '#363636',
+                        cards: '#FAF9F6',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --color-principal: #15277B;
+                --color-secondaire: #F5D804;
+                --color-background: #363636;
+                --color-cards: #FAF9F6;
+            }
+        }
+        @layer utilities {
+            .navbar img {
+                max-width: none !important;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="/frontend/src/style/style.css">
+    <link rel="icon" type="image/svg+xml" href="/frontend/src/assets/logo.webp" />
+
+    {% block head %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen bg-gray-50">
+
+    <!-- Mobile Navigation -->
+    <header class="lg:hidden">
+        <div class="navbar bg-[var(--color-principal)] h-20 text-white relative shadow-md">
+            <a class="normal-case text-xl absolute left-1/2 -translate-x-1/2" href="/dashboard">
+                <img src="/frontend/src/assets/logo.svg" alt="Logo" class="w-16 h-auto py-1">
+            </a>
+            <div class="flex-none ml-auto">
+                <button class="btn btn-square btn-ghost" id="menu-toggle" aria-label="Menu">
+                    <img src="/frontend/src/assets/burger-menu-svgrepo-com (1).svg" alt="Menu" class="w-6 h-6">
+                </button>
+            </div>
+        </div>
+
+        <!-- Burger Menu Content -->
+        <nav class="burger_menu hidden bg-[var(--color-principal)] text-white z-[100] rounded-box m-3 absolute right-0 top-16 shadow-xl" id="burger-menu">
+            <ul class="menu menu-vertical p-2 w-56">
+                <li><a href="/dashboard">Dashboard</a></li>
+                <li><a href="/contacts">Fiche contact</a></li>
+                <li><a href="/stats">Stats</a></li>
+                <div class="divider before:bg-white/20 after:bg-white/20"></div>
+                <li><a href="/logout" class="text-red-300">Déconnexion</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="drawer lg:drawer-open flex-1">
+        <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+        
+        <!-- Main Content Area -->
+        <main class="drawer-content flex flex-col bg-gray-100">
+            <div class="p-4 lg:p-8 flex-1">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+
+        <!-- Desktop Sidebar -->
+        <aside class="drawer-side z-40 text-white border-r border-white/10">
+            <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+            
+            <div class="flex min-h-full flex-col w-64 bg-[var(--color-principal)] transition-all duration-300 ease-in-out">
+                <!-- Logo Section -->
+                <div class="flex justify-center py-8">
+                    <img src="/frontend/src/assets/logo.webp" alt="Logo" class="h-40 w-auto px-4" />
+                </div>
+
+                <!-- Sidebar Menu -->
+                <nav class="flex-1 px-4 py-4">
+                    <ul class="menu w-full gap-2">
+                        <li>
+                            <a href="/dashboard" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-xl transition-colors {% if current_route == '/dashboard' %}bg-white/10 text-secondaire font-bold{% endif %}">
+                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/stats" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-xl transition-colors {% if current_route == '/stats' %}bg-white/10 text-secondaire font-bold{% endif %}">
+                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"></path><path d="M12 20V4"></path><path d="M6 20V14"></path></svg>
+                                <span>Statistiques</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/contacts" class="flex items-center gap-4 p-3 hover:bg-white/10 rounded-xl transition-colors {% if current_route == '/contacts' %}bg-white/10 text-secondaire font-bold{% endif %}">
+                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                <span>Fiche Contact</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Footer Sidebar -->
+                <div class="p-4 border-t border-white/10 flex flex-col gap-4">
+                    <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/10">
+                        <div class="w-10 h-10 rounded-full bg-secondaire text-principal flex items-center justify-center font-bold text-lg">
+                            {{ session.admin_name|slice(0, 1)|upper }}
+                        </div>
+                        <div class="flex flex-col overflow-hidden">
+                            <span class="text-xs font-bold text-white truncate">{{ session.admin_name }}</span>
+                            <span class="text-[10px] text-white/40 uppercase tracking-tighter">Administrateur</span>
+                        </div>
+                    </div>
+                    <a href="/logout" class="flex items-center gap-4 p-3 text-red-300 hover:bg-red-500/10 rounded-xl transition-colors">
+                        <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                        <span>Déconnexion</span>
+                    </a>
+                    <div class="px-3 text-[9px] font-medium tracking-widest uppercase text-white/20">
+                        BTS SIO IRIS 2025-2027
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script type="module" src="/frontend/src/script/burgermenu.js" defer></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

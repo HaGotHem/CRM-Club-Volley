@@ -1,0 +1,111 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Contacts - Nice Volley Ball{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Contacts</h1>
+            <p class="text-gray-500">Gérez vos contacts et segments Brevo.</p>
+        </div>
+        <div id="api-status" class="text-xs px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400 shadow-sm flex items-center gap-2">
+            <span class="w-2 h-2 bg-gray-300 rounded-full" id="status-dot"></span>
+            Statut API : En attente
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Sidebar : Groupes -->
+        <aside class="lg:col-span-3 space-y-4">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 h-full">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold text-gray-800">Groupes</h2>
+                    <span class="badge badge-sm badge-ghost opacity-50" id="group-count">0</span>
+                </div>
+                
+                <nav id="groupes-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                    <!-- Skeletons pendant le chargement -->
+                    <div class="animate-pulse space-y-3">
+                        <div class="h-12 bg-gray-50 rounded-2xl w-full"></div>
+                        <div class="h-12 bg-gray-50 rounded-2xl w-full"></div>
+                        <div class="h-12 bg-gray-50 rounded-2xl w-full"></div>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main : Liste des Contacts -->
+        <section class="lg:col-span-6 space-y-4">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col min-h-[600px]">
+                <!-- Toolbar -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-800" id="contacts-title">Tous les contacts</h2>
+                    <div class="flex items-center gap-2">
+                        <button type="button" id="btn-ajouter" class="btn btn-sm bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-4 normal-case">
+                            Ajouter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Liste -->
+                <div id="contacts-list" class="flex-1 space-y-3 overflow-y-auto max-h-[65vh] pr-2 custom-scrollbar">
+                    <!-- Injecté par JS -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between mt-6 pt-6 border-t border-gray-50">
+                    <button type="button" id="btn-precedent" class="btn btn-sm btn-ghost gap-2 normal-case disabled:opacity-30">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Précédent
+                    </button>
+                    <span id="page-info" class="text-sm font-medium text-gray-400">Page 1</span>
+                    <button type="button" id="btn-suivant" class="btn btn-sm btn-ghost gap-2 normal-case disabled:opacity-30">
+                        Suivant
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right : Filtres & Actions -->
+        <aside class="lg:col-span-3 space-y-6">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800 mb-6">Filtres</h2>
+                <div class="space-y-4">
+                    <div class="form-control">
+                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                            <span class="label-text font-medium">Alphabétique</span>
+                            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-filtre="alpha" />
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                            <span class="label-text font-medium">Récent</span>
+                            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-filtre="recent" />
+                        </label>
+                    </div>
+                    <div class="divider">Sources</div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                            <span class="label-text font-medium text-blue-600">Weezevent</span>
+                            <input type="checkbox" class="checkbox checkbox-info checkbox-sm" data-filtre="weezevent" />
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
+                            <span class="label-text font-medium text-orange-600">Brevo</span>
+                            <input type="checkbox" class="checkbox checkbox-warning checkbox-sm" data-filtre="brevo" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="module" src="/frontend/src/script/total-contact.js" defer></script>
+{% endblock %}

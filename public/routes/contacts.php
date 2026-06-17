@@ -5,16 +5,29 @@ declare(strict_types=1);
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-// GET /api/contacts — liste tous les contacts
+// GET /api/contacts — liste tous les contacts (paginée)
 $app->get('/api/contacts', function (Request $request, Response $response) {
     try {
+        $queryParams = $request->getQueryParams();
+        $page  = max(1, (int) ($queryParams['page'] ?? 1));
+        $limit = max(1, min(1000, (int) ($queryParams['limit'] ?? 50)));
+        $offset = ($page - 1) * $limit;
+
         $pdo = Database::getConnection();
         $repository = new ContactRepository($pdo);
-        $contacts = $repository->findAll();
+        
+        $contacts = $repository->findAll($limit, $offset);
+        $total    = $repository->countAll();
 
         return jsonResponse($response, [
             'success' => true,
-            'data'    => $contacts
+            'data'    => $contacts,
+            'pagination' => [
+                'current_page' => $page,
+                'limit'        => $limit,
+                'total_items'  => $total,
+                'total_pages'  => ceil($total / $limit)
+            ]
         ]);
     } catch (Throwable $e) {
         return jsonResponse($response, [

@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     libpq-dev \
+    postgresql-client \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Installer Composer
@@ -19,9 +20,10 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Donner les bons droits
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod +x /var/www/html/docker/script/entrypoint.sh
 
 EXPOSE 80
 
-# Démarrer Nginx en arrière-plan et PHP-FPM au premier plan
-CMD nginx && php-fpm
+# Utiliser le script d'entrée pour l'initialisation
+ENTRYPOINT ["/var/www/html/docker/script/entrypoint.sh"]

@@ -61,11 +61,11 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         $pdo = Database::getConnection();
 
         if ($segmentId === 'supporters-reguliers') {
-            $contacts = $pdo->query("SELECT * FROM contacts WHERE source = 'weezevent'")->fetchAll();
+            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE source = 'weezevent'")->fetchAll();
         } elseif ($segmentId === 'nouveaux-visiteurs') {
-            $contacts = $pdo->query("SELECT * FROM contacts WHERE created_at >= NOW() - INTERVAL '7 days'")->fetchAll();
+            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE date_creation >= NOW() - INTERVAL '7 days'")->fetchAll();
         } else {
-            $contacts = $pdo->query("SELECT * FROM contacts WHERE email IS NOT NULL")->fetchAll();
+            $contacts = $pdo->query("SELECT idcontact as id, prenom as first_name, nom as last_name, email, phone, source, date_creation as created_at FROM contact WHERE email IS NOT NULL")->fetchAll();
         }
 
         $brevo   = new BrevoService();
