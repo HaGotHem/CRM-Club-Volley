@@ -186,16 +186,27 @@ async function testContacts() {
   clearResult();
 
   try {
-    const contacts = await callBrevo('/contacts?limit=20', apiKey);
+    const contacts = await callBrevo('/contacts?', apiKey);
     console.log('[testContacts] Succès, contacts récupérés :', contacts);
     setStatus(`${contacts.count ?? contacts.contacts?.length ?? 0} contact(s) récupéré(s).`);
     renderContactsCards(contacts);
+    downloadJson(contacts, 'contacts.json');
   } catch (err) {
     console.error('[testContacts] Échec :', err);
     setStatus(`Échec de la récupération des contacts : ${err.message}`, true);
     renderError(err.message);
   }
 }
+
+// function downloadJson(data, filename) {
+//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+//   const url = URL.createObjectURL(blob);
+//   const a = document.createElement('a');
+//   a.href = url;
+//   a.download = filename;
+//   a.click();
+//   URL.revokeObjectURL(url);
+// }
 
 btnTestAccount.addEventListener('click', testAccount);
 btnTestContacts.addEventListener('click', testContacts);
