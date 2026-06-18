@@ -31,11 +31,12 @@ final class BrevoService
 
     /**
      * Crée ou met à jour un contact dans Brevo.
-     * 
-     * @param Contact $contact
+     *
+     * @param Contact     $contact
+     * @param int[]|null  $listIds Listes Brevo auxquelles rattacher le contact
      * @return array
      */
-    public function createOrUpdateContact(Contact $contact): array
+    public function createOrUpdateContact(Contact $contact, ?array $listIds = null): array
     {
         try {
             $payload = [
@@ -47,6 +48,10 @@ final class BrevoService
                 ],
                 'updateEnabled' => true
             ];
+
+            if (!empty($listIds)) {
+                $payload['listIds'] = array_values(array_map('intval', $listIds));
+            }
 
             $response = $this->client->post('/v3/contacts', [
                 'json' => $payload
@@ -240,5 +245,116 @@ final class BrevoService
         } catch (GuzzleException $e) {
             throw new \RuntimeException('Erreur récupération contacts liste Brevo : ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Récupère les dossiers (folders) de contacts Brevo.
+     */
+    public function getFolders(int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $response = $this->client->get('/v3/contacts/folders', [
+                'query' => [
+                    'limit'  => $limit,
+                    'offset' => $offset
+                ]
+            ]);
+
+            $body = json_decode((string) $response->getBody(), true);
+            return $body ?? [];
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur récupération dossiers Brevo : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupère l'identifiant d'un dossier Brevo par son nom, en le créant s'il n'existe pas.
+     * Toutes les listes créées par le CRM sont rangées dans ce dossier.
+     */
+    public function getOrCreateFolderId(string $name = 'CRM Volley'): int
+    {
+        try {
+            $folders = $this->getFolders(50, 0);
+            foreach (($folders['folders'] ?? []) as $folder) {
+                if (($folder['name'] ?? '') === $name) {
+                    return (int) $folder['id'];
+                }
+            }
+
+            $response = $this->client->post('/v3/contacts/folders', [
+                'json' => ['name' => $name]
+            ]);
+            $body = json_decode((string) $response->getBody(), true);
+
+            return (int) ($body['id'] ?? 1);
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur dossier Brevo : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Recherche une liste Brevo par son nom (parcourt toutes les pages).
+     */
+    public function findListByName(string $name): ?array
+    {
+        $offset = 0;
+        do {
+            $data  = $this->getLists(50, $offset);
+            $lists = $data['lists'] ?? [];
+            foreach ($lists as $list) {
+                if (($list['name'] ?? '') === $name) {
+                    return $list;
+                }
+            }
+            $offset += 50;
+        } while (count($lists) === 50);
+
+        return null;
+    }
+
+    /**
+     * Crée une liste Brevo dans le dossier indiqué (ou le dossier par défaut du CRM).
+     */
+    public function createList(string $name, ?int $folderId = null): array
+    {
+        try {
+            if ($folderId === null) {
+                $folderId = $this->getOrCreateFolderId();
+            }
+
+            $response = $this->client->post('/v3/contacts/lists', [
+                'json' => [
+                    'name'     => $name,
+                    'folderId' => $folderId
+                ]
+            ]);
+
+            $body = json_decode((string) $response->getBody(), true);
+            return $body ?? [];
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur création liste Brevo : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Ajoute des contacts (par email) à une liste Brevo existante.
+     * Brevo limite chaque requête à 150 contacts.
+     */
+    public function addContactsToList(int $listId, array $emails): array
+    {
+        $results = ['success' => 0, 'errors' => 0];
+
+        foreach (array_chunk(array_values($emails), 150) as $chunk) {
+            try {
+                $this->client->post("/v3/contacts/lists/{$listId}/contacts/add", [
+                    'json' => ['emails' => $chunk]
+                ]);
+                $results['success'] += count($chunk);
+            } catch (GuzzleException $e) {
+                $results['errors'] += count($chunk);
+            }
+        }
+
+        return $results;
     }
 }

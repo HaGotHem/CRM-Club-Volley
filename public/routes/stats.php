@@ -196,3 +196,138 @@ $app->get('/api/stats/dashboard', function (Request $request, Response $response
         ], 500);
     }
 });
+
+/**
+ * GET /api/stats/period?start=YYYY-MM-DD&end=YYYY-MM-DD
+ * Statistiques agrégées pour les événements compris dans la période sélectionnée
+ * via le calendrier. Les bornes sont inclusives.
+ */
+$app->get('/api/stats/period', function (Request $request, Response $response) {
+    try {
+        $params = $request->getQueryParams();
+        $start  = $params['start'] ?? null;
+        $end    = $params['end']   ?? null;
+
+        // Validation simple du format YYYY-MM-DD
+        $isValidDate = static function (?string $d): bool {
+            return is_string($d) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $d) === 1;
+        };
+
+        if (!$isValidDate($start) || !$isValidDate($end)) {
+            return jsonResponse($response, [
+                'success' => false,
+                'error'   => 'Paramètres start et end requis au format YYYY-MM-DD'
+            ], 400);
+        }
+
+        // On s'assure que start <= end (sinon on inverse)
+        if ($start > $end) {
+            [$start, $end] = [$end, $start];
+        }
+
+        $pdo = Database::getConnection();
+
+        // Liste des événements de la période
+        $stmtEvents = $pdo->prepare("
+            SELECT
+                e.idevenementweezevent      AS id,
+                e.nom_evenement             AS nom,
+                e.date                      AS date,
+                e.lieu                      AS lieu,
+                e.type                      AS type,
+                COUNT(be.idbilletweezevent) AS tickets
+            FROM evenement e
+            LEFT JOIN billet_evenement be ON e.idevenementweezevent = be.idevenementweezevent
+            WHERE e.date::date BETWEEN :start AND :end
+            GROUP BY e.idevenementweezevent, e.nom_evenement, e.date, e.lieu, e.type
+            ORDER BY e.date ASC
+        ");
+        $stmtEvents->execute(['start' => $start, 'end' => $end]);
+        $eventsRows = $stmtEvents->fetchAll();
+
+        $events = array_map(static function (array $r): array {
+            return [
+                'id'      => (int) $r['id'],
+                'nom'     => $r['nom'],
+                'date'    => $r['date'],
+                'lieu'    => $r['lieu'],
+                'type'    => $r['type'],
+                'tickets' => (int) $r['tickets'],
+            ];
+        }, $eventsRows);
+
+        // Billets / recette pour les événements de la période
+        $paidFilter = "b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'";
+        $freeFilter = "b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%'";
+
+        $stmtTickets = $pdo->prepare("
+            SELECT
+                COUNT(*) FILTER (WHERE {$paidFilter})                            AS tickets_sold,
+                COUNT(*) FILTER (WHERE {$freeFilter})                            AS invitations,
+                COALESCE(SUM(b.montant_total) FILTER (WHERE {$paidFilter}), 0)   AS revenue
+            FROM evenement e
+            JOIN billet_evenement be ON e.idevenementweezevent = be.idevenementweezevent
+            JOIN billet b            ON be.idbilletweezevent = b.idbilletweezevent
+            WHERE e.date::date BETWEEN :start AND :end
+        ");
+        $stmtTickets->execute(['start' => $start, 'end' => $end]);
+        $ticketStats = $stmtTickets->fetch() ?: [];
+
+        // Spectateurs uniques sur les événements de la période
+        $stmtAttendees = $pdo->prepare("
+            SELECT COUNT(DISTINCT cb.idcontact) AS attendees
+            FROM evenement e
+            JOIN billet_evenement be ON e.idevenementweezevent = be.idevenementweezevent
+            JOIN contact_billet cb   ON be.idbilletweezevent = cb.idbilletweezevent
+            WHERE e.date::date BETWEEN :start AND :end
+        ");
+        $stmtAttendees->execute(['start' => $start, 'end' => $end]);
+        $attendees = (int) $stmtAttendees->fetchColumn();
+
+        // Nouveaux contacts créés sur la période
+        $stmtContacts = $pdo->prepare("
+            SELECT COUNT(*) FROM contact
+            WHERE date_creation::date BETWEEN :start AND :end
+        ");
+        $stmtContacts->execute(['start' => $start, 'end' => $end]);
+        $newContacts = (int) $stmtContacts->fetchColumn();
+
+        // Répartition journalière des billets vendus (pour le graphique)
+        $stmtDaily = $pdo->prepare("
+            SELECT e.date::date AS jour,
+                   COUNT(*) FILTER (WHERE {$paidFilter}) AS count
+            FROM evenement e
+            JOIN billet_evenement be ON e.idevenementweezevent = be.idevenementweezevent
+            JOIN billet b            ON be.idbilletweezevent = b.idbilletweezevent
+            WHERE e.date::date BETWEEN :start AND :end
+            GROUP BY e.date::date
+            ORDER BY e.date::date ASC
+        ");
+        $stmtDaily->execute(['start' => $start, 'end' => $end]);
+        $daily = array_map(static function (array $r): array {
+            return ['jour' => $r['jour'], 'count' => (int) $r['count']];
+        }, $stmtDaily->fetchAll());
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => [
+                'start'        => $start,
+                'end'          => $end,
+                'events_count' => count($events),
+                'tickets_sold' => (int) ($ticketStats['tickets_sold'] ?? 0),
+                'invitations'  => (int) ($ticketStats['invitations'] ?? 0),
+                'revenue'      => round((float) ($ticketStats['revenue'] ?? 0), 2),
+                'attendees'    => $attendees,
+                'new_contacts' => $newContacts,
+                'daily'        => $daily,
+                'events'       => $events,
+            ]
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les statistiques de la période',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});

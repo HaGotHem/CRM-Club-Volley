@@ -116,10 +116,11 @@ final class WeezeventService
     public function formatEvent(array $event): array
     {
         $date = $event['date_start'] ?? $event['date'] ?? date('Y-m-d H:i:s');
-        
-        // Sécurité si l'API renvoie un tableau pour la date (déjà vu sur certaines API)
+
+        // L'API Weezevent /events renvoie la date sous la forme { "start": "...", "end": "..." }.
+        // On prend 'start' en priorité, puis quelques variantes par sécurité.
         if (is_array($date)) {
-            $date = $date['date'] ?? $date[0] ?? date('Y-m-d H:i:s');
+            $date = $date['start'] ?? $date['date'] ?? $date[0] ?? date('Y-m-d H:i:s');
         }
 
         return [
@@ -133,33 +134,88 @@ final class WeezeventService
     }
 
     /**
-     * Formatte un billet à partir d'un participant.  
+     * Récupère le catalogue de tarifs d'un événement (nom + prix par type de billet).
+     * Le prix n'est pas présent dans /participant/list : il faut le lire ici.
+     *
+     * @return array<string, array{name: string, price: float}> indexé par id_ticket (type de tarif)
      */
-    public function formatTicketFromParticipant(array $participant): array
+    public function getTicketCatalog(int $eventId): array
+    {
+        try {
+            $response = $this->client->get('/tickets', [
+                'query' => [
+                    'api_key'      => $this->apiKey,
+                    'access_token' => $this->accessToken,
+                    'id_event[]'   => $eventId,
+                ]
+            ]);
+            $body = json_decode((string) $response->getBody(), true);
+
+            $catalog = [];
+            foreach (($body['events'] ?? []) as $event) {
+                foreach (($event['tickets'] ?? []) as $ticket) {
+                    $catalog[(string)($ticket['id'] ?? '')] = [
+                        'name'  => (string)($ticket['name'] ?? '—'),
+                        'price' => (float)($ticket['price'] ?? 0),
+                    ];
+                }
+            }
+            return $catalog;
+        } catch (GuzzleException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Formatte un billet à partir d'un participant.
+     *
+     * @param array $participant   Participant brut Weezevent
+     * @param array $ticketCatalog Catalogue de tarifs de l'événement (voir getTicketCatalog)
+     */
+    public function formatTicketFromParticipant(array $participant, array $ticketCatalog = []): array
     {
         // En mode "full", Weezevent retourne souvent les données dans un sous-objet participant ou directement
         $data = $participant['participant'] ?? $participant;
-        
-        // Tentative de récupération de l'ID du billet. Souvent id_ticket ou ticket_id.
-        // Fallback sur l'ID du participant si c'est un billet unique par participant.
-        $id = $data['id_ticket'] ?? $data['ticket_id'] ?? $data['id'] ?? null;
-        
+
+        // Identifiant UNIQUE du billet = id_participant (un participant = un billet).
+        // ATTENTION : id_ticket est le TYPE de tarif (partagé par tous les billets du même tarif) ;
+        // l'utiliser comme identifiant écrasait tous les billets entre eux.
+        $id = $data['id_participant'] ?? $data['id'] ?? null;
+
+        // Type de tarif : sert de clé pour retrouver le prix et le libellé dans le catalogue.
+        $idTicketType = (string)($data['id_ticket'] ?? $data['ticket_id'] ?? '');
+
         // Récupération de l'ID de l'événement
         $eventId = $participant['id_event'] ?? $data['id_event'] ?? $participant['event_id'] ?? 0;
 
-        $dateAchat = $data['date_achat'] ?? $data['order_date'] ?? $data['create_date'] ?? date('Y-m-d H:i:s');
+        // Date d'achat réelle (create_date / transaction_date)
+        $dateAchat = $data['create_date'] ?? $data['transaction_date'] ?? $data['date_achat'] ?? date('Y-m-d H:i:s');
         if (is_array($dateAchat)) {
             $dateAchat = $dateAchat['date'] ?? $dateAchat[0] ?? date('Y-m-d H:i:s');
         }
 
+        // Origine Weezevent : 'web' (vente en ligne), 'invitation' (place offerte), 'guichet'...
+        $origin = (string)($data['origin'] ?? 'weezevent');
+        $isInvitation = stripos($origin, 'invitation') !== false;
+
+        // Prix + libellé issus du catalogue de l'événement
+        $catalog   = $ticketCatalog[$idTicketType] ?? null;
+        $tarifName = $catalog['name'] ?? '—';
+        $price     = (float)($catalog['price'] ?? 0);
+
+        // Une invitation ne génère pas de recette : montant 0 et libellé préfixé "Invitation"
+        // (ce préfixe permet aux statistiques de distinguer ventes payantes et invitations).
+        $montant   = $isInvitation ? 0.0 : $price;
+        $typeTarif = $isInvitation ? ('Invitation - ' . $tarifName) : $tarifName;
+
         return [
             'id'            => (int)($id ?? 0),
             'date_achat'    => (string)$dateAchat,
-            'quantite'      => (int)($data['quantity'] ?? $data['quantite'] ?? 1),
-            'montant_total' => (float)($data['amount'] ?? $data['montant'] ?? $data['price'] ?? $data['total'] ?? 0),
-            'type_tarif'    => $data['ticket_category'] ?? $data['type_tarif'] ?? $data['ticket_name'] ?? '—',
+            'quantite'      => 1,
+            'montant_total' => $montant,
+            'type_tarif'    => $typeTarif,
             'code_promotionnel' => $data['promo_code'] ?? $data['code_promo'] ?? null,
-            'origine'       => 'weezevent',
+            'origine'       => $origin,
             'event_id'      => (int)$eventId,
             // Champs pour l'événement si on doit le créer à la volée
             'event_name'     => $participant['event_name'] ?? $participant['nom_evenement'] ?? 'Événement',

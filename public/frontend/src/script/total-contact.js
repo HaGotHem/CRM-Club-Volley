@@ -419,6 +419,206 @@ class ContactManager {
             this.btnSuivant.disabled = (pagination.current_page >= pagination.total_pages);
         }
     }
+
+    /* ==================== Export Brevo ==================== */
+
+    /**
+     * Ouvre la modale et (re)charge groupes + contacts depuis la BDD.
+     */
+    openExportModal() {
+        this.resetExportResult();
+        const selectAllG = document.getElementById('export-select-all-groupes');
+        const selectAllC = document.getElementById('export-select-all-contacts');
+        if (selectAllG) selectAllG.checked = false;
+        if (selectAllC) selectAllC.checked = false;
+
+        if (typeof this.exportModal.showModal === 'function') {
+            this.exportModal.showModal();
+        } else {
+            this.exportModal.setAttribute('open', 'open');
+        }
+
+        this.loadExportGroups();
+        this.loadExportContacts();
+    }
+
+    /**
+     * Charge la liste des groupes (segments) dans la modale.
+     */
+    async loadExportGroups() {
+        if (!this.exportGroupesList) return;
+        try {
+            const res = await apiGet('/segments');
+            const groups = (res.success && res.data) ? res.data : [];
+
+            if (groups.length === 0) {
+                this.exportGroupesList.innerHTML = '<p class="text-gray-400 text-sm py-4">Aucun groupe disponible.</p>';
+                return;
+            }
+
+            this.exportGroupesList.innerHTML = '';
+            groups.forEach(group => {
+                const label = document.createElement('label');
+                label.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors';
+                label.innerHTML = `
+                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-export-segment value="${group.id}" />
+                    <span class="font-medium text-sm text-gray-700 truncate">${group.nom_segment}</span>
+                `;
+                this.exportGroupesList.appendChild(label);
+            });
+
+            this.exportGroupesList
+                .querySelectorAll('input[data-export-segment]')
+                .forEach(cb => cb.addEventListener('change', () => this.updateExportSelectionInfo()));
+        } catch (err) {
+            console.error('[Export] Erreur loadExportGroups:', err);
+            this.exportGroupesList.innerHTML = '<p class="text-red-500 text-sm py-4">Erreur lors du chargement des groupes.</p>';
+        }
+    }
+
+    /**
+     * Charge la liste des contacts dans la modale.
+     */
+    async loadExportContacts() {
+        if (!this.exportContactsList) return;
+        try {
+            const res = await apiGet('/contacts?page=1&limit=1000');
+            this.exportContacts = (res.success && res.data) ? res.data : [];
+
+            if (this.exportContacts.length === 0) {
+                this.exportContactsList.innerHTML = '<p class="text-gray-400 text-sm py-4">Aucun contact disponible.</p>';
+                return;
+            }
+
+            this.exportContactsList.innerHTML = '';
+            this.exportContacts.forEach(contact => {
+                const label = document.createElement('label');
+                label.className = 'export-contact-row flex items-center gap-3 p-2 bg-gray-50 rounded-xl hover:bg-gray-100 cursor-pointer transition-colors';
+                const nomComplet = `${contact.prenom || ''} ${contact.nom || ''}`.trim() || 'Inconnu';
+                label.dataset.search = `${nomComplet} ${contact.email}`.toLowerCase();
+                label.innerHTML = `
+                    <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-export-contact value="${contact.id}" />
+                    <div class="min-w-0">
+                        <p class="font-medium text-sm text-gray-700 truncate">${nomComplet}</p>
+                        <p class="text-xs text-gray-400 truncate">${contact.email}</p>
+                    </div>
+                `;
+                this.exportContactsList.appendChild(label);
+            });
+
+            this.exportContactsList
+                .querySelectorAll('input[data-export-contact]')
+                .forEach(cb => cb.addEventListener('change', () => this.updateExportSelectionInfo()));
+        } catch (err) {
+            console.error('[Export] Erreur loadExportContacts:', err);
+            this.exportContactsList.innerHTML = '<p class="text-red-500 text-sm py-4">Erreur lors du chargement des contacts.</p>';
+        }
+    }
+
+    /**
+     * Filtre l'affichage des contacts de la modale selon la recherche.
+     */
+    filterExportContacts(term) {
+        const q = (term || '').trim().toLowerCase();
+        this.exportContactsList?.querySelectorAll('.export-contact-row').forEach(row => {
+            const match = !q || (row.dataset.search || '').includes(q);
+            row.classList.toggle('hidden', !match);
+            const cb = row.querySelector('input[data-export-contact]');
+            if (cb) cb.classList.toggle('hidden-by-search', !match);
+        });
+    }
+
+    /**
+     * Met à jour le compteur de sélection.
+     */
+    updateExportSelectionInfo() {
+        const info = document.getElementById('export-selection-info');
+        if (!info) return;
+        const nbGroupes = this.exportGroupesList?.querySelectorAll('input[data-export-segment]:checked').length || 0;
+        const nbContacts = this.exportContactsList?.querySelectorAll('input[data-export-contact]:checked').length || 0;
+
+        if (nbGroupes === 0 && nbContacts === 0) {
+            info.textContent = 'Aucune sélection';
+        } else {
+            const parts = [];
+            if (nbGroupes) parts.push(`${nbGroupes} groupe${nbGroupes > 1 ? 's' : ''}`);
+            if (nbContacts) parts.push(`${nbContacts} contact${nbContacts > 1 ? 's' : ''}`);
+            info.textContent = `Sélection : ${parts.join(' • ')}`;
+        }
+    }
+
+    /**
+     * Réinitialise le bandeau de résultat.
+     */
+    resetExportResult() {
+        const result = document.getElementById('export-result');
+        if (result) {
+            result.classList.add('hidden');
+            result.innerHTML = '';
+        }
+    }
+
+    /**
+     * Affiche un message de résultat dans la modale.
+     */
+    showExportResult(message, type = 'info') {
+        const result = document.getElementById('export-result');
+        if (!result) return;
+        const styles = {
+            success: 'bg-green-50 text-green-700 border border-green-200',
+            error: 'bg-red-50 text-red-700 border border-red-200',
+            info: 'bg-blue-50 text-blue-700 border border-blue-200'
+        };
+        result.className = `text-sm rounded-xl p-3 mb-4 ${styles[type] || styles.info}`;
+        result.innerHTML = message;
+        result.classList.remove('hidden');
+    }
+
+    /**
+     * Lance l'export vers Brevo.
+     */
+    async runExport() {
+        const segmentIds = [...(this.exportGroupesList?.querySelectorAll('input[data-export-segment]:checked') || [])]
+            .map(cb => parseInt(cb.value, 10));
+        const contactIds = [...(this.exportContactsList?.querySelectorAll('input[data-export-contact]:checked') || [])]
+            .map(cb => parseInt(cb.value, 10));
+
+        if (segmentIds.length === 0 && contactIds.length === 0) {
+            this.showExportResult('Veuillez sélectionner au moins un groupe ou un contact.', 'error');
+            return;
+        }
+
+        const spinner = document.getElementById('export-spinner');
+        if (spinner) spinner.classList.remove('hidden');
+        if (this.btnLancerExport) this.btnLancerExport.disabled = true;
+        this.resetExportResult();
+
+        try {
+            const res = await apiPost('/sync/brevo/export', {
+                segment_ids: segmentIds,
+                contact_ids: contactIds
+            });
+
+            const d = res.data || {};
+            this.showExportResult(
+                `<strong>Export terminé.</strong><br>
+                 Listes créées : ${d.lists_created ?? 0} •
+                 Listes réutilisées : ${d.lists_existing ?? 0}<br>
+                 Contacts synchronisés : ${d.contacts_synced ?? 0} •
+                 Erreurs : ${d.errors ?? 0}`,
+                (d.errors ?? 0) > 0 ? 'info' : 'success'
+            );
+
+            // Rafraîchit les groupes/contacts de la page (de nouveaux segments ont pu apparaître)
+            this.loadGroups();
+        } catch (err) {
+            console.error('[Export] Erreur runExport:', err);
+            this.showExportResult(`Erreur lors de l'export : ${err.message}`, 'error');
+        } finally {
+            if (spinner) spinner.classList.add('hidden');
+            if (this.btnLancerExport) this.btnLancerExport.disabled = false;
+        }
+    }
 }
 
 // Initialisation

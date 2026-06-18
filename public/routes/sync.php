@@ -177,6 +177,9 @@ $app->post('/api/sync/weezevent/import', function (Request $request, Response $r
         }
         $batch = array_slice($all, $offset, $limit);
 
+        // Cache des catalogues de tarifs par événement (prix + libellé des billets)
+        $ticketCatalogs = [];
+
         foreach ($batch as $participant) {
             try {
                 // 1) Contact (acheteur/destinataire)
@@ -208,7 +211,12 @@ $app->post('/api/sync/weezevent/import', function (Request $request, Response $r
                 }
 
                 // 2) Billet + liaisons
-                $ticketData = $weezevent->formatTicketFromParticipant($participant);
+                // Catalogue de tarifs de l'événement (mis en cache pour éviter les appels répétés)
+                $evtId = (int)($participant['id_event'] ?? 0);
+                if ($evtId > 0 && !array_key_exists($evtId, $ticketCatalogs)) {
+                    $ticketCatalogs[$evtId] = $weezevent->getTicketCatalog($evtId);
+                }
+                $ticketData = $weezevent->formatTicketFromParticipant($participant, $ticketCatalogs[$evtId] ?? []);
                 $eventId = (int)($ticketData['event_id'] ?? 0);
                 
                 if (!empty($ticketData['id'])) {
@@ -295,6 +303,129 @@ $app->post('/api/sync/brevo', function (Request $request, Response $response) {
         return jsonResponse($response, [
             'success' => false,
             'error'   => 'Erreur synchronisation Brevo',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});
+
+/**
+ * Export sélectif vers Brevo.
+ * Reçoit une sélection de groupes (segments) et/ou de contacts depuis la fiche contact.
+ * Chaque groupe sélectionné devient (ou réutilise) une liste Brevo portant le même nom,
+ * et tous ses contacts y sont synchronisés. Les contacts sélectionnés individuellement
+ * sont créés / mis à jour dans Brevo sans liste spécifique.
+ *
+ * Body attendu : { "segment_ids": [1,2], "contact_ids": [10,11] }
+ */
+$app->post('/api/sync/brevo/export', function (Request $request, Response $response) {
+    try {
+        $data       = (array) $request->getParsedBody();
+        $segmentIds = array_values(array_unique(array_map('intval', $data['segment_ids'] ?? [])));
+        $contactIds = array_values(array_unique(array_map('intval', $data['contact_ids'] ?? [])));
+
+        if (empty($segmentIds) && empty($contactIds)) {
+            return jsonResponse($response, [
+                'success' => false,
+                'error'   => 'Veuillez sélectionner au moins un groupe ou un contact à exporter'
+            ], 400);
+        }
+
+        $brevo       = new BrevoService();
+        $contactRepo = new ContactRepository();
+        $segmentRepo = new SegmentRepository();
+
+        $stats = [
+            'lists_created'   => 0,
+            'lists_existing'  => 0,
+            'contacts_synced' => 0,
+            'errors'          => 0,
+            'details'         => []
+        ];
+
+        // Dossier Brevo où ranger les listes créées par le CRM
+        $folderId = $brevo->getOrCreateFolderId();
+
+        // Pour éviter de synchroniser deux fois le même email
+        $syncedEmails = [];
+
+        // 1) Groupes -> listes Brevo
+        foreach ($segmentIds as $segmentId) {
+            $segment = $segmentRepo->findById($segmentId);
+            if ($segment === null) {
+                continue;
+            }
+
+            $listName     = $segment->getNomSegment();
+            $existingList = $brevo->findListByName($listName);
+
+            if ($existingList !== null) {
+                $listId = (int) $existingList['id'];
+                $stats['lists_existing']++;
+            } else {
+                $created = $brevo->createList($listName, $folderId);
+                $listId  = (int) ($created['id'] ?? 0);
+                if ($listId > 0) {
+                    $stats['lists_created']++;
+                }
+            }
+
+            if ($listId <= 0) {
+                $stats['errors']++;
+                $stats['details'][] = [
+                    'segment' => $listName,
+                    'error'   => 'Impossible de créer la liste Brevo'
+                ];
+                continue;
+            }
+
+            $contacts = $contactRepo->findBySegmentId($segmentId);
+            foreach ($contacts as $contact) {
+                try {
+                    $brevo->createOrUpdateContact($contact, [$listId]);
+                    if (!isset($syncedEmails[$contact->getEmail()])) {
+                        $syncedEmails[$contact->getEmail()] = true;
+                        $stats['contacts_synced']++;
+                    }
+                } catch (\Exception $e) {
+                    $stats['errors']++;
+                    $stats['details'][] = [
+                        'email' => $contact->getEmail(),
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        }
+
+        // 2) Contacts individuels (sans liste spécifique)
+        foreach ($contactIds as $contactId) {
+            $contact = $contactRepo->findById($contactId);
+            if ($contact === null || isset($syncedEmails[$contact->getEmail()])) {
+                continue;
+            }
+
+            try {
+                $brevo->createOrUpdateContact($contact);
+                $syncedEmails[$contact->getEmail()] = true;
+                $stats['contacts_synced']++;
+            } catch (\Exception $e) {
+                $stats['errors']++;
+                $stats['details'][] = [
+                    'email' => $contact->getEmail(),
+                    'error' => $e->getMessage()
+                ];
+            }
+        }
+
+        return jsonResponse($response, [
+            'success' => true,
+            'message' => 'Export Brevo terminé',
+            'data'    => $stats
+        ]);
+
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Erreur lors de l\'export Brevo',
             'details' => $e->getMessage()
         ], 500);
     }
