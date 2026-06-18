@@ -1,4 +1,5 @@
 import { apiGet, apiPost } from './api.js';
+import { initStatsChart, initAffluenceChart } from './Charts.js';
 
 /**
  * Met à jour le texte d'un élément par son ID
@@ -157,6 +158,28 @@ async function setupSync() {
 }
 
 /**
+ * Met à jour l'indicateur de tendance (badge +/- %)
+ * @param {string} id ID de l'élément
+ * @param {number} value Valeur du pourcentage
+ */
+function setTrend(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const isPositive = value >= 0;
+    const absValue = Math.abs(value);
+    
+    el.textContent = `${isPositive ? '+' : '-'}${absValue}%`;
+    
+    // Classes CSS selon le signe
+    if (isPositive) {
+        el.className = 'text-sm font-bold bg-green-50 text-green-500 px-2 py-1 rounded-lg';
+    } else {
+        el.className = 'text-sm font-bold bg-red-50 text-red-500 px-2 py-1 rounded-lg';
+    }
+}
+
+/**
  * Charge les statistiques du dashboard via l'API
  */
 async function loadDashboard() {
@@ -170,9 +193,66 @@ async function loadDashboard() {
             // Mise à jour des compteurs avec formatage
             // On utilise des valeurs par défaut si les données sont absentes pour éviter le vide
             setText('total-contacts', Number(d.total_contacts ?? 0).toLocaleString('fr-FR'));
-            setText('total-groupes',  (d.segment_count || d.total_groups) ?? 0);
+            setText('total-groupes',  Number(d.total_groups ?? 0).toLocaleString('fr-FR'));
             setText('invites-count',  Number(d.invited_count ?? 0).toLocaleString('fr-FR'));
-            setText('places-count',   Number(d.tickets_sold ?? 0).toLocaleString('fr-FR'));
+            setText('places-count',   Number(d.paid_sales ?? 0).toLocaleString('fr-FR'));
+
+            // Tendances
+            if (d.trends) {
+                setTrend('trend-contacts', d.trends.contacts);
+                setTrend('trend-groupes', d.trends.groups);
+                setTrend('trend-invitations', d.trends.invitations);
+                setTrend('trend-sales', d.trends.sales);
+            }
+
+            // Graphiques
+            if (typeof initStatsChart === 'function') {
+                initStatsChart(d);
+            }
+            if (typeof initAffluenceChart === 'function') {
+                initAffluenceChart(d.sales_history);
+            }
+
+            // Comparaison des ventes
+            if (d.sales_history && d.sales_history.length >= 2) {
+                const thisMonth = d.sales_history[d.sales_history.length - 1].count;
+                const lastMonth = d.sales_history[d.sales_history.length - 2].count;
+                
+                setText('sales-this-month', thisMonth.toLocaleString('fr-FR'));
+                setText('sales-last-month', lastMonth.toLocaleString('fr-FR'));
+
+                // Mise à jour des barres
+                const maxSales = Math.max(thisMonth, lastMonth, 1);
+                const heightThis = (thisMonth / maxSales) * 100;
+                const heightLast = (lastMonth / maxSales) * 100;
+
+                const barThis = document.getElementById('bar-this-month');
+                const barLast = document.getElementById('bar-last-month');
+                if (barThis) barThis.style.height = `${Math.max(heightThis * 1.8, 10)}px`;
+                if (barLast) barLast.style.height = `${Math.max(heightLast * 1.8, 10)}px`;
+
+                // Carte de performance
+                const diff = thisMonth - lastMonth;
+                const pct = lastMonth > 0 ? Math.round((diff / lastMonth) * 100) : (thisMonth > 0 ? 100 : 0);
+                
+                const perfCard = document.getElementById('performance-card');
+                const perfTitle = document.getElementById('performance-title');
+                const perfDesc = document.getElementById('performance-desc');
+
+                if (perfCard && perfTitle && perfDesc) {
+                    if (diff >= 0) {
+                        perfCard.className = 'p-6 bg-blue-50 rounded-3xl border border-blue-100 transition-colors duration-300';
+                        perfTitle.className = 'text-blue-800 font-semibold mb-2 flex items-center gap-2';
+                        perfTitle.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg> Performance en hausse`;
+                        perfDesc.textContent = `Vos ventes ont augmenté de ${pct}% par rapport au mois dernier. Continuez ainsi !`;
+                    } else {
+                        perfCard.className = 'p-6 bg-orange-50 rounded-3xl border border-orange-100 transition-colors duration-300';
+                        perfTitle.className = 'text-orange-800 font-semibold mb-2 flex items-center gap-2';
+                        perfTitle.innerHTML = `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path></svg> Attention à la baisse`;
+                        perfDesc.textContent = `Vos ventes ont diminué de ${Math.abs(pct)}% par rapport au mois dernier. Analysez vos campagnes !`;
+                    }
+                }
+            }
 
             console.log('[Dashboard] Statistiques chargées avec succès');
         }

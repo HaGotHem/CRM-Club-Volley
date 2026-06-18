@@ -7,15 +7,25 @@ const principal = '#15277B';
 /**
  * Initialisation du graphique Donut (Répartition)
  */
-function initStatsChart() {
+function initStatsChart(data) {
     const statsCanvas = document.getElementById('StatsChart');
     if (statsCanvas) {
+        const total = (data.invited_count || 0) + (data.paid_sales || 0);
+        const invitedPct = total > 0 ? ((data.invited_count / total) * 100).toFixed(1) : 0;
+        const paidPct = total > 0 ? ((data.paid_sales / total) * 100).toFixed(1) : 0;
+
+        // Mise à jour de la légende textuelle à côté du chart
+        const legendPaid = document.getElementById('legend-paid-pct');
+        const legendInvited = document.getElementById('legend-invited-pct');
+        if (legendPaid) legendPaid.textContent = `${paidPct}%`;
+        if (legendInvited) legendInvited.textContent = `${invitedPct}%`;
+
         new Chart(statsCanvas, {
             type: 'doughnut',
             data: {
                 labels: ["Nombre d'invitations", 'Places Vendues'],
                 datasets: [{
-                    data: [76.9, 23.1],
+                    data: [invitedPct, paidPct],
                     backgroundColor: ['#E5E7EB', principal],
                     borderWidth: 0,
                     hoverOffset: 4
@@ -47,16 +57,19 @@ function initStatsChart() {
 /**
  * Initialisation du graphique de ligne (Affluence)
  */
-function initAffluenceChart() {
+function initAffluenceChart(salesHistory) {
     const affluenceCanvas = document.getElementById('affluenceChart');
     if (affluenceCanvas) {
+        const labels = salesHistory ? salesHistory.map(h => h.month) : ['Sep', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout'];
+        const data = salesHistory ? salesHistory.map(h => h.count) : [10, 28, 22, 30, 45, 42, 40, 48, 44, 38, 60, 62];
+
         new Chart(affluenceCanvas, {
             type: 'line',
             data: {
-                labels: ['Sep', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout'],
+                labels: labels,
                 datasets: [{
-                    label: 'Affluence',
-                    data: [10, 28, 22, 30, 45, 42, 40, 48, 44, 38, 60, 62],
+                    label: 'Ventes',
+                    data: data,
                     borderColor: '#38BDF8',
                     backgroundColor: 'rgba(56, 189, 248, 0.1)',
                     borderWidth: 3,
@@ -98,8 +111,4 @@ function initAffluenceChart() {
     }
 }
 
-// Lancement de l'initialisation au chargement du DOM
-document.addEventListener('DOMContentLoaded', () => {
-    initStatsChart();
-    initAffluenceChart();
-});
+export { initStatsChart, initAffluenceChart };
