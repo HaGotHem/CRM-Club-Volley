@@ -69,12 +69,15 @@ final class BrevoService
     }
 
     /**
-     * Crée une liste dans Brevo.
+     * Crée une liste dans Brevo et renvoie son identifiant.
      */
     public function createList(string $name, ?int $folderId = null): int
     {
         if ($folderId === null) {
-            $folderId = (int) ($_ENV['BREVO_FOLDER_ID'] ?? 4);
+            // Dossier défini en .env, sinon dossier « CRM Volley » créé automatiquement
+            $folderId = isset($_ENV['BREVO_FOLDER_ID'])
+                ? (int) $_ENV['BREVO_FOLDER_ID']
+                : $this->getOrCreateFolderId();
         }
 
         try {
@@ -134,6 +137,58 @@ final class BrevoService
         } catch (GuzzleException $e) {
             throw new \RuntimeException('Erreur retrait contacts liste Brevo : ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Import en masse de contacts dans Brevo (traitement asynchrone côté Brevo).
+     * Bien plus rapide qu'un appel createOrUpdateContact par contact : un seul appel par lot,
+     * indispensable pour les gros segments (sinon timeout HTTP).
+     *
+     * @param Contact[] $contacts
+     * @param int[]     $listIds  Listes auxquelles rattacher les contacts importés
+     * @return int Nombre de contacts envoyés à l'import
+     */
+    public function importContacts(array $contacts, array $listIds = []): int
+    {
+        $rows = [];
+        foreach ($contacts as $contact) {
+            $rows[] = [
+                'email'      => $contact->getEmail(),
+                'attributes' => [
+                    'FIRSTNAME' => $contact->getPrenom(),
+                    'LASTNAME'  => $contact->getNom(),
+                    'SMS'       => $contact->getPhone() ?? ''
+                ]
+            ];
+        }
+
+        if (empty($rows)) {
+            return 0;
+        }
+
+        $listIds = array_values(array_map('intval', $listIds));
+        $sent = 0;
+
+        // Brevo accepte de gros lots ; on découpe par 1000 par prudence.
+        foreach (array_chunk($rows, 1000) as $chunk) {
+            $payload = [
+                'jsonBody'                => $chunk,
+                'updateExistingContacts'  => true,
+                'emptyContactsAttributes' => false
+            ];
+            if (!empty($listIds)) {
+                $payload['listIds'] = $listIds;
+            }
+
+            try {
+                $this->client->post('/v3/contacts/import', ['json' => $payload]);
+                $sent += count($chunk);
+            } catch (GuzzleException $e) {
+                throw new \RuntimeException('Erreur import Brevo : ' . $e->getMessage());
+            }
+        }
+
+        return $sent;
     }
 
     public function syncSegment(array $contacts): array
@@ -310,51 +365,5 @@ final class BrevoService
         } while (count($lists) === 50);
 
         return null;
-    }
-
-    /**
-     * Crée une liste Brevo dans le dossier indiqué (ou le dossier par défaut du CRM).
-     */
-    public function createList(string $name, ?int $folderId = null): array
-    {
-        try {
-            if ($folderId === null) {
-                $folderId = $this->getOrCreateFolderId();
-            }
-
-            $response = $this->client->post('/v3/contacts/lists', [
-                'json' => [
-                    'name'     => $name,
-                    'folderId' => $folderId
-                ]
-            ]);
-
-            $body = json_decode((string) $response->getBody(), true);
-            return $body ?? [];
-        } catch (GuzzleException $e) {
-            throw new \RuntimeException('Erreur création liste Brevo : ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Ajoute des contacts (par email) à une liste Brevo existante.
-     * Brevo limite chaque requête à 150 contacts.
-     */
-    public function addContactsToList(int $listId, array $emails): array
-    {
-        $results = ['success' => 0, 'errors' => 0];
-
-        foreach (array_chunk(array_values($emails), 150) as $chunk) {
-            try {
-                $this->client->post("/v3/contacts/lists/{$listId}/contacts/add", [
-                    'json' => ['emails' => $chunk]
-                ]);
-                $results['success'] += count($chunk);
-            } catch (GuzzleException $e) {
-                $results['errors'] += count($chunk);
-            }
-        }
-
-        return $results;
     }
 }

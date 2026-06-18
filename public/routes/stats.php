@@ -331,3 +331,106 @@ $app->get('/api/stats/period', function (Request $request, Response $response) {
         ], 500);
     }
 });
+
+/**
+ * GET /api/stats/event/{id}
+ * Statistiques d'un événement précis (ou de TOUS les événements si id = 0),
+ * utilisé par le sélecteur d'événement de la page Statistiques.
+ */
+$app->get('/api/stats/event/{id}', function (Request $request, Response $response, array $args) {
+    try {
+        $eventId = (int) $args['id']; // 0 = tous les événements
+        $pdo = Database::getConnection();
+
+        $paidFilter = "b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'";
+        $freeFilter = "b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%'";
+
+        $where  = $eventId > 0 ? "WHERE be.idevenementweezevent = :id" : "";
+        $params = $eventId > 0 ? ['id' => $eventId] : [];
+
+        // Billets / recette
+        $stmt = $pdo->prepare("
+            SELECT
+                COUNT(*) FILTER (WHERE {$paidFilter})                          AS tickets_sold,
+                COUNT(*) FILTER (WHERE {$freeFilter})                          AS invitations,
+                COUNT(*)                                                       AS total_tickets,
+                COALESCE(SUM(b.montant_total) FILTER (WHERE {$paidFilter}), 0) AS revenue
+            FROM billet_evenement be
+            JOIN billet b ON be.idbilletweezevent = b.idbilletweezevent
+            {$where}
+        ");
+        $stmt->execute($params);
+        $t = $stmt->fetch() ?: [];
+
+        // Spectateurs uniques
+        $stmtA = $pdo->prepare("
+            SELECT COUNT(DISTINCT cb.idcontact)
+            FROM billet_evenement be
+            JOIN contact_billet cb ON be.idbilletweezevent = cb.idbilletweezevent
+            {$where}
+        ");
+        $stmtA->execute($params);
+        $attendees = (int) $stmtA->fetchColumn();
+
+        // Répartition des billets par tarif
+        $stmtT = $pdo->prepare("
+            SELECT b.type_tarif                       AS tarif,
+                   COUNT(*)                           AS count,
+                   COALESCE(SUM(b.montant_total), 0)  AS revenue
+            FROM billet_evenement be
+            JOIN billet b ON be.idbilletweezevent = b.idbilletweezevent
+            {$where}
+            GROUP BY b.type_tarif
+            ORDER BY count DESC
+        ");
+        $stmtT->execute($params);
+        $tarifs = array_map(static function (array $r): array {
+            return [
+                'tarif'   => $r['tarif'],
+                'count'   => (int) $r['count'],
+                'revenue' => round((float) $r['revenue'], 2),
+            ];
+        }, $stmtT->fetchAll());
+
+        // Infos sur l'événement (ou agrégat global)
+        if ($eventId > 0) {
+            $stmtE = $pdo->prepare("
+                SELECT idevenementweezevent AS id, nom_evenement AS nom, date, lieu, type
+                FROM evenement WHERE idevenementweezevent = :id
+            ");
+            $stmtE->execute(['id' => $eventId]);
+            $row = $stmtE->fetch();
+            $eventInfo = $row ? [
+                'id'   => (int) $row['id'],
+                'nom'  => $row['nom'],
+                'date' => $row['date'],
+                'lieu' => $row['lieu'],
+                'type' => $row['type'],
+            ] : null;
+        } else {
+            $eventInfo = [
+                'events_count' => (int) $pdo->query("SELECT COUNT(*) FROM evenement")->fetchColumn(),
+            ];
+        }
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => [
+                'event_id'      => $eventId,
+                'event'         => $eventInfo,
+                'tickets_sold'  => (int) ($t['tickets_sold'] ?? 0),
+                'invitations'   => (int) ($t['invitations'] ?? 0),
+                'total_tickets' => (int) ($t['total_tickets'] ?? 0),
+                'revenue'       => round((float) ($t['revenue'] ?? 0), 2),
+                'attendees'     => $attendees,
+                'tarifs'        => $tarifs,
+            ]
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les statistiques de l\'événement',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});

@@ -25,6 +25,14 @@ class ContactManager {
         this.nomListeASupprimer = document.getElementById('nom-liste-a-supprimer');
         this.modalSuccessSync = document.getElementById('modal-success-sync');
 
+        // Export Brevo (modale de sélection groupes + contacts)
+        this.exportModal = document.getElementById('modal-export-brevo');
+        this.btnExportBrevo = document.getElementById('btn-export-brevo');
+        this.btnLancerExport = document.getElementById('btn-lancer-export');
+        this.exportGroupesList = document.getElementById('export-groupes-list');
+        this.exportContactsList = document.getElementById('export-contacts-list');
+        this.exportContacts = [];
+
         this.currentPage = 1;
         this.currentLimit = 20;
         this.searchQuery = '';
@@ -65,6 +73,36 @@ class ContactManager {
      * Configuration des écouteurs d'événements
      */
     setupEventListeners() {
+        // ----- Export Brevo (modale groupes + contacts) -----
+        if (this.btnExportBrevo && this.exportModal) {
+            this.btnExportBrevo.addEventListener('click', () => this.openExportModal());
+        }
+        if (this.btnLancerExport) {
+            this.btnLancerExport.addEventListener('click', () => this.runExport());
+        }
+        const selectAllGroupes = document.getElementById('export-select-all-groupes');
+        if (selectAllGroupes) {
+            selectAllGroupes.addEventListener('change', (e) => {
+                this.exportGroupesList
+                    ?.querySelectorAll('input[data-export-segment]')
+                    .forEach(cb => { cb.checked = e.target.checked; });
+                this.updateExportSelectionInfo();
+            });
+        }
+        const selectAllContacts = document.getElementById('export-select-all-contacts');
+        if (selectAllContacts) {
+            selectAllContacts.addEventListener('change', (e) => {
+                this.exportContactsList
+                    ?.querySelectorAll('input[data-export-contact]:not(.hidden-by-search)')
+                    .forEach(cb => { cb.checked = e.target.checked; });
+                this.updateExportSelectionInfo();
+            });
+        }
+        const exportSearch = document.getElementById('export-contacts-search');
+        if (exportSearch) {
+            exportSearch.addEventListener('input', (e) => this.filterExportContacts(e.target.value));
+        }
+
         if (this.btnTransferer) {
             this.btnTransferer.addEventListener('click', async () => {
                 if (!this.currentListId) return;

@@ -348,25 +348,30 @@ $app->post('/api/sync/brevo/export', function (Request $request, Response $respo
         // Pour éviter de synchroniser deux fois le même email
         $syncedEmails = [];
 
-        // 1) Groupes -> listes Brevo
+        // 1) Groupes -> listes Brevo (import en masse)
         foreach ($segmentIds as $segmentId) {
             $segment = $segmentRepo->findById($segmentId);
             if ($segment === null) {
                 continue;
             }
 
-            $listName     = $segment->getNomSegment();
-            $existingList = $brevo->findListByName($listName);
+            $listName = $segment->getNomSegment();
 
-            if ($existingList !== null) {
-                $listId = (int) $existingList['id'];
-                $stats['lists_existing']++;
-            } else {
-                $created = $brevo->createList($listName, $folderId);
-                $listId  = (int) ($created['id'] ?? 0);
-                if ($listId > 0) {
-                    $stats['lists_created']++;
+            // On réutilise la liste Brevo déjà associée si elle existe (évite un parcours coûteux)
+            $listId = (int) ($segment->getBrevoId() ?? 0);
+            if ($listId <= 0) {
+                $existingList = $brevo->findListByName($listName);
+                if ($existingList !== null) {
+                    $listId = (int) $existingList['id'];
+                    $stats['lists_existing']++;
+                } else {
+                    $listId = $brevo->createList($listName, $folderId);
+                    if ($listId > 0) {
+                        $stats['lists_created']++;
+                    }
                 }
+            } else {
+                $stats['lists_existing']++;
             }
 
             if ($listId <= 0) {
@@ -378,41 +383,63 @@ $app->post('/api/sync/brevo/export', function (Request $request, Response $respo
                 continue;
             }
 
+            // Mémorise l'ID de la liste Brevo sur le segment (statut « synchronisé »)
+            if ($segment->getBrevoId() !== $listId) {
+                $segment->setBrevoId($listId);
+                $segmentRepo->save($segment);
+            }
+
+            // Import en masse des contacts du segment dans la liste
             $contacts = $contactRepo->findBySegmentId($segmentId);
-            foreach ($contacts as $contact) {
-                try {
-                    $brevo->createOrUpdateContact($contact, [$listId]);
-                    if (!isset($syncedEmails[$contact->getEmail()])) {
-                        $syncedEmails[$contact->getEmail()] = true;
-                        $stats['contacts_synced']++;
-                    }
-                } catch (\Exception $e) {
-                    $stats['errors']++;
-                    $stats['details'][] = [
-                        'email' => $contact->getEmail(),
-                        'error' => $e->getMessage()
-                    ];
+            try {
+                $stats['contacts_synced'] += $brevo->importContacts($contacts, [$listId]);
+                foreach ($contacts as $contact) {
+                    $syncedEmails[$contact->getEmail()] = true;
                 }
+            } catch (\Exception $e) {
+                $stats['errors']++;
+                $stats['details'][] = [
+                    'segment' => $listName,
+                    'error'   => $e->getMessage()
+                ];
             }
         }
 
-        // 2) Contacts individuels (sans liste spécifique)
+        // 2) Contacts individuels (sans liste spécifique) -> import en masse
+        $individualContacts = [];
         foreach ($contactIds as $contactId) {
             $contact = $contactRepo->findById($contactId);
             if ($contact === null || isset($syncedEmails[$contact->getEmail()])) {
                 continue;
             }
+            $individualContacts[] = $contact;
+            $syncedEmails[$contact->getEmail()] = true;
+        }
 
+        if (!empty($individualContacts)) {
             try {
-                $brevo->createOrUpdateContact($contact);
-                $syncedEmails[$contact->getEmail()] = true;
-                $stats['contacts_synced']++;
+                // L'import en masse Brevo exige une liste : les contacts choisis un par un
+                // sont regroupés dans une liste générale dédiée du CRM.
+                $generalName = 'Contacts CRM';
+                $generalList = $brevo->findListByName($generalName);
+                if ($generalList !== null) {
+                    $generalListId = (int) $generalList['id'];
+                } else {
+                    $generalListId = $brevo->createList($generalName, $folderId);
+                    if ($generalListId > 0) {
+                        $stats['lists_created']++;
+                    }
+                }
+
+                if ($generalListId > 0) {
+                    $stats['contacts_synced'] += $brevo->importContacts($individualContacts, [$generalListId]);
+                } else {
+                    $stats['errors']++;
+                    $stats['details'][] = ['error' => 'Impossible de créer la liste « Contacts CRM »'];
+                }
             } catch (\Exception $e) {
                 $stats['errors']++;
-                $stats['details'][] = [
-                    'email' => $contact->getEmail(),
-                    'error' => $e->getMessage()
-                ];
+                $stats['details'][] = ['error' => $e->getMessage()];
             }
         }
 

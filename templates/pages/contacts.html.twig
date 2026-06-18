@@ -70,6 +70,10 @@
                     </div>
 
                     <div class="flex items-center gap-2">
+                        <button type="button" id="btn-export-brevo" class="btn btn-sm bg-secondaire hover:bg-secondaire/90 text-principal border-none rounded-xl px-4 normal-case font-bold gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0L8 7m4-4l4 4"></path></svg>
+                            Exporter vers Brevo
+                        </button>
                         <button type="button" id="btn-transferer" class="btn btn-sm bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-4 normal-case hidden">
                             Transférer vers Brevo
                         </button>
@@ -104,6 +108,81 @@
 {% endblock %}
 
 {% block scripts %}
+    <!-- Modale Export Brevo -->
+    <dialog id="modal-export-brevo" class="modal">
+        <div class="modal-box max-w-4xl rounded-3xl p-0 overflow-hidden">
+            <!-- En-tête -->
+            <div class="flex items-center justify-between px-6 py-5 bg-principal text-white">
+                <div>
+                    <h3 class="text-lg font-bold">Exporter vers Brevo</h3>
+                    <p class="text-xs text-white/60">Sélectionnez les groupes/listes et/ou les contacts à synchroniser. Chaque groupe crée (ou réutilise) une liste Brevo.</p>
+                </div>
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost text-white" aria-label="Fermer">✕</button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+                <!-- Groupes / listes -->
+                <div class="flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-bold text-gray-800">Groupes / listes <span class="text-gray-400 font-normal text-sm">(→ listes Brevo)</span></h4>
+                        <label class="label cursor-pointer gap-2 p-0">
+                            <span class="text-xs text-gray-500">Tout</span>
+                            <input type="checkbox" id="export-select-all-groupes" class="checkbox checkbox-primary checkbox-xs" />
+                        </label>
+                    </div>
+                    <div id="export-groupes-list" class="space-y-2 max-h-[45vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <div class="animate-pulse space-y-2">
+                            <div class="h-10 bg-gray-50 rounded-xl w-full"></div>
+                            <div class="h-10 bg-gray-50 rounded-xl w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contacts -->
+                <div class="flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="font-bold text-gray-800">Contacts</h4>
+                        <label class="label cursor-pointer gap-2 p-0">
+                            <span class="text-xs text-gray-500">Tout</span>
+                            <input type="checkbox" id="export-select-all-contacts" class="checkbox checkbox-primary checkbox-xs" />
+                        </label>
+                    </div>
+                    <input type="text" id="export-contacts-search" placeholder="Rechercher un contact…"
+                           class="input input-sm input-bordered rounded-xl mb-3 w-full" />
+                    <div id="export-contacts-list" class="space-y-2 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <div class="animate-pulse space-y-2">
+                            <div class="h-10 bg-gray-50 rounded-xl w-full"></div>
+                            <div class="h-10 bg-gray-50 rounded-xl w-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pied : résultat + actions -->
+            <div class="px-6 pb-6">
+                <div id="export-result" class="hidden text-sm rounded-xl p-3 mb-4"></div>
+                <div class="flex items-center justify-between gap-4">
+                    <span id="export-selection-info" class="text-xs text-gray-400">Aucune sélection</span>
+                    <div class="flex items-center gap-2">
+                        <form method="dialog">
+                            <button class="btn btn-sm btn-ghost normal-case">Annuler</button>
+                        </form>
+                        <button type="button" id="btn-lancer-export"
+                                class="btn btn-sm bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-5 normal-case gap-2">
+                            <span class="loading loading-spinner loading-xs hidden" id="export-spinner"></span>
+                            Lancer l'export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>Fermer</button>
+        </form>
+    </dialog>
+
     <!-- Modal Suppression Liste -->
     <input type="checkbox" id="modal-suppression-liste" class="modal-toggle" />
     <div class="modal">

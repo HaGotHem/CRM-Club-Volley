@@ -17,56 +17,34 @@
         </div>
     </div>
 
-    <!-- ============ Calendrier des événements & stats par période ============ -->
+    <!-- ============ Sélecteur d'événement & statistiques ============ -->
     <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
         <div class="flex flex-col lg:flex-row gap-8">
 
-            <!-- Calendrier -->
-            <div class="lg:w-1/2">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-gray-800">Calendrier des événements</h3>
-                    <div class="flex items-center gap-1">
-                        <button type="button" id="cal-prev" class="btn btn-sm btn-circle btn-ghost" aria-label="Mois précédent">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
-                        <span id="cal-month-label" class="text-sm font-bold text-principal w-36 text-center capitalize">—</span>
-                        <button type="button" id="cal-next" class="btn btn-sm btn-circle btn-ghost" aria-label="Mois suivant">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
+            <!-- Sélecteur -->
+            <div class="lg:w-1/3">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Sélection d'événement</h3>
+                <label for="event-select" class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Événement</label>
+                <select id="event-select" class="select select-bordered rounded-xl w-full focus:outline-principal">
+                    <option value="0">Tous les événements</option>
+                    <!-- options injectées par JS -->
+                </select>
+
+                <!-- Détails de l'événement sélectionné -->
+                <div id="event-details" class="mt-6 space-y-3 text-sm">
+                    <div class="animate-pulse space-y-3">
+                        <div class="h-4 bg-gray-50 rounded w-3/4"></div>
+                        <div class="h-4 bg-gray-50 rounded w-1/2"></div>
                     </div>
                 </div>
-
-                <!-- Raccourcis de période -->
-                <div class="flex flex-wrap gap-2 mb-4">
-                    <button type="button" class="btn btn-xs rounded-full normal-case" data-preset="month">Ce mois</button>
-                    <button type="button" class="btn btn-xs rounded-full normal-case" data-preset="30d">30 derniers jours</button>
-                    <button type="button" class="btn btn-xs rounded-full normal-case" data-preset="season">Cette saison</button>
-                    <button type="button" class="btn btn-xs rounded-full normal-case" data-preset="all">Tout</button>
-                </div>
-
-                <!-- En-têtes jours -->
-                <div class="grid grid-cols-7 gap-1 mb-1 text-[10px] font-bold text-gray-400 uppercase text-center">
-                    <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
-                </div>
-                <!-- Grille jours -->
-                <div id="cal-grid" class="grid grid-cols-7 gap-1"></div>
-
-                <p class="text-xs text-gray-400 mt-3">
-                    Cliquez sur un jour pour démarrer une période, puis sur un autre jour pour la fermer.
-                    Un point <span class="inline-block w-1.5 h-1.5 rounded-full bg-secondaire align-middle"></span> signale un événement.
-                </p>
             </div>
 
-            <!-- Stats de la période -->
-            <div class="lg:w-1/2 lg:border-l lg:border-gray-100 lg:pl-8">
-                <h3 class="text-xl font-bold text-gray-800 mb-1">Statistiques de la période</h3>
-                <p id="period-range-label" class="text-sm text-gray-400 mb-5">Sélectionnez une période</p>
+            <!-- Statistiques -->
+            <div class="lg:w-2/3 lg:border-l lg:border-gray-100 lg:pl-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-1">Statistiques</h3>
+                <p id="stats-subtitle" class="text-sm text-gray-400 mb-5">—</p>
 
-                <div class="grid grid-cols-2 gap-3 mb-5">
-                    <div class="bg-gray-50 rounded-2xl p-4">
-                        <p class="text-2xl font-black text-principal" id="kpi-events">0</p>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Événements</p>
-                    </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     <div class="bg-gray-50 rounded-2xl p-4">
                         <p class="text-2xl font-black text-principal" id="kpi-tickets">0</p>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Places vendues</p>
@@ -83,15 +61,17 @@
                         <p class="text-2xl font-black text-principal" id="kpi-revenue">0 €</p>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Recette</p>
                     </div>
-                    <div class="bg-gray-50 rounded-2xl p-4">
-                        <p class="text-2xl font-black text-principal" id="kpi-new-contacts">0</p>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nouveaux contacts</p>
-                    </div>
                 </div>
 
-                <h4 class="text-sm font-bold text-gray-700 mb-2">Événements de la période</h4>
-                <div id="period-events-list" class="space-y-2 max-h-56 overflow-y-auto pr-1 custom-scrollbar">
-                    <p class="text-gray-400 text-sm py-4">Aucune période sélectionnée.</p>
+                <div class="mt-3 bg-principal/5 rounded-2xl p-4 flex items-center justify-between">
+                    <span class="text-sm font-bold text-principal uppercase tracking-wider">Billets total</span>
+                    <span class="text-2xl font-black text-principal" id="kpi-total">0</span>
+                </div>
+
+                <!-- Répartition par tarif -->
+                <div class="mt-5">
+                    <h4 class="text-sm font-bold text-gray-700 mb-2">Répartition des billets par tarif</h4>
+                    <div id="tarif-chart" class="w-full min-h-[200px]"></div>
                 </div>
             </div>
         </div>
@@ -295,5 +275,5 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
     <script type="module" src="/frontend/src/script/chart-clients-total.js" defer></script>
     <script type="module" src="/frontend/src/script/chart-places-sold.js" defer></script>
-    <script type="module" src="/frontend/src/script/stats-calendar.js" defer></script>
+    <script type="module" src="/frontend/src/script/stats-events.js" defer></script>
 {% endblock %}
