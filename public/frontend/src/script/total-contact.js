@@ -20,7 +20,10 @@ class ContactManager {
 
         this.currentPage = 1;
         this.currentLimit = 20;
-        this.currentListId = null;
+        
+        // Gestion du segment passé en URL
+        const urlParams = new URLSearchParams(window.location.search);
+        this.currentListId = urlParams.has('segment_id') ? parseInt(urlParams.get('segment_id')) : null;
         this.currentListName = 'Tous les contacts';
         
         this.init();
@@ -146,6 +149,7 @@ class ContactManager {
 
                 groups.forEach(group => {
                     const isSelected = this.currentListId === group.id;
+                    if (isSelected) this.currentListName = group.nom_segment; // Mise à jour du nom si sélectionné via URL
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = `flex items-center justify-between w-full p-3 ${isSelected ? 'bg-principal text-white shadow-md' : 'bg-gray-50'} hover:bg-principal hover:text-white rounded-2xl transition-all group text-left`;
@@ -177,6 +181,8 @@ class ContactManager {
     async loadContacts() {
         if (!this.contactsListEl) return;
 
+        if (this.contactsTitle) this.contactsTitle.textContent = this.currentListName;
+
         // Skeleton loading
         this.contactsListEl.innerHTML = `
             <div class="animate-pulse space-y-3">
@@ -185,8 +191,6 @@ class ContactManager {
                 <div class="h-16 bg-gray-50 rounded-2xl w-full"></div>
             </div>
         `;
-
-        if (this.contactsTitle) this.contactsTitle.textContent = this.currentListName;
 
         try {
             let url = `/contacts?page=${this.currentPage}&limit=${this.currentLimit}`;

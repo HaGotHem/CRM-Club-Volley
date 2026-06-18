@@ -62,21 +62,25 @@
             </div>
         </div>
 
-        <!-- Invitations -->
+        <!-- Dernier Événement / Nouveaux Visiteurs -->
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-4">
                 <div class="p-3 bg-purple-50 text-purple-600 rounded-2xl">
-                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="6" width="20" height="14" rx="2"/>
-                    <path d="M2 6 L12 2 L22 6"/>
-                    <path d="M2 6 L12 13 L22 6"/>
-        </svg>
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
                 </div>
-                <div id="trend-invitations" class="text-sm font-bold px-2 py-1 rounded-lg">--</div>
+                <div class="text-xs font-bold px-2 py-1 rounded-lg bg-purple-100 text-purple-700 truncate max-w-[120px]" id="last-event-name" title="Dernier événement">--</div>
             </div>
             <div>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Invitations</p>
-                <h3 id="invites-count" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Nouveaux spectateurs</p>
+                <div class="flex items-center justify-between gap-2">
+                    <h3 id="new-visitors-count" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                    <button id="btn-extract-new" class="btn btn-sm btn-outline btn-primary rounded-xl hidden">Extraire la liste</button>
+                </div>
             </div>
         </div>
 
@@ -215,6 +219,42 @@
         </div>
         <form method="dialog" class="modal-backdrop">
             <button disabled>close</button>
+        </form>
+    </dialog>
+
+    <!-- Modal Nouveaux Visiteurs -->
+    <dialog id="modal-new-visitors" class="modal">
+        <div class="modal-box max-w-4xl rounded-3xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">x</button>
+            </form>
+            <h3 class="text-2xl font-bold text-gray-800 mb-4">Nouveaux spectateurs</h3>
+            <p class="text-gray-500 mb-6">Ces contacts sont venus pour la première fois lors de l'événement : <span id="modal-event-name" class="font-semibold text-principal">--</span></p>
+            
+            <div class="overflow-x-auto max-h-96 mb-6 rounded-xl border border-gray-100">
+                <table class="table table-zebra w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="new-visitors-table-body">
+                        <!-- Rempli en JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-action flex justify-between items-center">
+                <p class="text-sm text-gray-400"><span id="modal-new-visitors-count">0</span> contact(s) identifié(s)</p>
+                <button id="btn-create-segment" class="btn bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-6">
+                    Créer une nouvelle liste
+                </button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
         </form>
     </dialog>
 </div>

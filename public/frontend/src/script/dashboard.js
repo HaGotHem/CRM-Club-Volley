@@ -1,6 +1,9 @@
 import { apiGet, apiPost } from './api.js';
 import { initStatsChart, initAffluenceChart } from './Charts.js';
 
+let currentLastEvent = null;
+let currentNewVisitors = [];
+
 /**
  * Met à jour le texte d'un élément par son ID
  * @param {string} id 
@@ -194,14 +197,30 @@ async function loadDashboard() {
             // On utilise des valeurs par défaut si les données sont absentes pour éviter le vide
             setText('total-contacts', Number(d.total_contacts ?? 0).toLocaleString('fr-FR'));
             setText('total-groupes',  Number(d.total_groups ?? 0).toLocaleString('fr-FR'));
-            setText('invites-count',  Number(d.invited_count ?? 0).toLocaleString('fr-FR'));
             setText('places-count',   Number(d.paid_sales ?? 0).toLocaleString('fr-FR'));
+
+            // Dernier événement et nouveaux visiteurs
+            if (d.last_event) {
+                currentLastEvent = d.last_event;
+                currentNewVisitors = d.last_event.new_visitors_list || [];
+                
+                setText('last-event-name', d.last_event.name);
+                setText('new-visitors-count', d.last_event.new_visitors_count);
+                
+                const btnExtract = document.getElementById('btn-extract-new');
+                if (btnExtract) {
+                    if (d.last_event.new_visitors_count > 0) {
+                        btnExtract.classList.remove('hidden');
+                    } else {
+                        btnExtract.classList.add('hidden');
+                    }
+                }
+            }
 
             // Tendances
             if (d.trends) {
                 setTrend('trend-contacts', d.trends.contacts);
                 setTrend('trend-groupes', d.trends.groups);
-                setTrend('trend-invitations', d.trends.invitations);
                 setTrend('trend-sales', d.trends.sales);
             }
 
@@ -394,15 +413,82 @@ async function setupSyncWeezevent() {
     });
 }
 
+/**
+ * Gère la modale des nouveaux visiteurs et la création de segment
+ */
+function setupNewVisitorsModal() {
+    const btnExtract = document.getElementById('btn-extract-new');
+    const modal = document.getElementById('modal-new-visitors');
+    const tableBody = document.getElementById('new-visitors-table-body');
+    const btnCreateSegment = document.getElementById('btn-create-segment');
+
+    if (!btnExtract || !modal) return;
+
+    btnExtract.addEventListener('click', () => {
+        if (!currentLastEvent) return;
+
+        // Remplir la modale
+        setText('modal-event-name', currentLastEvent.name);
+        setText('modal-new-visitors-count', currentLastEvent.new_visitors_count);
+
+        if (tableBody) {
+            tableBody.innerHTML = currentNewVisitors.map(v => `
+                <tr>
+                    <td class="font-medium">${v.nom || ''}</td>
+                    <td>${v.prenom || ''}</td>
+                    <td class="text-gray-500">${v.email}</td>
+                </tr>
+            `).join('');
+        }
+
+        modal.showModal();
+    });
+
+    if (btnCreateSegment) {
+        btnCreateSegment.addEventListener('click', async () => {
+            if (!currentLastEvent || currentNewVisitors.length === 0) return;
+
+            const segmentName = `Nouveaux spectateurs ${currentLastEvent.name}`;
+            const contactIds = currentNewVisitors.map(v => v.idcontact);
+
+            btnCreateSegment.disabled = true;
+            btnCreateSegment.innerHTML = '<span class="loading loading-spinner"></span> Création...';
+
+            try {
+                const res = await apiPost('/segments/create-from-visitors', {
+                    name: segmentName,
+                    contact_ids: contactIds
+                });
+
+                if (res.success) {
+                    // Redirection vers Fiche Contact avec focus sur la liste
+                    // On suppose que la page contacts accepte un paramètre segment_id ou similaire
+                    window.location.href = `/contacts?segment_id=${res.segment_id}`;
+                } else {
+                    alert('Erreur lors de la création du segment : ' + (res.error || 'Erreur inconnue'));
+                }
+            } catch (err) {
+                console.error('Erreur création segment:', err);
+                alert('Erreur réseau lors de la création du segment');
+            } finally {
+                btnCreateSegment.disabled = false;
+                btnCreateSegment.textContent = 'Créer une nouvelle liste';
+            }
+        });
+    }
+}
+
 // Initialisation au chargement du DOM
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         loadDashboard();
         setupSync();
         setupSyncWeezevent();
+        setupNewVisitorsModal();
     });
 } else {
     loadDashboard();
     setupSync();
     setupSyncWeezevent();
+    setupNewVisitorsModal();
 }
