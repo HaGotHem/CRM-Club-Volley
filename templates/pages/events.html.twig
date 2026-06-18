@@ -37,10 +37,15 @@
         <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 min-h-[200px]">
             <div class="flex items-center justify-between mb-8">
                 <h2 class="text-xl font-bold text-gray-800">Saisons passées</h2>
-                <span class="badge badge-ghost opacity-50" id="past-count">0 événements</span>
+                <div id="seasons-tabs" class="tabs tabs-boxed bg-gray-50 p-1">
+                    <!-- Les onglets de saisons seront générés ici -->
+                    <span class="p-2 text-xs text-gray-400">Chargement des saisons...</span>
+                </div>
             </div>
-            <div id="events-list-past" class="space-y-4 text-gray-400 italic text-center p-8">
-                Chargement...
+            <div id="events-list-past" class="space-y-4">
+                <div class="p-8 text-center text-gray-400 italic">
+                    Sélectionnez une saison pour afficher les événements.
+                </div>
             </div>
         </div>
     </div>

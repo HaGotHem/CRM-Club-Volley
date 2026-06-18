@@ -1,31 +1,74 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const eventsListCurrent = document.getElementById('events-list-current');
     const eventsListPast = document.getElementById('events-list-past');
+    const seasonsTabs = document.getElementById('seasons-tabs');
     const currentCount = document.getElementById('current-count');
-    const pastCount = document.getElementById('past-count');
 
     // Chargement initial
-    await loadEvents();
+    await loadInitialData();
 
-    async function loadEvents() {
+    async function loadInitialData() {
         try {
             const response = await fetch('/api/events');
             const result = await response.json();
 
             if (result.success) {
                 renderSection(eventsListCurrent, result.data.current);
-                renderSection(eventsListPast, result.data.past);
-                
                 currentCount.textContent = `${result.data.current.length} événements`;
-                pastCount.textContent = `${result.data.past.length} événements`;
+                
+                renderSeasonTabs(result.data.past_seasons);
             } else {
                 const errorHtml = `<div class="p-8 text-center text-red-500 bg-red-50 rounded-2xl border border-red-100">${result.error}</div>`;
                 eventsListCurrent.innerHTML = errorHtml;
-                eventsListPast.innerHTML = '';
             }
         } catch (error) {
             console.error('Erreur:', error);
             eventsListCurrent.innerHTML = '<div class="p-8 text-center text-red-500 bg-red-50 rounded-2xl border border-red-100">Erreur lors de la récupération des événements.</div>';
+        }
+    }
+
+    function renderSeasonTabs(seasons) {
+        if (!seasons || seasons.length === 0) {
+            seasonsTabs.innerHTML = '<span class="p-2 text-xs text-gray-400">Aucune saison passée.</span>';
+            return;
+        }
+
+        seasonsTabs.innerHTML = seasons.map(season => `
+            <button class="tab tab-sm md:tab-md rounded-lg season-tab" data-season="${season}">${season}</button>
+        `).join('');
+
+        seasonsTabs.querySelectorAll('.season-tab').forEach(tab => {
+            tab.addEventListener('click', async (e) => {
+                // UI: Active tab
+                seasonsTabs.querySelectorAll('.season-tab').forEach(t => t.classList.remove('tab-active', 'bg-principal', 'text-white'));
+                e.currentTarget.classList.add('tab-active', 'bg-principal', 'text-white');
+
+                const season = e.currentTarget.getAttribute('data-season');
+                await loadSeasonEvents(season);
+            });
+        });
+    }
+
+    async function loadSeasonEvents(season) {
+        eventsListPast.innerHTML = `
+            <div class="animate-pulse space-y-4">
+                <div class="h-24 bg-gray-50 rounded-2xl w-full"></div>
+                <div class="h-24 bg-gray-50 rounded-2xl w-full"></div>
+            </div>
+        `;
+
+        try {
+            const response = await fetch(`/api/events?season=${encodeURIComponent(season)}`);
+            const result = await response.json();
+
+            if (result.success) {
+                renderSection(eventsListPast, result.data);
+            } else {
+                eventsListPast.innerHTML = `<div class="p-8 text-center text-red-500">${result.error}</div>`;
+            }
+        } catch (error) {
+            console.error('Erreur:', error);
+            eventsListPast.innerHTML = '<div class="p-8 text-center text-red-500">Erreur lors du chargement de la saison.</div>';
         }
     }
 
@@ -36,8 +79,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         container.innerHTML = events.map(event => {
-            const dateObj = new Date(event.date);
-            const formattedDate = dateObj.toLocaleDateString('fr-FR', {
+            // Weezevent renvoie parfois la date avec un fuseau horaire ou un format que le constructeur Date 
+            // peut mal interpréter selon le navigateur. On nettoie si besoin.
+            // Ex: "2026-06-18 21:37:00"
+            const dateStr = event.date.replace(' ', 'T');
+            const dateObj = new Date(dateStr);
+            
+            const formattedDate = isNaN(dateObj.getTime()) ? event.date : dateObj.toLocaleDateString('fr-FR', {
                 weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
             });
@@ -65,6 +113,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${event.in_db ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}">
                                     ${event.in_db ? 'Synchronisé' : 'Disponible sur Weezevent'}
                                 </span>
+                                ${event.sales_status && event.sales_status.libelle_status ? `
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-blue-100 text-blue-700">
+                                        ${event.sales_status.libelle_status}
+                                    </span>
+                                ` : ''}
                                 ${event.archived_weezevent ? '<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-gray-100 text-gray-600">Archivé Weezevent</span>' : ''}
                             </div>
                         </div>
@@ -122,7 +175,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('modal-success-import').checked = true;
                 
                 // Recharger la liste
-                await loadEvents();
+                if (button.closest('#events-list-current')) {
+                    await loadInitialData();
+                } else {
+                    const activeTab = seasonsTabs.querySelector('.tab-active');
+                    if (activeTab) {
+                        const season = activeTab.getAttribute('data-season');
+                        await loadSeasonEvents(season);
+                    }
+                    // On rafraîchit aussi le haut au cas où
+                    await loadInitialData();
+                }
             } else {
                 alert(`Erreur d'import : ${result.error}`);
             }
