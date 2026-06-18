@@ -19,7 +19,11 @@ RUN composer install --no-interaction --optimize-autoloader
 
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
+RUN rm /etc/nginx/sites-enabled/default
+
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
+
+CMD nginx && php-fpm
 
