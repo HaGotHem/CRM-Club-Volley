@@ -10,7 +10,7 @@ DB_NAME="appdb"
 mkdir -p $BACKUP_DIR
 mkdir -p ./logs
 
-echo "[$DATE] Début sauvegarde PostgreSQL..." >> $LOGFILE
+echo "[$DATE] D??but sauvegarde PostgreSQL..." >> $LOGFILE
 
 docker exec $CONTAINER pg_dump -U $DB_USER $DB_NAME > $BACKUP_DIR/backup_$DATE.sql
 
@@ -26,7 +26,7 @@ find $BACKUP_DIR -type f -mtime +7 -delete
 ###############################################
 
 
-# 2ème version (avec option supplémentaire)
+# 2??me version (avec option suppl??mentaire)
 
 BACKUP_DIR="/var/backups/mon_app"
 DEFAULT_INCLUDE="/etc /var/www /var/lib/mon_app"
@@ -41,11 +41,11 @@ log() {
 }
 
 echo "=== SAUVEGARDE ==="
-echo "1) Complète"
-echo "2) Incrémentale"
+echo "1) Compl??te"
+echo "2) Incr??mentale"
 read -r -p "Choix : " TYPE
 
-read -r -p "Dossiers à sauvegarder (défaut : $DEFAULT_INCLUDE) : " INC
+read -r -p "Dossiers ?? sauvegarder (d??faut : $DEFAULT_INCLUDE) : " INC
 INC=${INC:-$DEFAULT_INCLUDE}
 
 DATE=$(date '+%Y%m%d-%H%M%S')
@@ -88,5 +88,5 @@ META="$BACKUP_DIR/$NAME.meta"
   echo "encrypted=$ENC"
 } > "$META"
 
-log "Sauvegarde terminée : $NAME"
-echo "Backup créé : $NAME"
+log "Sauvegarde termin??e : $NAME"
+echo "Backup cr???? : $NAME"

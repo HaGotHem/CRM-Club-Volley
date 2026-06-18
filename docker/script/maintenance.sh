@@ -8,4 +8,4 @@ find ./logs -type f -mtime +14 -delete
 echo "Nettoyage backups..."
 find ./backups -type f -mtime +14 -delete
 
-echo "Maintenance terminée."
+echo "Maintenance termin??e."

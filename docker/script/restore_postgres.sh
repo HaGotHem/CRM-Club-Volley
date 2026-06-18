@@ -16,7 +16,7 @@ docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME < $FILE
 
 #########################################################
 
-# 2ème version (option de restauration complète ou partielle)
+# 2??me version (option de restauration compl??te ou partielle)
 BACKUP_DIR="/var/backups/mon_app"
 LOG_FILE="/var/log/restore.log"
 
@@ -47,19 +47,19 @@ if [[ "$encrypted" =~ ^[oOyY]$ ]]; then
   FILE="$TMP"
 fi
 
-echo "1) Restauration complète"
+echo "1) Restauration compl??te"
 echo "2) Restauration partielle"
 read -r -p "Choix : " MODE
 
-read -r -p "Dossier cible (défaut /) : " TARGET
+read -r -p "Dossier cible (d??faut /) : " TARGET
 TARGET=${TARGET:-/}
 
 if [ "$MODE" = "1" ]; then
   tar -xpz -f "$FILE" -C "$TARGET"
-  log "Restauration complète effectuée"
-  echo "Restauration complète OK"
+  log "Restauration compl??te effectu??e"
+  echo "Restauration compl??te OK"
 else
-  read -r -p "Chemin à restaurer (ex: etc/mon_app) : " PATH
+  read -r -p "Chemin ?? restaurer (ex: etc/mon_app) : " PATH
   tar -xpz -f "$FILE" -C "$TARGET" "$PATH"
   log "Restauration partielle : $PATH"
   echo "Restauration partielle OK"
