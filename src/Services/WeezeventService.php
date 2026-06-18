@@ -132,7 +132,7 @@ final class WeezeventService
     }
 
     /**
-     * Formatte un billet à partir d'un participant.
+     * Formatte un billet à partir d'un participant.  
      */
     public function formatTicketFromParticipant(array $participant): array
     {
