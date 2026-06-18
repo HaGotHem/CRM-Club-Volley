@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Weezevent</title>
+    <!-- Tailwind CSS & DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .event-card:hover {
+            transform: translateY(-2px);
+            transition: all 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-base-200 min-h-screen">
+    <div class="container mx-auto p-4 max-w-5xl">
+        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-sm">
+            <div>
+                <h1 class="text-3xl font-bold text-primary">Weezevent Manager</h1>
+                <p class="text-base-content/70">Visualisez vos événements et leurs performances</p>
+            </div>
+            <button id="fetchBtn" class="btn btn-primary">
+                <span id="btnText">Charger les événements</span>
+                <span id="btnLoader" class="loading loading-spinner hidden"></span>
+            </button>
+        </header>
+
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Les événements s'afficheront ici -->
+            <div class="col-span-full text-center py-20 opacity-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                <p class="text-xl">Cliquez sur le bouton pour commencer</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour les détails de l'événement -->
+    <input type="checkbox" id="event_modal" class="modal-toggle" />
+    <div class="modal" role="dialog">
+        <div class="modal-box w-11/12 max-w-3xl">
+            <h3 id="modalEventName" class="font-bold text-2xl mb-4">Détails de l'événement</h3>
+            
+            <div id="modalContent" class="py-4">
+                <div class="flex flex-col gap-4">
+                    <!-- Stats rapides -->
+                    <div class="stats shadow w-full">
+                        <div class="stat">
+                            <div class="stat-title">Billets Vendus</div>
+                            <div id="statSold" class="stat-value text-primary">-</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-title">Recette Totale</div>
+                            <div id="statRevenue" class="stat-value text-secondary">-</div>
+                        </div>
+                    </div>
+
+                    <div class="divider">Informations détaillées</div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-base-100 p-4 rounded-lg border">
+                            <h4 class="font-semibold mb-2 text-sm uppercase opacity-60">Période</h4>
+                            <p id="modalDate">Chargement...</p>
+                        </div>
+                        <div class="bg-base-100 p-4 rounded-lg border">
+                            <h4 class="font-semibold mb-2 text-sm uppercase opacity-60">Statut de vente</h4>
+                            <p id="modalStatus">Chargement...</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-base-100 p-4 rounded-lg border">
+                        <h4 class="font-semibold mb-2 text-sm uppercase opacity-60 text-center">Catégories de billets</h4>
+                        <div id="ticketCategories" class="overflow-x-auto">
+                            <table class="table table-zebra w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Prix</th>
+                                        <th>Vendus</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ticketsBody">
+                                    <tr><td colspan="3" class="text-center">Chargement...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-action flex justify-between">
+                <button id="viewTicketsBtn" class="btn btn-outline btn-accent">
+                    Voir le listing des billets
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </button>
+                <label for="event_modal" class="btn">Fermer</label>
+            </div>
+        </div>
+        <label class="modal-backdrop" for="event_modal">Close</label>
+    </div>
+
+    <!-- Modal pour le listing des participants -->
+    <input type="checkbox" id="participants_modal" class="modal-toggle" />
+    <div class="modal" role="dialog">
+        <div class="modal-box w-11/12 max-w-5xl h-5/6 flex flex-col">
+            <h3 id="modalParticipantsTitle" class="font-bold text-2xl mb-4">Listing des billets</h3>
+            
+            <div class="overflow-auto flex-grow bg-base-100 rounded-lg border">
+                <table class="table table-xs table-pin-rows table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Billet</th>
+                            <th>Date achat</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participantsBody">
+                        <tr><td colspan="6" class="text-center">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-action">
+                <label for="participants_modal" class="btn">Retour</label>
+            </div>
+        </div>
+        <label class="modal-backdrop" for="participants_modal">Close</label>
+    </div>
+
+    <script>
+        const API_KEY = '7febe7458a941cf384bd968ee7964a1c';
+        const USERNAME = 'aymeric.muller@mediaschool.me';
+        const PASSWORD = 'Mediaschool2026@';
+        const BASE_URL = 'https://api.weezevent.com';
+
+        let accessToken = null;
+
+        const fetchBtn = document.getElementById('fetchBtn');
+        const resultsDiv = document.getElementById('results');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+
+        async function getAccessToken() {
+            if (accessToken) return accessToken;
+
+            const response = await fetch(`${BASE_URL}/auth/access_token`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+                },
+                body: new URLSearchParams({
+                    username: USERNAME,
+                    password: PASSWORD,
+                    api_key: API_KEY
+                })
+            });
+
+            if (!response.ok) throw new Error(`Erreur d'authentification: ${response.status}`);
+            const data = await response.json();
+            accessToken = data.accessToken;
+            return accessToken;
+        }
+
+        fetchBtn.addEventListener('click', async () => {
+            setLoading(true);
+            try {
+                const token = await getAccessToken();
+                // On tente de récupérer plus d'événements si possible. 
+                // La doc mentionne que par défaut seuls les publiés sont là.
+                // On peut essayer de forcer certains paramètres si on les connaissait, 
+                // mais ici on va déjà s'assurer de bien afficher ce qu'on reçoit.
+                const response = await fetch(`${BASE_URL}/events?access_token=${token}&api_key=${API_KEY}`);
+                
+                if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+                
+                const data = await response.json();
+                displayEvents(data.events || data);
+            } catch (error) {
+                console.error(error);
+                resultsDiv.innerHTML = `<div class="alert alert-error col-span-full">${error.message}</div>`;
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            fetchBtn.disabled = isLoading;
+            if (isLoading) {
+                btnText.textContent = 'Chargement...';
+                btnLoader.classList.remove('hidden');
+            } else {
+                btnText.textContent = 'Charger les événements';
+                btnLoader.classList.add('hidden');
+            }
+        }
+
+        function displayEvents(events) {
+            const eventList = Array.isArray(events) ? events : (events.events || []);
+            
+            if (eventList.length === 0) {
+                resultsDiv.innerHTML = '<div class="alert alert-info col-span-full">Aucun événement trouvé.</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = '';
+            eventList.forEach(event => {
+                const startDate = event.date?.start ? new Date(event.date.start).toLocaleDateString('fr-FR') : 'N/A';
+                const card = document.createElement('div');
+                card.className = 'card bg-white shadow-xl event-card cursor-pointer border border-transparent hover:border-primary';
+                card.innerHTML = `
+                    <div class="card-body">
+                        <div class="flex justify-between items-start">
+                            <h2 class="card-title text-lg font-bold">${event.name}</h2>
+
+                        </div>
+                        <p class="text-sm opacity-70">
+                            <span class="font-semibold">Date :</span> ${startDate}<br>
+                            <span class="font-semibold">Participants :</span> ${event.participants || 0}
+                        </p>
+                        <div class="card-actions justify-end mt-4">
+                            <button class="btn btn-sm btn-ghost text-primary">Détails →</button>
+                        </div>
+                    </div>
+                `;
+                card.onclick = () => openEventDetails(event);
+                resultsDiv.appendChild(card);
+            });
+        }
+
+        async function openEventDetails(event) {
+            // Afficher la modale et reset le contenu
+            document.getElementById('event_modal').checked = true;
+            document.getElementById('modalEventName').textContent = event.name;
+            document.getElementById('statSold').textContent = event.participants || 0;
+            document.getElementById('statRevenue').textContent = 'Calcul...';
+            document.getElementById('modalDate').textContent = `${event.date?.start || 'N/A'} - ${event.date?.end || 'N/A'}`;
+            document.getElementById('modalStatus').textContent = event.sales_status?.libelle_status || event.status || 'N/A';
+            document.getElementById('ticketsBody').innerHTML = '<tr><td colspan="3" class="text-center"><span class="loading loading-dots loading-md"></span></td></tr>';
+            
+            document.getElementById('viewTicketsBtn').onclick = () => fetchParticipants(event.id, event.name);
+
+            try {
+                const token = await getAccessToken();
+                // Récupérer les tickets pour calculer la recette
+                const tResponse = await fetch(`${BASE_URL}/tickets?access_token=${token}&api_key=${API_KEY}&id_event=${event.id}`);
+                if (!tResponse.ok) throw new Error("Impossible de charger les billets");
+                
+                const tData = await tResponse.json();
+                
+                // La structure peut avoir les tickets directement dans events[0].tickets
+                // ou dans une structure avec catégories.
+                let totalRevenue = 0;
+                let ticketsHtml = '';
+
+                // Fonction récursive pour extraire tous les tickets des catégories
+                function extractTickets(data) {
+                    let allTickets = [];
+                    if (data.tickets) allTickets = allTickets.concat(data.tickets);
+                    if (data.categories) {
+                        data.categories.forEach(cat => {
+                            allTickets = allTickets.concat(extractTickets(cat));
+                        });
+                    }
+                    return allTickets;
+                }
+
+                const eventData = tData.events && tData.events[0] ? tData.events[0] : tData;
+                const allTickets = extractTickets(eventData);
+
+                if (allTickets.length === 0) {
+                    ticketsHtml = '<tr><td colspan="3" class="text-center">Aucune catégorie de billet trouvée</td></tr>';
+                } else {
+                    allTickets.forEach(t => {
+                        const price = parseFloat(t.price) || 0;
+                        const sold = parseInt(t.participants) || 0;
+                        totalRevenue += (price * sold);
+                        
+                        ticketsHtml += `
+                            <tr>
+                                <td>${t.name}</td>
+                                <td>${price.toFixed(2)} €</td>
+                                <td>${sold}</td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                document.getElementById('ticketsBody').innerHTML = ticketsHtml;
+                document.getElementById('statRevenue').textContent = `${totalRevenue.toLocaleString('fr-FR')} €`;
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('ticketsBody').innerHTML = `<tr><td colspan="3" class="text-center text-error">Erreur : ${error.message}</td></tr>`;
+                document.getElementById('statRevenue').textContent = 'Erreur';
+            }
+        }
+
+        async function fetchParticipants(eventId, eventName) {
+            console.log('Fetching participants for event:', eventId);
+            document.getElementById('participants_modal').checked = true;
+            document.getElementById('modalParticipantsTitle').textContent = `Billets : ${eventName}`;
+            document.getElementById('participantsBody').innerHTML = '<tr><td colspan="6" class="text-center"><span class="loading loading-dots loading-lg"></span></td></tr>';
+
+            try {
+                const token = await getAccessToken();
+                // Test avec id_event[] car l'API Weezevent accepte souvent des tableaux pour les IDs
+                const url = `${BASE_URL}/participant/list?access_token=${token}&api_key=${API_KEY}&id_event[]=${eventId}`;
+                console.log('Fetch URL:', url);
+                const response = await fetch(url);
+                
+                if (!response.ok) throw new Error(`Erreur API: ${response.status}`);
+                
+                const data = await response.json();
+                console.log('Participants Data:', data);
+
+                if (data.error) {
+                    throw new Error(data.error.message || "Erreur API");
+                }
+
+                // On gère le cas où les participants seraient dans data.participants ou directement dans data
+                const participants = data.participants || (Array.isArray(data) ? data : []);
+
+                if (participants.length === 0) {
+                    document.getElementById('participantsBody').innerHTML = '<tr><td colspan="6" class="text-center">Aucun billet trouvé pour cet événement.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                participants.forEach(p => {
+                    const buyDate = p.create_date ? new Date(p.create_date).toLocaleDateString('fr-FR') : 'N/A';
+                    // Gestion de la structure imbriquée potentielle
+                    const owner = p.owner || p; 
+                    const ticket = p.ticket || {};
+                    
+                    html += `
+                        <tr>
+                            <td>${owner.last_name || owner.nom || '-'}</td>
+                            <td>${owner.first_name || owner.prenom || '-'}</td>
+                            <td>${owner.email || '-'}</td>
+                            <td><span class="badge badge-ghost badge-sm">${ticket.name || ticket.libelle || 'N/A'}</span></td>
+                            <td>${buyDate}</td>
+                            <td><div class="badge ${p.deleted ? 'badge-error' : 'badge-success'} badge-outline text-[10px]">${p.deleted ? 'Annulé' : 'Valide'}</div></td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('participantsBody').innerHTML = html;
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('participantsBody').innerHTML = `<tr><td colspan="6" class="text-center text-error">Erreur : ${error.message}</td></tr>`;
+            }
+        }
+    </script>
+</body>
+</html>

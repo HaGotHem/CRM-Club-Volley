@@ -109,7 +109,8 @@ final class ContactRepository
                 SET nom = EXCLUDED.nom, 
                     prenom = EXCLUDED.prenom, 
                     phone = EXCLUDED.phone,
-                    consentement_marketing = EXCLUDED.consentement_marketing";
+                    consentement_marketing = EXCLUDED.consentement_marketing,
+                    updated_at             = NOW()";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -118,7 +119,7 @@ final class ContactRepository
             'email'        => $contact->getEmail(),
             'phone'        => $contact->getPhone(),
             'source'       => $contact->getSource(),
-            'consentement' => $contact->isConsentementMarketing() ? 'true' : 'false'
+            'consentement' => $contact->isConsentementMarketing() ? 1 : 0
         ]);
     }
 }
