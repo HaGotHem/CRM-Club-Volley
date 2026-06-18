@@ -15,15 +15,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 
 # Installer les dépendances PHP
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN composer install --no-interaction --optimize-autoloader
 
 COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Donner les bons droits
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod +x /var/www/html/docker/script/entrypoint.sh
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-# Utiliser le script d'entrée pour l'initialisation
-ENTRYPOINT ["/var/www/html/docker/script/entrypoint.sh"]

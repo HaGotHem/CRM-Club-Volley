@@ -80,6 +80,8 @@ Les prochaines étapes consisteront à mixer notre base locale avec les données
 
 ## 📜 Commandes Utiles
 
-- **Installer des dépendances** : `docker compose exec php composer install`
-- **Mettre à jour l'autoloader** : `docker compose exec php composer dump-autoload`
+- **Installer des dépendances** : `docker compose exec web-app composer install`
+- **Mettre à jour l'autoloader** : `docker compose exec web-app composer dump-autoload`
 - **Logs en temps réel** : `docker compose logs -f`
+- **Accès à l'application** : `http://localhost`
+- **Accès à Adminer (gestion BDD)** : `http://localhost:8081`
