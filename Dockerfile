@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev \
     postgresql-client \
-    && docker-php-ext-install pdo pdo_pgsql
+    && docker-php-ext-install pdo pdo_pgsql opcache
+
+# Activer et configurer OPcache (accélère fortement le bootstrap PHP)
+COPY ./docker/php/opcache.ini /usr/local/etc/php/conf.d/zz-opcache.ini
 
 # Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

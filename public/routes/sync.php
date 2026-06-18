@@ -36,14 +36,13 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
                     'consentement_marketing' => false
                 ]);
 
-                $existing = $repository->findByEmail($contact->getEmail());
-                if ($existing === null) {
+                // Upsert + détection création/maj en UNE seule requête
+                // (suppression du findByEmail exécuté pour chaque participant).
+                if ($repository->upsertWithStatus($contact)) {
                     $created++;
                 } else {
                     $updated++;
                 }
-                
-                $repository->save($contact);
             } catch (\Exception $e) {
                 $errors++;
             }
@@ -154,15 +153,13 @@ $app->post('/api/sync/brevo/import', function (Request $request, Response $respo
                         'consentement_marketing' => true
                     ]);
 
-                    $existing = $repository->findByEmail($email);
-
-                    if ($existing === null) {
+                    // Upsert + détection création/maj en UNE seule requête
+                    // (suppression du findByEmail exécuté pour chaque contact).
+                    if ($repository->upsertWithStatus($contact)) {
                         $created++;
                     } else {
                         $updated++;
                     }
-                    
-                    $repository->save($contact);
 
                 } catch (\Exception $e) {
                     $errors++;

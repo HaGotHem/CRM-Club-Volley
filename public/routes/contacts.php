@@ -108,10 +108,9 @@ $app->post('/api/contacts', function (Request $request, Response $response) {
             'consentement_marketing' => false
         ]);
 
-        $repository->save($contact);
-        
-        // On récupère l'objet fraîchement créé (ou mis à jour via le ON CONFLICT)
-        $contact = $repository->findByEmail($data['email']);
+        // save() renvoie directement la ligne créée (RETURNING *) : plus besoin
+        // d'un SELECT supplémentaire pour relire le contact.
+        $contact = $repository->save($contact);
 
         return jsonResponse($response, [
             'success' => true,

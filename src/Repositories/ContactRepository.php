@@ -99,26 +99,66 @@ final class ContactRepository
     }
 
     /**
-     * Crée un nouveau contact.
+     * Crée ou met à jour un contact et renvoie l'enregistrement résultant.
+     *
+     * Le `RETURNING *` évite un second aller-retour (SELECT) pour relire la
+     * ligne fraîchement insérée/mise à jour.
      */
-    public function save(Contact $contact): bool
+    public function save(Contact $contact): ?Contact
     {
-        $sql = "INSERT INTO contact (nom, prenom, email, phone, source, consentement_marketing) 
+        $sql = "INSERT INTO contact (nom, prenom, email, phone, source, consentement_marketing)
                 VALUES (:nom, :prenom, :email, :phone, :source, :consentement)
-                ON CONFLICT (email) DO UPDATE 
-                SET nom = EXCLUDED.nom, 
-                    prenom = EXCLUDED.prenom, 
+                ON CONFLICT (email) DO UPDATE
+                SET nom = EXCLUDED.nom,
+                    prenom = EXCLUDED.prenom,
                     phone = EXCLUDED.phone,
-                    consentement_marketing = EXCLUDED.consentement_marketing";
+                    consentement_marketing = EXCLUDED.consentement_marketing
+                RETURNING *";
 
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $stmt->execute($this->toParams($contact));
+        $data = $stmt->fetch();
+
+        return $data ? Contact::fromArray($data) : null;
+    }
+
+    /**
+     * Upsert optimisé pour les imports en masse (Weezevent / Brevo).
+     *
+     * Réalise l'insertion/mise à jour en UNE seule requête et indique si la
+     * ligne a été créée (true) ou mise à jour (false), grâce au pseudo-attribut
+     * `xmax` de PostgreSQL (= 0 lors d'un INSERT pur). Évite le SELECT
+     * `findByEmail()` qui était exécuté pour chaque contact (suppression du N+1).
+     */
+    public function upsertWithStatus(Contact $contact): bool
+    {
+        $sql = "INSERT INTO contact (nom, prenom, email, phone, source, consentement_marketing)
+                VALUES (:nom, :prenom, :email, :phone, :source, :consentement)
+                ON CONFLICT (email) DO UPDATE
+                SET nom = EXCLUDED.nom,
+                    prenom = EXCLUDED.prenom,
+                    phone = EXCLUDED.phone,
+                    consentement_marketing = EXCLUDED.consentement_marketing
+                RETURNING (xmax = 0)::int AS inserted";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($this->toParams($contact));
+
+        return (int) $stmt->fetchColumn() === 1;
+    }
+
+    /**
+     * Paramètres communs aux requêtes d'écriture d'un contact.
+     */
+    private function toParams(Contact $contact): array
+    {
+        return [
             'nom'          => $contact->getNom(),
             'prenom'       => $contact->getPrenom(),
             'email'        => $contact->getEmail(),
             'phone'        => $contact->getPhone(),
             'source'       => $contact->getSource(),
             'consentement' => $contact->isConsentementMarketing() ? 'true' : 'false'
-        ]);
+        ];
     }
 }

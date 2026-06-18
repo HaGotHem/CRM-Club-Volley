@@ -1,0 +1,5 @@
+# Force les fins de ligne LF pour les scripts shell exécutés dans les conteneurs
+# Linux. Sans cela, un checkout Windows (CRLF) casse le shebang de
+# docker/script/entrypoint.sh ("exec ...: no such file or directory").
+*.sh text eol=lf
+docker/script/* text eol=lf

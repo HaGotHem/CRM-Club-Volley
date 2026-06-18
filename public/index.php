@@ -33,8 +33,18 @@ $dotenv->safeLoad();
 // Création de l'application Slim
 $app = AppFactory::create();
 
-// Configuration de Twig
-$twig = Twig::create(__DIR__ . '/../templates', ['cache' => false]);
+// Détection de l'environnement (production par défaut)
+$isDev = ($_ENV['APP_ENV'] ?? 'production') !== 'production';
+
+// Configuration de Twig — cache de compilation activé.
+// Les templates ne sont compilés en PHP qu'une seule fois (puis réutilisés),
+// au lieu d'être recompilés à chaque requête. Le cache est écrit dans le
+// système de fichiers local du conteneur (rapide) plutôt que sur le bind-mount.
+// auto_reload=true => les modifications de templates restent prises en compte.
+$twig = Twig::create(__DIR__ . '/../templates', [
+    'cache'       => sys_get_temp_dir() . '/nvb_twig_cache',
+    'auto_reload' => true,
+]);
 $app->add(TwigMiddleware::create($app, $twig));
 
 // Ajout des variables de session aux variables Twig
@@ -55,8 +65,8 @@ if (session_status() === PHP_SESSION_NONE) {
 // Middleware JSON
 $app->addBodyParsingMiddleware();
 
-// Middleware erreurs
-$app->addErrorMiddleware(true, true, true);
+// Middleware erreurs — détails affichés uniquement hors production
+$app->addErrorMiddleware($isDev, true, true);
 
 // Middleware CORS
 $app->add(function ($request, $handler) {

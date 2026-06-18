@@ -73,7 +73,8 @@ CREATE TABLE contact (
     PRIMARY KEY (idContact)
 );
 
-CREATE INDEX idx_contact_email ON contact(email);
+-- NB : pas d'index dédié sur email -> la contrainte UNIQUE crée déjà
+-- automatiquement un index utilisé par findByEmail() et par ON CONFLICT (email).
 CREATE INDEX idx_contact_source ON contact(source);
 CREATE INDEX idx_contact_date_creation ON contact(date_creation);
 
@@ -184,6 +185,11 @@ CREATE TABLE contact_segment (
     FOREIGN KEY (idSegment)  REFERENCES segment(idSegment)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- La PK (idContact, idSegment) n'indexe pas efficacement les recherches
+-- par idSegment seul. Cet index accélère findBySegmentId() (liste des contacts
+-- d'un segment) et la synchro Brevo segmentée.
+CREATE INDEX idx_contact_segment_segment ON contact_segment(idSegment);
 
 -- Contact_Billet : Un contact peut avoir acheté plusieurs billets
 CREATE TABLE contact_billet (
