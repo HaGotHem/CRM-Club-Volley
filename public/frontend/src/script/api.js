@@ -24,3 +24,14 @@ export async function apiPost(path, payload) {
     }
     return data;
 }
+
+export async function apiDelete(path) {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+        method: "DELETE"
+    });
+    const data = await response.json();
+    if (!response.ok || data.success === false) {
+        throw new Error(data.error || "Erreur API");
+    }
+    return data;
+}

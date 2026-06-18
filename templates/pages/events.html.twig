@@ -1,0 +1,72 @@
+{% extends "layouts/base.html.twig" %}
+
+{% block title %}Événements - Nice Volley Ball{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">Gestion des Événements</h1>
+            <p class="text-gray-500">Visualisez et synchronisez vos matchs depuis Weezevent.</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <div id="sync-status" class="text-xs px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400 shadow-sm flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full" id="status-dot"></span>
+                <span>Connecté à Weezevent</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des Événements -->
+    <div class="space-y-8">
+        <!-- Saison en cours -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 min-h-[200px]">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-bold text-gray-800">Saison en cours</h2>
+                <span class="badge badge-ghost opacity-50" id="current-count">0 événements</span>
+            </div>
+            <div id="events-list-current" class="space-y-4">
+                <div class="animate-pulse space-y-4">
+                    <div class="h-24 bg-gray-50 rounded-2xl w-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Saisons passées -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 min-h-[200px]">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-bold text-gray-800">Saisons passées</h2>
+                <span class="badge badge-ghost opacity-50" id="past-count">0 événements</span>
+            </div>
+            <div id="events-list-past" class="space-y-4 text-gray-400 italic text-center p-8">
+                Chargement...
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Succès Import -->
+<input type="checkbox" id="modal-success-import" class="modal-toggle" />
+<div class="modal">
+    <div class="modal-box bg-white rounded-3xl p-8 relative flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+            </svg>
+        </div>
+        <h3 class="font-bold text-2xl text-gray-800 mb-2">Import réussi !</h3>
+        <p class="text-gray-600 mb-8" id="import-details">
+            L'événement et ses participants ont été importés.
+        </p>
+        <div class="modal-action w-full">
+            <label for="modal-success-import" class="btn bg-principal hover:bg-principal/90 text-white border-none rounded-2xl w-full normal-case">Fermer</label>
+        </div>
+    </div>
+    <label class="modal-backdrop" for="modal-success-import">Fermer</label>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/frontend/src/script/events.js" defer></script>
+{% endblock %}

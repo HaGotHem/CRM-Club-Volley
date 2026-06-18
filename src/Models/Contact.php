@@ -125,14 +125,17 @@ class Contact
      */
     public static function fromArray(array $data): self
     {
+        // PostgreSQL peut retourner les clés en minuscules
+        $data = array_change_key_case($data, CASE_LOWER);
+
         return new self(
             $data['idcontact'] ?? null,
-            $data['nom'],
-            $data['prenom'],
-            $data['email'],
+            $data['nom'] ?? '',
+            $data['prenom'] ?? '',
+            $data['email'] ?? '',
             $data['phone'] ?? null,
             $data['source'] ?? 'manual',
-            new DateTimeImmutable($data['date_creation']),
+            new DateTimeImmutable($data['date_creation'] ?? 'now'),
             isset($data['date_derniere_maj']) ? new DateTimeImmutable($data['date_derniere_maj']) : null,
             (bool)($data['consentement_marketing'] ?? false)
         );

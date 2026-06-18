@@ -94,12 +94,13 @@ class Administrateur
      */
     public static function fromArray(array $data): self
     {
+        $data = array_change_key_case($data, CASE_LOWER);
         return new self(
             $data['idadministrateur'] ?? null,
-            $data['nom'],
-            $data['prenom'],
-            $data['email'],
-            $data['mot_de_passe'],
+            $data['nom'] ?? '',
+            $data['prenom'] ?? '',
+            $data['email'] ?? '',
+            $data['mot_de_passe'] ?? '',
             $data['statut'] ?? 'actif'
         );
     }

@@ -20,21 +20,39 @@ final class ContactRepository
     }
 
     /**
-     * Récupère tous les contacts avec pagination.
+     * Récupère tous les contacts avec pagination et recherche optionnelle.
      * 
      * @return Contact[]
      */
-    public function findAll(int $limit = 100, int $offset = 0): array
+    public function findAll(int $limit = 100, int $offset = 0, ?string $search = null): array
     {
-        $sql = "SELECT * FROM contact ORDER BY date_creation DESC LIMIT :limit OFFSET :offset";
+        $sql = "SELECT * FROM contact";
+        $params = [];
+
+        if ($search) {
+            $sql .= " WHERE nom ILIKE :search 
+                      OR prenom ILIKE :search 
+                      OR email ILIKE :search 
+                      OR phone ILIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $sql .= " ORDER BY date_creation DESC LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
+        
+        // Liaison explicite des paramètres pour LIMIT et OFFSET
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        
+        if ($search) {
+            $stmt->bindValue(':search', $params['search'], PDO::PARAM_STR);
+        }
+
         $stmt->execute();
         
         $results = [];
-        while ($data = $stmt->fetch()) {
+        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $results[] = Contact::fromArray($data);
         }
         
@@ -42,32 +60,56 @@ final class ContactRepository
     }
 
     /**
-     * Compte le nombre total de contacts.
+     * Compte le nombre total de contacts avec recherche optionnelle.
      */
-    public function countAll(): int
+    public function countAll(?string $search = null): int
     {
-        return (int) $this->db->query("SELECT COUNT(*) FROM contact")->fetchColumn();
+        $sql = "SELECT COUNT(*) FROM contact";
+        $params = [];
+
+        if ($search) {
+            $sql .= " WHERE nom ILIKE :search 
+                      OR prenom ILIKE :search 
+                      OR email ILIKE :search 
+                      OR phone ILIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int) $stmt->fetchColumn();
     }
 
     /**
-     * Récupère les contacts appartenant à un segment.
+     * Récupère les contacts appartenant à un segment avec recherche optionnelle.
      * 
      * @param int $idSegment
      * @return Contact[]
      */
-    public function findBySegmentId(int $idSegment): array
+    public function findBySegmentId(int $idSegment, ?string $search = null): array
     {
         $sql = "SELECT c.* 
                 FROM contact c
                 JOIN contact_segment cs ON c.idContact = cs.idContact
-                WHERE cs.idSegment = :idSegment
-                ORDER BY c.date_creation DESC";
+                WHERE cs.idSegment = :idSegment";
+        
+        $params = ['idSegment' => $idSegment];
+
+        if ($search) {
+            $sql .= " AND (c.nom ILIKE :search 
+                      OR c.prenom ILIKE :search 
+                      OR c.email ILIKE :search 
+                      OR c.phone ILIKE :search)";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        $sql .= " ORDER BY c.date_creation DESC";
         
         $stmt = $this->db->prepare($sql);
-        $stmt->execute(['idSegment' => $idSegment]);
+        $stmt->execute($params);
         
         $results = [];
-        while ($data = $stmt->fetch()) {
+        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $results[] = Contact::fromArray($data);
         }
         
@@ -81,7 +123,7 @@ final class ContactRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM contact WHERE idContact = :id");
         $stmt->execute(['id' => $id]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Contact::fromArray($data) : null;
     }
@@ -93,7 +135,7 @@ final class ContactRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM contact WHERE email = :email");
         $stmt->execute(['email' => $email]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Contact::fromArray($data) : null;
     }
@@ -120,7 +162,7 @@ final class ContactRepository
             'email'        => $contact->getEmail(),
             'phone'        => $contact->getPhone(),
             'source'       => $contact->getSource(),
-            'consentement' => $contact->isConsentementMarketing() ? 'true' : 'false'
+            'consentement' => $contact->isConsentementMarketing() ? 1 : 0
         ]);
 
         if ($res) {

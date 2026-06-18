@@ -30,7 +30,7 @@ final class AdminRepository
         // Utilisation d'une requête préparée pour prévenir les injections SQL
         $stmt = $this->db->prepare("SELECT * FROM administrateur WHERE email = :email AND statut = 'actif'");
         $stmt->execute(['email' => $email]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Administrateur::fromArray($data) : null;
     }
@@ -42,7 +42,7 @@ final class AdminRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM administrateur WHERE idAdministrateur = :id");
         $stmt->execute(['id' => $id]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Administrateur::fromArray($data) : null;
     }

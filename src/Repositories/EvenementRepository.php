@@ -15,6 +15,23 @@ final class EvenementRepository
         $this->db = \Database::getConnection();
     }
 
+    /**
+     * Récupère tous les événements présents en base avec le nombre de tickets vendus
+     */
+    public function findAllWithStats(): array
+    {
+        $sql = "SELECT e.*, 
+                       COUNT(cb.idContact) as total_tickets
+                FROM evenement e
+                LEFT JOIN billet_evenement be ON e.idEvenementWeezevent = be.idEvenementWeezevent
+                LEFT JOIN contact_billet cb ON be.idBilletWeezevent = cb.idBilletWeezevent
+                GROUP BY e.idEvenementWeezevent
+                ORDER BY e.date DESC";
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function exists(int $id): bool
     {
         $stmt = $this->db->prepare("SELECT 1 FROM evenement WHERE idEvenementWeezevent = :id");

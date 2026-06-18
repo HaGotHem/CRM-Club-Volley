@@ -116,8 +116,11 @@ CREATE TABLE segment (
     idSegment      SERIAL          NOT NULL,
     nom_segment    VARCHAR(150)    NOT NULL,
     date_creation  TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
+    brevo_id       INTEGER         NULL,
     PRIMARY KEY (idSegment)
 );
+
+COMMENT ON COLUMN segment.brevo_id IS 'ID de la liste correspondante sur Brevo';
 
 
 -- =============================================================

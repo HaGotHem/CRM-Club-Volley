@@ -102,6 +102,11 @@ $app->get('/stats', function ($request, $response) {
     return $view->render($response, 'pages/stats.html.twig');
 });
 
+$app->get('/events', function ($request, $response) {
+    $view = Twig::fromRequest($request);
+    return $view->render($response, 'pages/events.html.twig');
+});
+
 $app->post('/login', function ($request, $response) {
     $data = $request->getParsedBody();
     $email = $data['identifiant'] ?? '';
@@ -139,6 +144,7 @@ require __DIR__ . '/routes/contacts.php';
 require __DIR__ . '/routes/stats.php';
 require __DIR__ . '/routes/segments.php';
 require __DIR__ . '/routes/sync.php';
+require __DIR__ . '/routes/events.php';
 
 // Sécurisation des routes API
 $app->add($authMiddleware);

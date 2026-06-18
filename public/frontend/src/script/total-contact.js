@@ -1,4 +1,4 @@
-import { apiGet } from './api.js';
+import { apiGet, apiPost, apiDelete } from './api.js';
 
 /**
  * Gestionnaire des contacts et groupes Brevo sur la page Contact
@@ -17,9 +17,18 @@ class ContactManager {
         this.btnSuivant = document.getElementById('btn-suivant');
         this.pageInfo = document.getElementById('page-info');
         this.contactsTitle = document.getElementById('contacts-title');
+        this.searchInput = document.getElementById('search-contacts');
+        this.btnTransferer = document.getElementById('btn-transferer');
+        this.btnSupprimerListe = document.getElementById('btn-supprimer-liste');
+        this.modalSuppression = document.getElementById('modal-suppression-liste');
+        this.confirmSupprimerListe = document.getElementById('confirm-supprimer-liste');
+        this.nomListeASupprimer = document.getElementById('nom-liste-a-supprimer');
+        this.modalSuccessSync = document.getElementById('modal-success-sync');
 
         this.currentPage = 1;
         this.currentLimit = 20;
+        this.searchQuery = '';
+        this.searchTimeout = null;
         
         // Gestion du segment passé en URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -56,6 +65,74 @@ class ContactManager {
      * Configuration des écouteurs d'événements
      */
     setupEventListeners() {
+        if (this.btnTransferer) {
+            this.btnTransferer.addEventListener('click', async () => {
+                if (!this.currentListId) return;
+
+                const originalText = this.btnTransferer.textContent;
+                this.btnTransferer.disabled = true;
+                this.btnTransferer.innerHTML = '<span class="loading loading-spinner loading-xs mr-2"></span> Transfert...';
+
+                try {
+                    const res = await apiPost(`/segments/${this.currentListId}/sync-brevo`, {});
+                    if (res.success) {
+                        if (this.modalSuccessSync) {
+                            this.modalSuccessSync.checked = true;
+                        } else {
+                            alert('Synchronisation réussie !');
+                        }
+                        await this.loadGroups(); // Pour mettre à jour l'icône de statut
+                        await this.loadContacts(); // Pour mettre à jour le texte du bouton
+                    }
+                } catch (err) {
+                    console.error('[ContactManager] Erreur sync Brevo:', err);
+                    alert('Erreur lors de la synchronisation : ' + err.message);
+                } finally {
+                    this.btnTransferer.disabled = false;
+                    this.btnTransferer.textContent = originalText;
+                }
+            });
+        }
+
+        if (this.btnSupprimerListe) {
+            this.btnSupprimerListe.addEventListener('click', () => {
+                if (!this.currentListId) return;
+                if (this.nomListeASupprimer) this.nomListeASupprimer.textContent = this.currentListName;
+                if (this.modalSuppression) this.modalSuppression.checked = true;
+            });
+        }
+
+        if (this.confirmSupprimerListe) {
+            this.confirmSupprimerListe.addEventListener('click', async () => {
+                if (!this.currentListId) return;
+
+                this.confirmSupprimerListe.disabled = true;
+                this.confirmSupprimerListe.innerHTML = '<span class="loading loading-spinner loading-xs mr-2"></span> Suppression...';
+
+                try {
+                    const res = await apiDelete(`/segments/${this.currentListId}`);
+                    if (res.success) {
+                        if (this.modalSuppression) this.modalSuppression.checked = false;
+                        
+                        // Retour à "Tous les contacts"
+                        this.currentListId = null;
+                        this.currentListName = 'Tous les contacts';
+                        this.currentBrevoId = null;
+                        this.currentPage = 1;
+                        
+                        await this.loadGroups();
+                        await this.loadContacts();
+                    }
+                } catch (err) {
+                    console.error('[ContactManager] Erreur suppression segment:', err);
+                    alert('Erreur lors de la suppression : ' + err.message);
+                } finally {
+                    this.confirmSupprimerListe.disabled = false;
+                    this.confirmSupprimerListe.textContent = 'Confirmer la suppression';
+                }
+            });
+        }
+
         if (this.btnPrecedent) {
             this.btnPrecedent.addEventListener('click', () => {
                 if (this.currentPage > 1) {
@@ -72,7 +149,20 @@ class ContactManager {
             });
         }
 
-        // Écouteurs pour les filtres
+        if (this.searchInput) {
+            this.searchInput.addEventListener('input', (e) => {
+                this.searchQuery = e.target.value;
+                this.currentPage = 1; // Reset à la première page lors d'une recherche
+                
+                // Debounce pour éviter trop d'appels API
+                clearTimeout(this.searchTimeout);
+                this.searchTimeout = setTimeout(() => {
+                    this.loadContacts();
+                }, 400);
+            });
+        }
+
+        // Écouteurs pour les filtres (si toujours présents ou utilisés par ailleurs)
         document.querySelectorAll('[data-filtre]').forEach(filter => {
             filter.addEventListener('change', (e) => {
                 const type = e.target.dataset.filtre;
@@ -141,6 +231,7 @@ class ContactManager {
                     e.preventDefault();
                     this.currentListId = null;
                     this.currentListName = 'Tous les contacts';
+                    this.currentBrevoId = null;
                     this.currentPage = 1;
                     this.loadGroups(); 
                     this.loadContacts();
@@ -149,17 +240,31 @@ class ContactManager {
 
                 groups.forEach(group => {
                     const isSelected = this.currentListId === group.id;
-                    if (isSelected) this.currentListName = group.nom_segment; // Mise à jour du nom si sélectionné via URL
+                    if (isSelected) {
+                        this.currentListName = group.nom_segment; // Mise à jour du nom si sélectionné via URL
+                        this.currentBrevoId = group.brevo_id;
+                    }
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = `flex items-center justify-between w-full p-3 ${isSelected ? 'bg-principal text-white shadow-md' : 'bg-gray-50'} hover:bg-principal hover:text-white rounded-2xl transition-all group text-left`;
+                    btn.className = `flex items-center justify-between w-full p-3 ${isSelected ? 'bg-principal text-white shadow-md selected-segment' : 'bg-gray-50'} hover:bg-principal hover:text-white rounded-2xl transition-all group text-left`;
+                    
+                    if (isSelected) {
+                        btn.id = `segment-btn-${group.id}`;
+                    }
+
+                    const statusIcon = group.brevo_id 
+                        ? '<span class="flex-shrink-0 w-2 h-2 rounded-full bg-green-400" title="Synchronisé avec Brevo"></span>' 
+                        : '<span class="flex-shrink-0 w-2 h-2 rounded-full bg-gray-300" title="Nouveau segment"></span>';
+
                     btn.innerHTML = `
                         <span class="font-medium truncate mr-2">${group.nom_segment}</span>
+                        ${statusIcon}
                     `;
                     btn.addEventListener('click', (e) => {
                         e.preventDefault();
                         this.currentListId = group.id;
                         this.currentListName = group.nom_segment;
+                        this.currentBrevoId = group.brevo_id;
                         this.currentPage = 1;
                         this.loadGroups(); 
                         this.loadContacts();
@@ -168,6 +273,16 @@ class ContactManager {
                 });
 
                 if (this.groupCountEl) this.groupCountEl.textContent = groups.length;
+
+                // Scrolling vers l'élément sélectionné si nécessaire
+                if (this.currentListId) {
+                    const selectedBtn = document.getElementById(`segment-btn-${this.currentListId}`);
+                    if (selectedBtn) {
+                        setTimeout(() => {
+                            selectedBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }, 100);
+                    }
+                }
             }
         } catch (err) {
             console.error('[ContactManager] Erreur loadGroups:', err);
@@ -183,6 +298,25 @@ class ContactManager {
 
         if (this.contactsTitle) this.contactsTitle.textContent = this.currentListName;
 
+        // Gestion du bouton de transfert
+        if (this.btnTransferer) {
+            if (this.currentListId) {
+                this.btnTransferer.classList.remove('hidden');
+                this.btnTransferer.textContent = this.currentBrevoId ? 'Mettre à jour sur Brevo' : 'Transférer vers Brevo';
+            } else {
+                this.btnTransferer.classList.add('hidden');
+            }
+        }
+
+        // Gestion du bouton de suppression
+        if (this.btnSupprimerListe) {
+            if (this.currentListId) {
+                this.btnSupprimerListe.classList.remove('hidden');
+            } else {
+                this.btnSupprimerListe.classList.add('hidden');
+            }
+        }
+
         // Skeleton loading
         this.contactsListEl.innerHTML = `
             <div class="animate-pulse space-y-3">
@@ -197,6 +331,9 @@ class ContactManager {
             if (this.currentListId) {
                 url += `&listId=${this.currentListId}`;
             }
+            if (this.searchQuery) {
+                url += `&search=${encodeURIComponent(this.searchQuery)}`;
+            }
 
             const res = await apiGet(url);
 
@@ -204,7 +341,7 @@ class ContactManager {
                 const contacts = res.data;
                 const pagination = res.pagination;
 
-                // Tri alphabétique si coché
+                // Tri alphabétique si coché (optionnel car on a maintenant une recherche mais on garde la logique si l'élément existe)
                 const isAlpha = document.querySelector('[data-filtre="alpha"]')?.checked;
                 const isRecent = document.querySelector('[data-filtre="recent"]')?.checked;
 
@@ -249,7 +386,10 @@ class ContactManager {
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-gray-800 truncate">${contact.prenom || ''} ${contact.nom || 'Inconnu'}</h3>
-                    <p class="text-sm text-gray-500 truncate">${contact.email}</p>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-gray-500">
+                        <p class="truncate">${contact.email}</p>
+                        ${contact.phone ? `<span class="hidden sm:inline text-gray-300">•</span><p class="truncate">${contact.phone}</p>` : ''}
+                    </div>
                 </div>
                 <div class="hidden sm:block">
                     <span class="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-medium text-gray-500">

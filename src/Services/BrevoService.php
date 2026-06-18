@@ -59,9 +59,78 @@ final class BrevoService
             ];
 
         } catch (GuzzleException $e) {
-            throw new RuntimeException('Erreur Brevo : ' . $e->getMessage());
+            throw new \RuntimeException('Erreur Brevo : ' . $e->getMessage());
         }
     }
+
+    /**
+     * Crée une liste dans Brevo.
+     */
+    public function createList(string $name, ?int $folderId = null): int
+    {
+        if ($folderId === null) {
+            $folderId = (int) ($_ENV['BREVO_FOLDER_ID'] ?? 4);
+        }
+
+        try {
+            $response = $this->client->post('/v3/contacts/lists', [
+                'json' => [
+                    'name'     => $name,
+                    'folderId' => $folderId
+                ]
+            ]);
+            $body = json_decode((string) $response->getBody(), true);
+            return (int) $body['id'];
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur création liste Brevo : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Ajoute des contacts à une liste Brevo.
+     */
+    public function addContactsToList(int $listId, array $emails): array
+    {
+        try {
+            $response = $this->client->post("/v3/contacts/lists/{$listId}/contacts/add", [
+                'json' => [
+                    'emails' => $emails
+                ]
+            ]);
+            return json_decode((string) $response->getBody(), true);
+        } catch (GuzzleException $e) {
+            $errorBody = '';
+            if (method_exists($e, 'getResponse') && $e->getResponse()) {
+                $errorBody = (string) $e->getResponse()->getBody();
+                $decoded = json_decode($errorBody, true);
+                
+                // Si l'erreur indique que des contacts sont déjà dans la liste, on peut tenter de continuer 
+                // ou renvoyer une info structurée. Pour l'instant on garde l'exception mais avec plus d'infos.
+                if (isset($decoded['code']) && $decoded['code'] === 'invalid_parameter') {
+                     // On pourrait aussi logger ici
+                }
+            }
+            throw new \RuntimeException('Erreur ajout contacts liste Brevo : ' . $e->getMessage() . ' | Response: ' . $errorBody);
+        }
+    }
+
+    /**
+     * Retire des contacts d'une liste Brevo.
+     */
+    public function removeContactsFromList(int $listId, array $emails): array
+    {
+        try {
+            $response = $this->client->post("/v3/contacts/lists/{$listId}/contacts/remove", [
+                'json' => [
+                    'emails' => $emails
+                ]
+            ]);
+            return json_decode((string) $response->getBody(), true);
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur retrait contacts liste Brevo : ' . $e->getMessage());
+        }
+    }
+
     public function syncSegment(array $contacts): array
     {
         $results = ['success' => 0, 'errors' => 0, 'details' => []];
@@ -126,6 +195,31 @@ final class BrevoService
         } catch (GuzzleException $e) {
             throw new \RuntimeException('Erreur récupération listes Brevo : ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Récupère TOUS les contacts d'une liste spécifique en gérant la pagination.
+     */
+    public function getAllContactsFromList(int $listId): array
+    {
+        $allEmails = [];
+        $offset = 0;
+        $limit = 50;
+
+        do {
+            $data = $this->getContactsFromList($listId, $limit, $offset);
+            if (isset($data['contacts']) && is_array($data['contacts'])) {
+                foreach ($data['contacts'] as $c) {
+                    $allEmails[] = $c['email'];
+                }
+                $offset += count($data['contacts']);
+                $hasMore = count($data['contacts']) === $limit;
+            } else {
+                $hasMore = false;
+            }
+        } while ($hasMore);
+
+        return $allEmails;
     }
 
     /**

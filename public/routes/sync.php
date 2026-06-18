@@ -98,7 +98,6 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
     }
 });
 
-// Weezevent: endpoints batch (count + import)
 $app->get('/api/sync/weezevent/count', function (Request $request, Response $response) {
     try {
         $weezevent = new WeezeventService();

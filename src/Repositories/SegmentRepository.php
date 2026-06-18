@@ -26,7 +26,7 @@ class SegmentRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM segment WHERE nom_segment = :name");
         $stmt->execute(['name' => $name]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Segment::fromArray($data) : null;
     }
@@ -43,7 +43,7 @@ class SegmentRepository
     {
         $stmt = $this->db->prepare("SELECT * FROM segment WHERE idSegment = :id");
         $stmt->execute(['id' => $id]);
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $data ? Segment::fromArray($data) : null;
     }
@@ -58,7 +58,7 @@ class SegmentRepository
         $stmt = $this->db->query("SELECT * FROM segment ORDER BY nom_segment ASC");
         
         $results = [];
-        while ($data = $stmt->fetch()) {
+        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $results[] = Segment::fromArray($data);
         }
         
@@ -82,7 +82,7 @@ class SegmentRepository
         $stmt->execute(['idContact' => $idContact]);
         
         $results = [];
-        while ($data = $stmt->fetch()) {
+        while ($data = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $results[] = Segment::fromArray($data);
         }
         
@@ -94,14 +94,37 @@ class SegmentRepository
      */
     public function save(Segment $segment): bool
     {
-        $sql = "INSERT INTO segment (nom_segment, date_creation) 
-                VALUES (:nom, :date)";
+        $id = $segment->getIdSegment();
+        $params = [
+            'nom'      => $segment->getNomSegment(),
+            'date'     => $segment->getDateCreation()->format('Y-m-d H:i:s'),
+            'brevo_id' => $segment->getBrevoId()
+        ];
+
+        if ($id === null) {
+            $sql = "INSERT INTO segment (nom_segment, date_creation, brevo_id) 
+                    VALUES (:nom, :date, :brevo_id)
+                    RETURNING idSegment";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute($params);
+            $newId = $stmt->fetchColumn();
+            if ($newId) {
+                // On peut utiliser la réflexion ou un setter si on veut mettre à jour l'objet
+                // Mais pour le retour de save(), bool suffit.
+                return true;
+            }
+            return false;
+        } else {
+            $sql = "INSERT INTO segment (idSegment, nom_segment, date_creation, brevo_id) 
+                    VALUES (:id, :nom, :date, :brevo_id)
+                    ON CONFLICT (idSegment) DO UPDATE 
+                    SET nom_segment = EXCLUDED.nom_segment, 
+                        brevo_id = EXCLUDED.brevo_id";
+            $params['id'] = $id;
+        }
         
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            'nom'  => $segment->getNomSegment(),
-            'date' => $segment->getDateCreation()->format('Y-m-d H:i:s')
-        ]);
+        return $stmt->execute($params);
     }
 
     /**
@@ -118,5 +141,14 @@ class SegmentRepository
             'idC' => $idContact,
             'idS' => $idSegment
         ]);
+    }
+    /**
+     * Supprime un segment par son ID.
+     */
+    public function delete(int $id): bool
+    {
+        $sql = "DELETE FROM segment WHERE idSegment = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute(['id' => $id]);
     }
 }

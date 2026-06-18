@@ -17,19 +17,20 @@ $app->get('/api/contacts', function (Request $request, Response $response) {
         $offset = ($page - 1) * $limit;
         
         $segmentId = isset($queryParams['listId']) ? (int)$queryParams['listId'] : null;
+        $search = $queryParams['search'] ?? null;
 
         $repository = new ContactRepository();
         
         if ($segmentId) {
-            $contacts = $repository->findBySegmentId($segmentId);
+            $contacts = $repository->findBySegmentId($segmentId, $search);
             // findBySegmentId n'est pas encore paginé dans le repo, on va le faire ici ou l'améliorer
             // Pour l'instant, on fait simple pour correspondre à l'usage
             $total = count($contacts);
             // Simulation pagination sur le résultat pour l'instant
             $contacts = array_slice($contacts, $offset, $limit);
         } else {
-            $contacts = $repository->findAll($limit, $offset);
-            $total    = $repository->countAll();
+            $contacts = $repository->findAll($limit, $offset, $search);
+            $total    = $repository->countAll($search);
         }
 
         return jsonResponse($response, [

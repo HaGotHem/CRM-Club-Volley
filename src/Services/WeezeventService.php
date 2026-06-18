@@ -60,8 +60,9 @@ final class WeezeventService
         try {
             $response = $this->client->get('/events', [
                 'query' => [
-                    'api_key'      => $this->apiKey,
-                    'access_token' => $this->accessToken,
+                    'api_key'          => $this->apiKey,
+                    'access_token'     => $this->accessToken,
+                    'include_archived' => 'true', // Tentative d'inclusion des archives
                 ]
             ]);
             $body = json_decode((string) $response->getBody(), true);

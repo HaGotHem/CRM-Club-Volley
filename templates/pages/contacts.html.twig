@@ -48,14 +48,33 @@
         </aside>
 
         <!-- Main : Liste des Contacts -->
-        <section class="lg:col-span-6 space-y-4">
+        <section class="lg:col-span-9 space-y-4">
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col min-h-[600px]">
                 <!-- Toolbar -->
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <h2 class="text-xl font-bold text-gray-800" id="contacts-title">Tous les contacts</h2>
+                    
+                    <div class="flex-1 max-w-md mx-4">
+                        <div class="relative group">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 group-focus-within:text-principal transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </span>
+                            <input type="text" 
+                                   id="search-contacts" 
+                                   class="block w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent focus:bg-white focus:border-principal focus:ring-0 rounded-2xl text-sm transition-all"
+                                   placeholder="Rechercher un contact (nom, email, tel...)"
+                            >
+                        </div>
+                    </div>
+
                     <div class="flex items-center gap-2">
-                        <button type="button" id="btn-ajouter" class="btn btn-sm bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-4 normal-case">
-                            Ajouter
+                        <button type="button" id="btn-transferer" class="btn btn-sm bg-principal hover:bg-principal/90 text-white border-none rounded-xl px-4 normal-case hidden">
+                            Transférer vers Brevo
+                        </button>
+                        <button type="button" id="btn-supprimer-liste" class="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-none rounded-xl px-4 normal-case hidden">
+                            Supprimer la liste
                         </button>
                     </div>
                 </div>
@@ -80,43 +99,63 @@
             </div>
         </section>
 
-        <!-- Right : Filtres & Actions -->
-        <aside class="lg:col-span-3 space-y-6">
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800 mb-6">Filtres</h2>
-                <div class="space-y-4">
-                    <div class="form-control">
-                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                            <span class="label-text font-medium">Alphabétique</span>
-                            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-filtre="alpha" />
-                        </label>
-                    </div>
-                    <div class="form-control">
-                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                            <span class="label-text font-medium">Récent</span>
-                            <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" data-filtre="recent" />
-                        </label>
-                    </div>
-                    <div class="divider">Sources</div>
-                    <div class="form-control">
-                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                            <span class="label-text font-medium text-blue-600">Weezevent</span>
-                            <input type="checkbox" class="checkbox checkbox-info checkbox-sm" data-filtre="weezevent" />
-                        </label>
-                    </div>
-                    <div class="form-control">
-                        <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                            <span class="label-text font-medium text-orange-600">Base locale (Synchro Brevo)</span>
-                            <input type="checkbox" class="checkbox checkbox-warning checkbox-sm" data-filtre="brevo" checked disabled />
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </aside>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+    <!-- Modal Suppression Liste -->
+    <input type="checkbox" id="modal-suppression-liste" class="modal-toggle" />
+    <div class="modal">
+        <div class="modal-box bg-white rounded-3xl p-8 relative">
+            <h3 class="font-bold text-2xl text-gray-800 mb-4">Supprimer la liste ?</h3>
+            <p class="py-4 text-gray-600 leading-relaxed">
+                Êtes-vous sûr de vouloir supprimer la liste <span id="nom-liste-a-supprimer" class="font-bold text-principal"></span> du dashboard ?
+            </p>
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0 pt-0.5">
+                        <svg class="h-5 w-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-amber-700">
+                            Cette action supprimera la liste de votre dashboard, mais <strong>cela n'aura aucun impact sur Brevo</strong>. 
+                            Si vous souhaitez purger vos listes Brevo, vous devez le faire directement depuis votre compte Brevo.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-action flex gap-3">
+                <label for="modal-suppression-liste" class="btn btn-ghost rounded-2xl normal-case">Annuler</label>
+                <button type="button" id="confirm-supprimer-liste" class="btn bg-red-500 hover:bg-red-600 text-white border-none rounded-2xl px-8 normal-case">
+                    Confirmer la suppression
+                </button>
+            </div>
+        </div>
+        <label class="modal-backdrop" for="modal-suppression-liste">Fermer</label>
+    </div>
+
     <script type="module" src="/frontend/src/script/total-contact.js" defer></script>
+    
+    <!-- Modal Succès Sync -->
+    <input type="checkbox" id="modal-success-sync" class="modal-toggle" />
+    <div class="modal">
+        <div class="modal-box bg-white rounded-3xl p-8 relative flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <h3 class="font-bold text-2xl text-gray-800 mb-2">Synchronisation réussie !</h3>
+            <p class="text-gray-600 mb-8">
+                Vos contacts ont été transférés avec succès vers Brevo.
+            </p>
+            <div class="modal-action w-full">
+                <label for="modal-success-sync" class="btn bg-principal hover:bg-principal/90 text-white border-none rounded-2xl w-full normal-case">Super !</label>
+            </div>
+        </div>
+        <label class="modal-backdrop" for="modal-success-sync">Fermer</label>
+    </div>
 {% endblock %}
