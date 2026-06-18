@@ -138,7 +138,7 @@
                         <p class="text-sm font-medium text-gray-400 leading-tight text-balance">Mails envoyés via Brevo (Quota 40k)</p>
                     </div>
                 </div>
-                <div class="w-full h-64" id="chart-mail">
+                <div class="w-full h-40" id="chart-mail">
                     <!-- Donut chart for quota -->
                 </div>
             </div>
@@ -174,10 +174,42 @@
                 </div>
             </div>
 
+            <!-- Comparaison des ventes -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+                <h3 class="text-xl font-bold text-gray-800 mb-8">Comparaison des ventes</h3>
+                <div class="flex flex-col xl:flex-row items-end gap-6">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-16 bg-principal rounded-t-3xl shadow-lg shadow-principal/20" style="height: 140px"></div>
+                        <div class="text-center">
+                            <p class="text-2xl font-black text-principal">3,128</p>
+                            <p class="text-sm font-medium text-gray-400">Ce mois-ci</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-16 bg-gray-200 rounded-t-3xl" style="height: 108px"></div>
+                        <div class="text-center">
+                            <p class="text-2xl font-black text-gray-400">2,420</p>
+                            <p class="text-sm font-medium text-gray-400">Mois dernier</p>
+                        </div>
+                    </div>
+                    <div class="flex-1 pb-4 hidden xl:block">
+                        <div class="p-6 bg-blue-50 rounded-3xl border border-blue-100">
+                            <p class="text-blue-800 font-semibold mb-2 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                Performance en hausse
+                            </p>
+                            <p class="text-blue-600/80 text-sm">Vos ventes ont augmenté de 29% par rapport au mois dernier. Continuez ainsi !</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
 {% endblock %}
+
+
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
