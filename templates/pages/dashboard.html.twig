@@ -12,13 +12,13 @@
         </div>
         <div class="flex flex-wrap items-center gap-4">
             <div class="tooltip tooltip-bottom before:text-xs before:max-w-[200px]" data-tip="Importez toutes les données en provenance de vos événements organisés sur WeezEvent">
-                <button class="btn btn-lg bg-principal hover:bg-principal/90 text-white border-none rounded-2xl shadow-lg shadow-principal/20 px-8 transition-all hover:scale-105 active:scale-95">
+                <button id="btn-sync-weezevent" class="btn btn-lg bg-principal hover:bg-principal/90 text-white border-none rounded-2xl shadow-lg shadow-principal/20 px-8 transition-all hover:scale-105 active:scale-95">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Synchro WeezEvent
                 </button>
             </div>
             <div class="tooltip tooltip-bottom before:text-xs before:max-w-[200px]" data-tip="Synchronisez les données de votre Dashboard avec vos listings Brevo">
-                <button class="btn btn-lg bg-secondaire hover:bg-secondaire/90 text-principal border-none rounded-2xl shadow-lg shadow-secondaire/20 px-8 transition-all hover:scale-105 active:scale-95">
+                <button id="btn-sync-brevo" class="btn btn-lg bg-secondaire hover:bg-secondaire/90 text-principal border-none rounded-2xl shadow-lg shadow-secondaire/20 px-8 transition-all hover:scale-105 active:scale-95">
                     <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Synchro Brevo
                 </button>
@@ -162,6 +162,58 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal de synchronisation Brevo -->
+    <dialog id="modal-sync-brevo" class="modal">
+        <div class="modal-box max-w-xl rounded-3xl">
+            <form method="dialog">
+                <button id="modal-sync-close" class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3" disabled>x</button>
+            </form>
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-2xl bg-secondaire/10 text-secondaire flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-800">Synchronisation Brevo en cours…</h3>
+                    <p id="sync-status-text" class="text-sm text-gray-500 mt-1">Initialisation…</p>
+                    <div class="mt-5">
+                        <progress id="sync-progress" class="progress progress-warning w-full" value="0" max="100"></progress>
+                        <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
+                            <span id="sync-count">0 / 0</span>
+                            <span id="sync-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-gray-500">Contacts</p>
+                            <p class="font-bold text-gray-800"><span id="sync-contacts-created">0</span> / <span id="sync-contacts-updated">0</span></p>
+                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-gray-500">Événements</p>
+                            <p class="font-bold text-gray-800"><span id="sync-events-created">0</span> / <span id="sync-events-updated">0</span></p>
+                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-gray-500">Billets</p>
+                            <p class="font-bold text-gray-800"><span id="sync-tickets-created">0</span> / <span id="sync-tickets-updated">0</span></p>
+                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
+                        </div>
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-gray-500">Liaisons / Err.</p>
+                            <p class="font-bold text-gray-800"><span id="sync-links" class="text-green-600">0</span> / <span id="sync-errors" class="text-red-600">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-action">
+                <button id="btn-sync-close" class="btn btn-ghost" disabled>Fermer</button>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button disabled>close</button>
+        </form>
+    </dialog>
 </div>
 {% endblock %}
 

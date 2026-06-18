@@ -143,11 +143,11 @@ require __DIR__ . '/routes/sync.php';
 // Sécurisation des routes API
 $app->add($authMiddleware);
 
-// Redirection forcée de /index.php (Exécuté tout au début de la pile LIFO)
-$app->add(function ($request, $handler) {
+// Redirection forcée de /index.php
+$app->add(function ($request, $handler) use ($app) {
     $path = $request->getUri()->getPath();
-    if ($path === '/index.php') {
-        $response = new \Slim\Psr7\Response();
+    if ($path === '/index.php' || $path === '/index.php/') {
+        $response = $app->getResponseFactory()->createResponse();
         return $response->withHeader('Location', '/')->withStatus(301);
     }
     return $handler->handle($request);

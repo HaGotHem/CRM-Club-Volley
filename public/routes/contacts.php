@@ -15,11 +15,22 @@ $app->get('/api/contacts', function (Request $request, Response $response) {
         $page  = max(1, (int) ($queryParams['page'] ?? 1));
         $limit = max(1, min(1000, (int) ($queryParams['limit'] ?? 50)));
         $offset = ($page - 1) * $limit;
+        
+        $segmentId = isset($queryParams['listId']) ? (int)$queryParams['listId'] : null;
 
         $repository = new ContactRepository();
         
-        $contacts = $repository->findAll($limit, $offset);
-        $total    = $repository->countAll();
+        if ($segmentId) {
+            $contacts = $repository->findBySegmentId($segmentId);
+            // findBySegmentId n'est pas encore paginé dans le repo, on va le faire ici ou l'améliorer
+            // Pour l'instant, on fait simple pour correspondre à l'usage
+            $total = count($contacts);
+            // Simulation pagination sur le résultat pour l'instant
+            $contacts = array_slice($contacts, $offset, $limit);
+        } else {
+            $contacts = $repository->findAll($limit, $offset);
+            $total    = $repository->countAll();
+        }
 
         return jsonResponse($response, [
             'success' => true,
@@ -62,6 +73,59 @@ $app->get('/api/contacts/{id}', function (Request $request, Response $response, 
         return jsonResponse($response, [
             'success' => false,
             'error'   => 'Impossible de récupérer le contact',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// GET /api/brevo/contacts — liste les contacts Brevo
+$app->get('/api/brevo/contacts', function (Request $request, Response $response) {
+    try {
+        $queryParams = $request->getQueryParams();
+        $page  = max(1, (int) ($queryParams['page'] ?? 1));
+        $limit = max(1, min(100, (int) ($queryParams['limit'] ?? 50)));
+        $listId = isset($queryParams['listId']) ? (int)$queryParams['listId'] : null;
+        $offset = ($page - 1) * $limit;
+
+        $service = new \App\Services\BrevoService();
+        $data = $service->getContacts($limit, $offset, $listId);
+
+        $total = $data['count'] ?? 0;
+        $contacts = $data['contacts'] ?? [];
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => $contacts,
+            'pagination' => [
+                'current_page' => $page,
+                'limit'        => $limit,
+                'total_items'  => $total,
+                'total_pages'  => ceil($total / $limit)
+            ]
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les contacts Brevo',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});
+
+// GET /api/brevo/lists — liste les listes Brevo
+$app->get('/api/brevo/lists', function (Request $request, Response $response) {
+    try {
+        $service = new \App\Services\BrevoService();
+        $data = $service->getLists();
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => $data['lists'] ?? []
+        ]);
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer les listes Brevo',
             'details' => $e->getMessage()
         ], 500);
     }

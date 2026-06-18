@@ -11,6 +11,18 @@ class ContactManager {
         this.statusDot = document.getElementById('status-dot');
         this.statusText = document.getElementById('api-status');
         
+        // Nouveaux éléments pour la pagination et la liste
+        this.contactsListEl = document.getElementById('contacts-list');
+        this.btnPrecedent = document.getElementById('btn-precedent');
+        this.btnSuivant = document.getElementById('btn-suivant');
+        this.pageInfo = document.getElementById('page-info');
+        this.contactsTitle = document.getElementById('contacts-title');
+
+        this.currentPage = 1;
+        this.currentLimit = 20;
+        this.currentListId = null;
+        this.currentListName = 'Tous les contacts';
+        
         this.init();
     }
 
@@ -22,19 +34,60 @@ class ContactManager {
         this.updateStatus('Chargement...', 'bg-yellow-400');
         
         try {
-            // Dans un vrai scénario, ces données viendraient de notre backend Slim
-            // qui ferait le pont avec Brevo pour éviter d'exposer la clé API au client.
-            // Pour l'instant, on simule ou on utilise l'API locale si disponible.
+            this.setupEventListeners();
+            
             await Promise.all([
                 this.loadStats(),
-                this.loadGroups()
+                this.loadGroups(),
+                this.loadContacts()
             ]);
             
-            this.updateStatus('Connecté à Brevo', 'bg-green-500');
+            this.updateStatus('Base de données locale', 'bg-green-500');
         } catch (err) {
             console.error('[ContactManager] Erreur init :', err);
-            this.updateStatus('Erreur de connexion', 'bg-red-500');
+            this.updateStatus('Erreur base de données', 'bg-red-500');
         }
+    }
+
+    /**
+     * Configuration des écouteurs d'événements
+     */
+    setupEventListeners() {
+        if (this.btnPrecedent) {
+            this.btnPrecedent.addEventListener('click', () => {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                    this.loadContacts();
+                }
+            });
+        }
+
+        if (this.btnSuivant) {
+            this.btnSuivant.addEventListener('click', () => {
+                this.currentPage++;
+                this.loadContacts();
+            });
+        }
+
+        // Écouteurs pour les filtres
+        document.querySelectorAll('[data-filtre]').forEach(filter => {
+            filter.addEventListener('change', (e) => {
+                const type = e.target.dataset.filtre;
+                
+                // Si on coche alpha, on décoche recent et vice-versa
+                if (e.target.checked) {
+                    if (type === 'alpha') {
+                        const recent = document.querySelector('[data-filtre="recent"]');
+                        if (recent) recent.checked = false;
+                    } else if (type === 'recent') {
+                        const alpha = document.querySelector('[data-filtre="alpha"]');
+                        if (alpha) alpha.checked = false;
+                    }
+                }
+                
+                this.loadContacts(); 
+            });
+        });
     }
 
     /**
@@ -48,56 +101,178 @@ class ContactManager {
     }
 
     /**
-     * Charge les stats globales (simulé ou via backend)
+     * Charge les stats globales
      */
     async loadStats() {
         try {
-            // On essaie de récupérer les stats du dashboard qui contiennent déjà ces infos
             const res = await apiGet('/stats/dashboard');
             if (res.success && res.data) {
                 const d = res.data;
-                if (this.totalEl) this.totalEl.textContent = Number(d.total_contacts ?? 10128).toLocaleString('fr-FR');
-                if (this.totalGroupesEl) this.totalGroupesEl.textContent = d.segment_count ?? 6;
+                if (this.totalEl) this.totalEl.textContent = Number(d.total_contacts).toLocaleString('fr-FR');
+                if (this.totalGroupesEl) this.totalGroupesEl.textContent = d.segment_count;
             }
         } catch (e) {
-            console.warn('[ContactManager] Impossible de charger les stats via backend, utilisation des placeholders.');
+            console.warn('[ContactManager] Impossible de charger les stats via backend.');
         }
     }
 
     /**
-     * Charge les groupes/segments
+     * Charge les groupes/segments réels de notre DB
      */
     async loadGroups() {
         const listContainer = document.getElementById('groupes-list');
         if (!listContainer) return;
 
         try {
-            // Simulation ou appel réel si implémenté
-            // const groups = await apiGet('/segments'); 
+            const res = await apiGet('/segments');
             
-            // Pour l'instant on garde une structure propre
-            const mockGroups = [
-                { id: 1, name: 'Partenaires', count: 42 },
-                { id: 2, name: 'Licenciés', count: 1250 },
-                { id: 3, name: 'Presse', count: 12 },
-                { id: 4, name: 'Bénévoles', count: 85 }
-            ];
+            if (res.success && res.data) {
+                const groups = res.data;
+                listContainer.innerHTML = '';
+                
+                // Option "Tous les contacts"
+                const allBtn = document.createElement('button');
+                allBtn.className = `flex items-center justify-between w-full p-3 ${!this.currentListId ? 'bg-principal text-white shadow-md' : 'bg-gray-50'} hover:bg-principal hover:text-white rounded-2xl transition-all group text-left mb-2`;
+                allBtn.innerHTML = `<span class="font-medium">Tous les contacts</span>`;
+                allBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.currentListId = null;
+                    this.currentListName = 'Tous les contacts';
+                    this.currentPage = 1;
+                    this.loadGroups(); 
+                    this.loadContacts();
+                });
+                listContainer.appendChild(allBtn);
 
-            listContainer.innerHTML = '';
-            mockGroups.forEach(group => {
-                const btn = document.createElement('button');
-                btn.className = "flex items-center justify-between w-full p-3 bg-gray-50 hover:bg-principal hover:text-white rounded-2xl transition-all group text-left";
-                btn.innerHTML = `
-                    <span class="font-medium">${group.name}</span>
-                    <span class="text-xs bg-white/20 px-2 py-1 rounded-lg group-hover:bg-white group-hover:text-principal font-bold">${group.count}</span>
-                `;
-                listContainer.appendChild(btn);
-            });
+                groups.forEach(group => {
+                    const isSelected = this.currentListId === group.id;
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = `flex items-center justify-between w-full p-3 ${isSelected ? 'bg-principal text-white shadow-md' : 'bg-gray-50'} hover:bg-principal hover:text-white rounded-2xl transition-all group text-left`;
+                    btn.innerHTML = `
+                        <span class="font-medium truncate mr-2">${group.nom_segment}</span>
+                    `;
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.currentListId = group.id;
+                        this.currentListName = group.nom_segment;
+                        this.currentPage = 1;
+                        this.loadGroups(); 
+                        this.loadContacts();
+                    });
+                    listContainer.appendChild(btn);
+                });
 
-            if (this.groupCountEl) this.groupCountEl.textContent = mockGroups.length;
-
+                if (this.groupCountEl) this.groupCountEl.textContent = groups.length;
+            }
         } catch (err) {
+            console.error('[ContactManager] Erreur loadGroups:', err);
             listContainer.innerHTML = '<p class="text-red-500 text-sm p-4">Erreur lors du chargement des groupes.</p>';
+        }
+    }
+
+    /**
+     * Charge les contacts réels de notre DB
+     */
+    async loadContacts() {
+        if (!this.contactsListEl) return;
+
+        // Skeleton loading
+        this.contactsListEl.innerHTML = `
+            <div class="animate-pulse space-y-3">
+                <div class="h-16 bg-gray-50 rounded-2xl w-full"></div>
+                <div class="h-16 bg-gray-50 rounded-2xl w-full"></div>
+                <div class="h-16 bg-gray-50 rounded-2xl w-full"></div>
+            </div>
+        `;
+
+        if (this.contactsTitle) this.contactsTitle.textContent = this.currentListName;
+
+        try {
+            let url = `/contacts?page=${this.currentPage}&limit=${this.currentLimit}`;
+            if (this.currentListId) {
+                url += `&listId=${this.currentListId}`;
+            }
+
+            const res = await apiGet(url);
+
+            if (res.success && res.data) {
+                const contacts = res.data;
+                const pagination = res.pagination;
+
+                // Tri alphabétique si coché
+                const isAlpha = document.querySelector('[data-filtre="alpha"]')?.checked;
+                const isRecent = document.querySelector('[data-filtre="recent"]')?.checked;
+
+                if (isAlpha) {
+                    contacts.sort((a, b) => {
+                        const nameA = (a.nom + a.prenom).toUpperCase() || (a.email || '').toUpperCase();
+                        const nameB = (b.nom + b.prenom).toUpperCase() || (b.email || '').toUpperCase();
+                        return nameA.localeCompare(nameB);
+                    });
+                } else if (isRecent) {
+                    contacts.sort((a, b) => new Date(b.date_creation || 0) - new Date(a.date_creation || 0));
+                }
+
+                this.renderContacts(contacts);
+                this.updatePagination(pagination);
+            }
+        } catch (err) {
+            console.error('[ContactManager] Erreur loadContacts:', err);
+            this.contactsListEl.innerHTML = '<p class="text-red-500 text-sm p-4">Erreur lors du chargement des contacts.</p>';
+        }
+    }
+
+    /**
+     * Affiche les contacts dans la liste
+     */
+    renderContacts(contacts) {
+        if (contacts.length === 0) {
+            this.contactsListEl.innerHTML = '<p class="text-gray-400 text-center py-8">Aucun contact trouvé.</p>';
+            return;
+        }
+
+        this.contactsListEl.innerHTML = '';
+        contacts.forEach(contact => {
+            const card = document.createElement('div');
+            card.className = "flex items-center gap-4 p-4 bg-gray-50 rounded-2xl hover:bg-white hover:shadow-md border border-transparent hover:border-gray-100 transition-all";
+            
+            const initiales = (contact.prenom?.[0] || '') + (contact.nom?.[0] || '') || '?';
+            
+            card.innerHTML = `
+                <div class="w-12 h-12 rounded-xl bg-principal/10 text-principal flex items-center justify-center font-bold">
+                    ${initiales.toUpperCase()}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-gray-800 truncate">${contact.prenom || ''} ${contact.nom || 'Inconnu'}</h3>
+                    <p class="text-sm text-gray-500 truncate">${contact.email}</p>
+                </div>
+                <div class="hidden sm:block">
+                    <span class="px-3 py-1 bg-white border border-gray-100 rounded-full text-xs font-medium text-gray-500">
+                        ${contact.date_creation ? new Date(contact.date_creation).toLocaleDateString('fr-FR') : 'N/A'}
+                    </span>
+                </div>
+            `;
+            this.contactsListEl.appendChild(card);
+        });
+    }
+
+    /**
+     * Met à jour l'état de la pagination
+     */
+    updatePagination(pagination) {
+        if (!pagination) return;
+        
+        if (this.pageInfo) {
+            this.pageInfo.textContent = `Page ${pagination.current_page} sur ${pagination.total_pages || 1}`;
+        }
+
+        if (this.btnPrecedent) {
+            this.btnPrecedent.disabled = (pagination.current_page <= 1);
+        }
+
+        if (this.btnSuivant) {
+            this.btnSuivant.disabled = (pagination.current_page >= pagination.total_pages);
         }
     }
 }

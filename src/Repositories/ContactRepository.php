@@ -109,10 +109,12 @@ final class ContactRepository
                 SET nom = EXCLUDED.nom, 
                     prenom = EXCLUDED.prenom, 
                     phone = EXCLUDED.phone,
-                    consentement_marketing = EXCLUDED.consentement_marketing";
+                    consentement_marketing = EXCLUDED.consentement_marketing,
+                    date_derniere_maj = NOW()
+                RETURNING idContact";
 
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $res = $stmt->execute([
             'nom'          => $contact->getNom(),
             'prenom'       => $contact->getPrenom(),
             'email'        => $contact->getEmail(),
@@ -120,5 +122,18 @@ final class ContactRepository
             'source'       => $contact->getSource(),
             'consentement' => $contact->isConsentementMarketing() ? 'true' : 'false'
         ]);
+
+        if ($res) {
+            $id = $stmt->fetchColumn();
+            if ($id) {
+                // On met à jour l'objet contact avec l'ID récupéré
+                $reflector = new \ReflectionClass($contact);
+                $prop = $reflector->getProperty('idContact');
+                $prop->setAccessible(true);
+                $prop->setValue($contact, (int)$id);
+            }
+        }
+
+        return $res;
     }
 }

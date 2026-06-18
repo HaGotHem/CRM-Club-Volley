@@ -81,21 +81,70 @@ final class BrevoService
 
         return $results;
     }
-public function getContacts(int $limit = 500, int $offset = 0): array
-{
-    try {
-        $response = $this->client->get('/v3/contacts', [
-            'query' => [
+    public function getContacts(int $limit = 50, int $offset = 0, ?int $listId = null): array
+    {
+        try {
+            $query = [
                 'limit'  => $limit,
-                'offset' => $offset
-            ]
-        ]);
+                'offset' => $offset,
+                'sort'   => 'desc'
+            ];
 
-        $body = json_decode((string) $response->getBody(), true);
-        return $body ?? [];
+            if ($listId !== null) {
+                $query['listIds'] = (string)$listId;
+            }
 
-    } catch (GuzzleException $e) {
-        throw new RuntimeException('Erreur récupération Brevo : ' . $e->getMessage());
+            $response = $this->client->get('/v3/contacts', [
+                'query' => $query
+            ]);
+
+            $body = json_decode((string) $response->getBody(), true);
+            return $body ?? [];
+
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur récupération Brevo : ' . $e->getMessage());
+        }
     }
-}
+
+    /**
+     * Récupère les listes Brevo.
+     */
+    public function getLists(int $limit = 50, int $offset = 0): array
+    {
+        if ($limit > 50) $limit = 50;
+        try {
+            $response = $this->client->get('/v3/contacts/lists', [
+                'query' => [
+                    'limit'  => $limit,
+                    'offset' => $offset,
+                    'sort'   => 'desc'
+                ]
+            ]);
+
+            $body = json_decode((string) $response->getBody(), true);
+            return $body ?? [];
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur récupération listes Brevo : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Récupère les contacts d'une liste spécifique.
+     */
+    public function getContactsFromList(int $listId, int $limit = 50, int $offset = 0): array
+    {
+        try {
+            $response = $this->client->get("/v3/contacts/lists/{$listId}/contacts", [
+                'query' => [
+                    'limit'  => $limit,
+                    'offset' => $offset
+                ]
+            ]);
+
+            $body = json_decode((string) $response->getBody(), true);
+            return $body ?? [];
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('Erreur récupération contacts liste Brevo : ' . $e->getMessage());
+        }
+    }
 }

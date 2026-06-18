@@ -10,9 +10,17 @@
             <h1 class="text-3xl font-bold text-gray-800">Gestion des Contacts</h1>
             <p class="text-gray-500">Gérez vos contacts et segments Brevo.</p>
         </div>
-        <div id="api-status" class="text-xs px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400 shadow-sm flex items-center gap-2">
-            <span class="w-2 h-2 bg-gray-300 rounded-full" id="status-dot"></span>
-            Statut API : En attente
+        <div class="flex items-center gap-4">
+            <div class="hidden sm:flex items-center gap-2 px-4 py-2 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div class="text-right">
+                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold leading-none">Total Contacts</p>
+                    <p class="text-lg font-black text-principal" id="total-contacts">...</p>
+                </div>
+            </div>
+            <div id="api-status" class="text-xs px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400 shadow-sm flex items-center gap-2">
+                <span class="w-2 h-2 bg-gray-300 rounded-full" id="status-dot"></span>
+                Statut API : En attente
+            </div>
         </div>
     </div>
 
@@ -22,7 +30,10 @@
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 h-full">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-bold text-gray-800">Groupes</h2>
-                    <span class="badge badge-sm badge-ghost opacity-50" id="group-count">0</span>
+                    <div class="flex items-center gap-2">
+                        <span class="badge badge-sm badge-ghost opacity-50" id="group-count">0</span>
+                        <span id="total-groupes" class="hidden">0</span>
+                    </div>
                 </div>
                 
                 <nav id="groupes-list" class="space-y-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
@@ -95,8 +106,8 @@
                     </div>
                     <div class="form-control">
                         <label class="label cursor-pointer p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors">
-                            <span class="label-text font-medium text-orange-600">Brevo</span>
-                            <input type="checkbox" class="checkbox checkbox-warning checkbox-sm" data-filtre="brevo" />
+                            <span class="label-text font-medium text-orange-600">Base locale (Synchro Brevo)</span>
+                            <input type="checkbox" class="checkbox checkbox-warning checkbox-sm" data-filtre="brevo" checked disabled />
                         </label>
                     </div>
                 </div>

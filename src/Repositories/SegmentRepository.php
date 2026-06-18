@@ -20,8 +20,25 @@ class SegmentRepository
     }
 
     /**
-     * Récupère un segment par son ID.
+     * Récupère un segment par son nom.
      */
+    public function findByName(string $name): ?Segment
+    {
+        $stmt = $this->db->prepare("SELECT * FROM segment WHERE nom_segment = :name");
+        $stmt->execute(['name' => $name]);
+        $data = $stmt->fetch();
+
+        return $data ? Segment::fromArray($data) : null;
+    }
+
+    /**
+     * Supprime toutes les liaisons pour un contact (utilisé avant resynchro)
+     */
+    public function removeAllSegmentsFromContact(int $idContact): bool
+    {
+        $stmt = $this->db->prepare("DELETE FROM contact_segment WHERE idContact = :id");
+        return $stmt->execute(['id' => $idContact]);
+    }
     public function findById(int $id): ?Segment
     {
         $stmt = $this->db->prepare("SELECT * FROM segment WHERE idSegment = :id");
