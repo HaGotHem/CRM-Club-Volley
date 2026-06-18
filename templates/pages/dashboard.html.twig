@@ -3,28 +3,28 @@
 {% block title %}Dashboard - Nice Volley Ball{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
+<div class="flex flex-col space-y-4 h-[calc(100vh-4rem)]">
     <!-- Header Page -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 shrink-0">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800">Tableau de bord</h1>
-            <p class="text-gray-500">Bienvenue sur votre interface de gestion Nice Volley Ball.</p>
+            <h1 class="text-2xl font-bold text-gray-800">Tableau de bord</h1>
+            <p class="text-xs text-gray-500">Bienvenue sur votre interface de gestion Nice Volley Ball.</p>
         </div>
-        <div class="flex flex-wrap items-center gap-4">
+        <div class="flex flex-wrap items-center gap-3">
             <div class="tooltip tooltip-bottom before:text-xs before:max-w-[200px]" data-tip="Importez toutes les données en provenance de vos événements organisés sur WeezEvent">
-                <button id="btn-sync-weezevent" class="btn btn-lg bg-principal hover:bg-principal/90 text-white border-none rounded-2xl shadow-lg shadow-principal/20 px-8 transition-all hover:scale-105 active:scale-95">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <button class="btn btn-sm md:btn-md bg-principal hover:bg-principal/90 text-white border-none rounded-xl shadow-md shadow-principal/20 px-4 transition-all hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Synchro WeezEvent
                 </button>
             </div>
             <div class="tooltip tooltip-bottom before:text-xs before:max-w-[200px]" data-tip="Synchronisez les données de votre Dashboard avec vos listings Brevo">
-                <button id="btn-sync-brevo" class="btn btn-lg bg-secondaire hover:bg-secondaire/90 text-principal border-none rounded-2xl shadow-lg shadow-secondaire/20 px-8 transition-all hover:scale-105 active:scale-95">
-                    <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                <button class="btn btn-sm md:btn-md bg-secondaire hover:bg-secondaire/90 text-principal border-none rounded-xl shadow-md shadow-secondaire/20 px-4 transition-all hover:scale-105 active:scale-95">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Synchro Brevo
                 </button>
             </div>
-            <div class="flex items-center gap-4 text-sm text-gray-400 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 h-fit">
-                <span class="flex items-center gap-2">
+            <div class="flex items-center gap-2 text-xs text-gray-400 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-gray-100 h-fit">
+                <span class="flex items-center gap-1.5">
                     <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                     Système opérationnel
                 </span>
@@ -33,193 +33,113 @@
     </div>
 
     <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 shrink-0">
         <!-- Total Contacts -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 </div>
-                <div id="trend-contacts" class="text-sm font-bold px-2 py-1 rounded-lg">--</div>
+                <span class="text-green-500 text-xs font-bold bg-green-50 px-1.5 py-0.5 rounded-md">+10%</span>
             </div>
             <div>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Contacts Total</p>
-                <h3 id="total-contacts" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Contacts Total</p>
+                <h3 id="total-contacts" class="text-2xl font-extrabold text-gray-800 mt-0.5">--</h3>
             </div>
         </div>
 
         <!-- Total Groupes -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-yellow-50 text-yellow-600 rounded-2xl">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <div class="p-2 bg-yellow-50 text-yellow-600 rounded-xl">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                 </div>
-                <div id="trend-groupes" class="text-sm font-bold px-2 py-1 rounded-lg">--</div>
+                <span class="text-green-500 text-xs font-bold bg-green-50 px-1.5 py-0.5 rounded-md">+10%</span>
             </div>
             <div>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Groupes</p>
-                <h3 id="total-groupes" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Groupes</p>
+                <h3 id="total-groupes" class="text-2xl font-extrabold text-gray-800 mt-0.5">--</h3>
             </div>
         </div>
 
         <!-- Invitations -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-purple-50 text-purple-600 rounded-2xl">
-                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="6" width="20" height="14" rx="2"/>
-                    <path d="M2 6 L12 2 L22 6"/>
-                    <path d="M2 6 L12 13 L22 6"/>
-        </svg>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <div class="p-2 bg-purple-50 text-purple-600 rounded-xl">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="6" width="20" height="14" rx="2"/>
+                        <path d="M2 6 L12 2 L22 6"/>
+                        <path d="M2 6 L12 13 L22 6"/>
+                    </svg>
                 </div>
-                <div id="trend-invitations" class="text-sm font-bold px-2 py-1 rounded-lg">--</div>
+                <span class="text-sky-500 text-xs font-bold bg-sky-50 px-1.5 py-0.5 rounded-md">+10%</span>
             </div>
             <div>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Invitations</p>
-                <h3 id="invites-count" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Invitations</p>
+                <h3 id="invites-count" class="text-2xl font-extrabold text-gray-800 mt-0.5">--</h3>
             </div>
         </div>
 
         <!-- Places Vendues -->
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="p-3 bg-green-50 text-green-600 rounded-2xl">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1M4 11v8a2 2 0 0 0 2 2h10"></path><path d="M16 13h4v4h-4z"></path></svg>
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <div class="p-2 bg-green-50 text-green-600 rounded-xl">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1M4 11v8a2 2 0 0 0 2 2h10"></path><path d="M16 13h4v4h-4z"></path></svg>
                 </div>
-                <div id="trend-sales" class="text-sm font-bold px-2 py-1 rounded-lg">--</div>
+                <span class="text-green-500 text-xs font-bold bg-green-50 px-1.5 py-0.5 rounded-md">+10%</span>
             </div>
             <div>
-                <p class="text-gray-400 text-sm font-medium uppercase tracking-wider">Places Vendues</p>
-                <h3 id="places-count" class="text-4xl font-extrabold text-gray-800 mt-1">--</h3>
+                <p class="text-gray-400 text-xs font-medium uppercase tracking-wider">Places Vendues</p>
+                <h3 id="places-count" class="text-2xl font-extrabold text-gray-800 mt-0.5">--</h3>
             </div>
         </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+    <!-- Charts Section (S'étire pour combler le bas de l'écran) -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 flex-1">
         <!-- Affluence Chart -->
-        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between mb-8">
-                <h3 class="text-xl font-bold text-gray-800">Taux d'affluence</h3>
-                <div class="badge badge-outline text-gray-400">Mensuel</div>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2 shrink-0">
+                <h3 class="text-lg font-bold text-gray-800">Taux d'affluence</h3>
+                <div class="badge badge-sm badge-outline text-gray-400">Mensuel</div>
             </div>
-            <div class="h-64">
-                <canvas id="affluenceChart"></canvas>
+            <div class="flex-1 min-h-0 relative">
+                <canvas id="affluenceChart" class="w-full h-full"></canvas>
             </div>
         </div>
 
         <!-- Distribution Chart -->
-        <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between mb-8">
-                <h3 class="text-xl font-bold text-gray-800">Répartition Invitations / Ventes</h3>
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2 shrink-0">
+                <h3 class="text-lg font-bold text-gray-800">Répartition Invitations / Ventes</h3>
             </div>
-            <div class="flex flex-col md:flex-row items-center gap-8">
-                <div class="relative h-56 w-56 shrink-0">
+            <div class="flex flex-col sm:flex-row items-center gap-4 flex-1 min-h-0">
+                <div class="relative h-full aspect-square shrink-0 max-h-[220px]">
                     <canvas id="StatsChart"></canvas>
                 </div>
-                <div class="flex-1 space-y-4 w-full">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div class="flex-1 space-y-2 w-full justify-center flex flex-col">
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-xl text-sm">
                         <span class="flex items-center gap-2 font-medium text-gray-600">
-                            <span class="w-3 h-3 rounded-full bg-principal"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-principal"></span>
                             Places Vendues
                         </span>
-                        <span class="font-bold text-gray-800" id="legend-paid-pct">--</span>
+                        <span class="font-bold text-gray-800">23.1%</span>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-xl text-sm">
                         <span class="flex items-center gap-2 font-medium text-gray-600">
-                            <span class="w-3 h-3 rounded-full bg-gray-300"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
                             Invitations
                         </span>
-                        <span class="font-bold text-gray-800" id="legend-invited-pct">--</span>
+                        <span class="font-bold text-gray-800">76.9%</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Places Vendues Comparison -->
-    <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-        <h3 class="text-xl font-bold text-gray-800 mb-8">Comparaison des ventes</h3>
-        <div class="flex flex-col md:flex-row items-end gap-12 h-80">
-            <div class="flex flex-col items-center gap-4 h-full justify-end">
-                <div id="bar-this-month" class="w-24 bg-principal rounded-t-3xl shadow-lg shadow-principal/20 transition-all duration-500" style="height: 0px"></div>
-                <div class="text-center">
-                    <p class="text-2xl font-black text-principal" id="sales-this-month">--</p>
-                    <p class="text-sm font-medium text-gray-400">Ce mois-ci</p>
-                </div>
-            </div>
-            <div class="flex flex-col items-center gap-4 h-full justify-end">
-                <div id="bar-last-month" class="w-24 bg-gray-200 rounded-t-3xl transition-all duration-500" style="height: 0px"></div>
-                <div class="text-center">
-                    <p class="text-2xl font-black text-gray-400" id="sales-last-month">--</p>
-                    <p class="text-sm font-medium text-gray-400">Mois dernier</p>
-                </div>
-            </div>
-            <div class="flex-1 pb-4 hidden md:block">
-                <div id="performance-card" class="p-6 bg-gray-50 rounded-3xl border border-gray-100 transition-colors duration-300">
-                    <p id="performance-title" class="text-gray-800 font-semibold mb-2 flex items-center gap-2">
-                        --
-                    </p>
-                    <p id="performance-desc" class="text-gray-600/80 text-sm">Chargement des données...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de synchronisation Brevo -->
-    <dialog id="modal-sync-brevo" class="modal">
-        <div class="modal-box max-w-xl rounded-3xl">
-            <form method="dialog">
-                <button id="modal-sync-close" class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3" disabled>x</button>
-            </form>
-            <div class="flex items-start gap-4">
-                <div class="w-10 h-10 rounded-2xl bg-secondaire/10 text-secondaire flex items-center justify-center">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-lg font-bold text-gray-800">Synchronisation Brevo en cours…</h3>
-                    <p id="sync-status-text" class="text-sm text-gray-500 mt-1">Initialisation…</p>
-                    <div class="mt-5">
-                        <progress id="sync-progress" class="progress progress-warning w-full" value="0" max="100"></progress>
-                        <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
-                            <span id="sync-count">0 / 0</span>
-                            <span id="sync-percent">0%</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-gray-500">Contacts</p>
-                            <p class="font-bold text-gray-800"><span id="sync-contacts-created">0</span> / <span id="sync-contacts-updated">0</span></p>
-                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-gray-500">Événements</p>
-                            <p class="font-bold text-gray-800"><span id="sync-events-created">0</span> / <span id="sync-events-updated">0</span></p>
-                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-gray-500">Billets</p>
-                            <p class="font-bold text-gray-800"><span id="sync-tickets-created">0</span> / <span id="sync-tickets-updated">0</span></p>
-                            <p class="text-[10px] text-gray-400">Créés / MAJ</p>
-                        </div>
-                        <div class="p-3 bg-gray-50 rounded-xl">
-                            <p class="text-gray-500">Liaisons / Err.</p>
-                            <p class="font-bold text-gray-800"><span id="sync-links" class="text-green-600">0</span> / <span id="sync-errors" class="text-red-600">0</span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-action">
-                <button id="btn-sync-close" class="btn btn-ghost" disabled>Fermer</button>
-            </div>
-        </div>
-        <form method="dialog" class="modal-backdrop">
-            <button disabled>close</button>
-        </form>
-    </dialog>
 </div>
 {% endblock %}
 
 {% block scripts %}
     <script type="module" src="/frontend/src/script/dashboard.js" defer></script>
+    <script type="module" src="/frontend/src/script/Charts.js" defer></script>
 {% endblock %}
