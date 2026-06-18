@@ -42,7 +42,8 @@ $app->get('/api/events', function (Request $request, Response $response) {
                 $merged[] = array_merge($dbEventsMap[$id], [
                     'in_db' => true,
                     'nom' => $wEventFormatted['nom'], // On privilégie le nom Weezevent si mis à jour
-                    'date' => $wEventFormatted['date']
+                    'date' => $wEventFormatted['date'],
+                    'sales_status' => $wEventFormatted['sales_status'] ?? null
                 ]);
             } else {
                 // Absent en DB
@@ -60,39 +61,79 @@ $app->get('/api/events', function (Request $request, Response $response) {
             }
         }
 
-        // Tri par date décroissante
-        usort($merged, function ($a, $b) {
-            return strcmp($b['date'], $a['date']);
-        });
-
         // Détermination de la saison actuelle
         $now = new \DateTime();
         $currentMonth = (int)$now->format('n');
         $currentYear = (int)$now->format('Y');
-        $currentSeasonStart = ($currentMonth >= 7) ? $currentYear : $currentYear - 1;
+        $currentSeasonStartYear = ($currentMonth >= 7) ? $currentYear : $currentYear - 1;
 
-        $sections = [
-            'current' => [],
-            'past' => []
-        ];
-
+        // Groupement par saison
+        $seasons = [];
         foreach ($merged as $evt) {
             $evtDate = new \DateTime($evt['date']);
             $evtMonth = (int)$evtDate->format('n');
             $evtYear = (int)$evtDate->format('Y');
-            $evtSeasonStart = ($evtMonth >= 7) ? $evtYear : $evtYear - 1;
+            $seasonStartYear = ($evtMonth >= 7) ? $evtYear : $evtYear - 1;
+            $seasonLabel = $seasonStartYear . '/' . ($seasonStartYear + 1);
+            
+            // Un événement est "en cours" si publié OU (saison actuelle ET en DB)
+            $isPublished = (isset($evt['sales_status']['id_status']) && (int)$evt['sales_status']['id_status'] === 1);
+            $isCurrentSeason = ($seasonStartYear === $currentSeasonStartYear);
+            
+            $evt['is_current'] = ($isPublished || ($isCurrentSeason && ($evt['in_db'] ?? false)));
+            
+            if (!isset($seasons[$seasonLabel])) {
+                $seasons[$seasonLabel] = [];
+            }
+            $seasons[$seasonLabel][] = $evt;
+        }
 
-            if ($evtSeasonStart >= $currentSeasonStart) {
-                $sections['current'][] = $evt;
-            } else {
-                $sections['past'][] = $evt;
+        // Tri des saisons (plus récente en premier)
+        krsort($seasons);
+
+        // Tri des événements dans chaque saison
+        foreach ($seasons as &$sEvents) {
+            usort($sEvents, function ($a, $b) {
+                return strcmp($b['date'], $a['date']);
+            });
+        }
+
+        // Si une saison spécifique est demandée
+        $requestedSeason = $request->getQueryParams()['season'] ?? null;
+        if ($requestedSeason) {
+            return jsonResponse($response, [
+                'success' => true,
+                'data' => $seasons[$requestedSeason] ?? []
+            ]);
+        }
+
+        // Sinon, on renvoie la saison en cours et la liste des saisons passées disponibles
+        $currentSeasonLabel = $currentSeasonStartYear . '/' . ($currentSeasonStartYear + 1);
+        
+        $sections = [
+            'current' => [],
+            'past_seasons' => array_keys($seasons)
+        ];
+
+        // Pour la "Saison en cours", on prend tous les événements marqués is_current dans TOUTES les saisons
+        // (En général ils sont dans la saison actuelle, mais un événement "Vente en cours" peut techniquement être vieux)
+        foreach ($seasons as $label => $sEvents) {
+            foreach ($sEvents as $evt) {
+                if ($evt['is_current']) {
+                    $sections['current'][] = $evt;
+                }
             }
         }
+
+        // Tri de la section current par date décroissante
+        usort($sections['current'], function ($a, $b) {
+            return strcmp($b['date'], $a['date']);
+        });
 
         return jsonResponse($response, [
             'success' => true,
             'data' => $sections,
-            'count' => count($merged)
+            'current_season' => $currentSeasonLabel
         ]);
 
     } catch (\Throwable $e) {

@@ -60,9 +60,11 @@ final class WeezeventService
         try {
             $response = $this->client->get('/events', [
                 'query' => [
-                    'api_key'          => $this->apiKey,
-                    'access_token'     => $this->accessToken,
-                    'include_archived' => 'true', // Tentative d'inclusion des archives
+                    'api_key'               => $this->apiKey,
+                    'access_token'          => $this->accessToken,
+                    'include_closed'        => 'true',
+                    'include_without_sales' => 'true',
+                    'include_not_published' => 'true',
                 ]
             ]);
             $body = json_decode((string) $response->getBody(), true);
@@ -115,12 +117,14 @@ final class WeezeventService
      */
     public function formatEvent(array $event): array
     {
-        $date = $event['date_start'] ?? $event['date'] ?? date('Y-m-d H:i:s');
-
-        // L'API Weezevent /events renvoie la date sous la forme { "start": "...", "end": "..." }.
-        // On prend 'start' en priorité, puis quelques variantes par sécurité.
-        if (is_array($date)) {
-            $date = $date['start'] ?? $date['date'] ?? $date[0] ?? date('Y-m-d H:i:s');
+        // Dans l'API Weezevent v1 /events, la date est souvent dans event['date']['start']
+        $date = $event['date']['start'] ?? $event['date_start'] ?? $event['date'] ?? date('Y-m-d H:i:s');
+        
+        // Sécurité si l'API renvoie un tableau pour la date
+        if (is_array($date) && !isset($date['start'])) {
+            $date = $date['date'] ?? $date[0] ?? date('Y-m-d H:i:s');
+        } elseif (is_array($date) && isset($date['start'])) {
+            $date = $date['start'];
         }
 
         return [
@@ -130,6 +134,7 @@ final class WeezeventService
             'lieu'   => $event['location'] ?? $event['lieu'] ?? ($event['city'] ?? '—'),
             'type'   => $event['type'] ?? '—',
             'saison' => $event['season'] ?? null,
+            'sales_status' => $event['sales_status'] ?? null,
         ];
     }
 
