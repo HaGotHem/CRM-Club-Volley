@@ -97,17 +97,10 @@ body{
   border-color: #fca5a5;
 }
 
-/* --- menu burger --- */
+/* --- menu burger ---
+   La visibilité est gérée uniquement via la classe Tailwind "hidden"
+   (toggle en JS dans burgermenu.js). On garde juste une petite
+   transition d'apparition. */
 .burger_menu {
-  opacity: 0;
-  transform: translateY(-8px);
-  max-height: 0;
-  overflow: hidden;
-  transition: opacity 0.25s ease, transform 0.25s ease, max-height 0.3s ease;
-}
-
-.burger_menu.open {
-  opacity: 1;
-  transform: translateY(0);
-  max-height: 100vh;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
