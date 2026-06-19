@@ -18,7 +18,6 @@ class ContactManager {
         this.pageInfo = document.getElementById('page-info');
         this.contactsTitle = document.getElementById('contacts-title');
         this.searchInput = document.getElementById('search-contacts');
-        this.btnTransferer = document.getElementById('btn-transferer');
         this.btnSupprimerListe = document.getElementById('btn-supprimer-liste');
         this.modalSuppression = document.getElementById('modal-suppression-liste');
         this.confirmSupprimerListe = document.getElementById('confirm-supprimer-liste');
@@ -101,35 +100,6 @@ class ContactManager {
         const exportSearch = document.getElementById('export-contacts-search');
         if (exportSearch) {
             exportSearch.addEventListener('input', (e) => this.filterExportContacts(e.target.value));
-        }
-
-        if (this.btnTransferer) {
-            this.btnTransferer.addEventListener('click', async () => {
-                if (!this.currentListId) return;
-
-                const originalText = this.btnTransferer.textContent;
-                this.btnTransferer.disabled = true;
-                this.btnTransferer.innerHTML = '<span class="loading loading-spinner loading-xs mr-2"></span> Transfert...';
-
-                try {
-                    const res = await apiPost(`/segments/${this.currentListId}/sync-brevo`, {});
-                    if (res.success) {
-                        if (this.modalSuccessSync) {
-                            this.modalSuccessSync.checked = true;
-                        } else {
-                            alert('Synchronisation réussie !');
-                        }
-                        await this.loadGroups(); // Pour mettre à jour l'icône de statut
-                        await this.loadContacts(); // Pour mettre à jour le texte du bouton
-                    }
-                } catch (err) {
-                    console.error('[ContactManager] Erreur sync Brevo:', err);
-                    alert('Erreur lors de la synchronisation : ' + err.message);
-                } finally {
-                    this.btnTransferer.disabled = false;
-                    this.btnTransferer.textContent = originalText;
-                }
-            });
         }
 
         if (this.btnSupprimerListe) {
@@ -335,16 +305,6 @@ class ContactManager {
         if (!this.contactsListEl) return;
 
         if (this.contactsTitle) this.contactsTitle.textContent = this.currentListName;
-
-        // Gestion du bouton de transfert
-        if (this.btnTransferer) {
-            if (this.currentListId) {
-                this.btnTransferer.classList.remove('hidden');
-                this.btnTransferer.textContent = this.currentBrevoId ? 'Mettre à jour sur Brevo' : 'Transférer vers Brevo';
-            } else {
-                this.btnTransferer.classList.add('hidden');
-            }
-        }
 
         // Gestion du bouton de suppression
         if (this.btnSupprimerListe) {
