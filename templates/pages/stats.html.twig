@@ -92,12 +92,12 @@
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-3xl font-black text-gray-800">0</p>
+                            <p class="text-3xl font-black text-gray-800" id="stat-supporters-total">0</p>
                             <p class="text-sm font-bold text-principal uppercase tracking-tighter">Supporters totaux</p>
                         </div>
                     </div>
                     <div class="mt-auto">
-                        <span class="text-sky-500 text-xs font-bold bg-sky-50 px-2 py-1 rounded-lg">↑ 0% ce mois</span>
+                        <span class="text-sky-500 text-xs font-bold bg-sky-50 px-2 py-1 rounded-lg" id="stat-supporters-trend">↑ 0% ce mois</span>
                     </div>
                 </div>
 
@@ -108,7 +108,7 @@
                             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
                         </div>
                         <div>
-                            <p class="text-3xl font-black text-gray-800">0</p>
+                            <p class="text-3xl font-black text-gray-800" id="stat-supporters-new">0</p>
                             <p class="text-sm font-bold text-principal uppercase tracking-tighter">Nouveaux supporters de la saison</p>
                         </div>
                     </div>
@@ -118,50 +118,50 @@
                 </div>
             </div>
 
-        
-            <!-- Affluence Curve -->
+            <!-- ===== Courbe d'affluence ===== -->
             <div class="bg-principal rounded-3xl p-8 shadow-xl shadow-principal/10 text-white">
-                <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold">Courbe d'affluence</h3>
-                    <div class="px-3 py-1 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-widest">Temps réel</div>
+                    <div class="px-3 py-1 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-widest">12 derniers mois</div>
                 </div>
-                <div class="h-48 relative">
-                     <!-- SVG Curve from original but styled -->
-                     <svg viewBox="0 0 500 120" class="w-full h-full" preserveAspectRatio="none">
-                        <polyline fill="none" stroke="#F5D804" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5" />
-                        <path d="M0,120 L0,90 40,75 80,85 120,60 160,50 200,65 240,40 280,45 320,25 360,35 400,15 440,20 500,5 L500,120 Z" fill="url(#grad)" fill-opacity="0.2" />
-                        <defs>
-                            <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#F5D804;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#F5D804;stop-opacity:0" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+
+                <!-- Squelette visible le temps du chargement -->
+                <div id="affluence-skeleton" class="h-48 flex items-end gap-2 px-2 animate-pulse">
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:30%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:45%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:35%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:55%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:42%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:60%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:70%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:65%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:80%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:75%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:90%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:100%"></div>
                 </div>
-                <div class="flex justify-between mt-4 text-[10px] font-bold text-white/50 uppercase">
-                    <span>Sep</span><span>Oct</span><span>Nov</span><span>Déc</span><span>Jan</span><span>Fév</span><span>Mar</span><span>Avr</span><span>Mai</span><span>Jun</span><span>Jul</span><span>Août</span>
-                </div>
+
+                <!-- Conteneur caché jusqu'au render -->
+                <div id="affluence-chart" class="hidden"></div>
             </div>
         </div>
 
         <!-- Right Column: Marketing & Others -->
-        <div class="lg:col-span-5 space-y-8">
+        <div class="lg:col-span-5 space-y-6">
             
             <!-- Double Small Stats -->
             <div class="grid grid-cols-2 gap-6">
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center space-y-2">
-                    <p class="text-3xl font-black text-principal">783</p>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Places Places restantes</p>
+                    <p class="text-3xl font-black text-principal" id="stat-places-restantes">783</p>
+                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Places restantes</p>
                     <div class="text-[10px] font-bold text-sky-500 bg-sky-50 py-1 rounded-full">+10%</div>
                 </div>
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center space-y-2">
-                    <p class="text-3xl font-black text-principal">6</p>
+                    <p class="text-3xl font-black text-principal" id="stat-segments">6</p>
                     <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Segments actifs</p>
                     <div class="text-[10px] font-bold text-green-500 bg-green-50 py-1 rounded-full">Optimal</div>
                 </div>
             </div>
-
-        
 
             <!-- Comparaison des ventes -->
             <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
@@ -192,17 +192,12 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-    </div>
-</div>
 {% endblock %}
-
-
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
     <script type="module" src="/frontend/src/script/chart-clients-total.js" defer></script>
     <script type="module" src="/frontend/src/script/chart-places-sold.js" defer></script>
     <script type="module" src="/frontend/src/script/stats-events.js" defer></script>
+    <script type="module" src="/frontend/src/script/stats-affluence.js" defer></script>
 {% endblock %}

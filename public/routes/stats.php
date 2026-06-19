@@ -437,3 +437,52 @@ $app->get('/api/stats/event/{id}', function (Request $request, Response $respons
         ], 500);
     }
 });
+
+/**
+ * GET /api/stats/affluence
+ * Spectateurs uniques par mois sur les 12 derniers mois (basé sur la date des événements).
+ * Utilisé par stats-affluence.js pour tracer la courbe d'affluence.
+ */
+$app->get('/api/stats/affluence', function (Request $request, Response $response) {
+    try {
+        $pdo = Database::getConnection();
+
+        $rows = $pdo->query("
+            WITH months AS (
+                SELECT date_trunc('month', m)::date AS month_date
+                FROM generate_series(
+                    date_trunc('month', NOW() - INTERVAL '11 months'),
+                    date_trunc('month', NOW()),
+                    INTERVAL '1 month'
+                ) m
+            )
+            SELECT
+                TO_CHAR(m.month_date, 'Mon') AS label,
+                COUNT(DISTINCT cb.idcontact)  AS value
+            FROM months m
+            LEFT JOIN evenement e
+                ON date_trunc('month', e.date) = m.month_date
+            LEFT JOIN billet_evenement be
+                ON e.idevenementweezevent = be.idevenementweezevent
+            LEFT JOIN contact_billet cb
+                ON be.idbilletweezevent = cb.idbilletweezevent
+            GROUP BY m.month_date
+            ORDER BY m.month_date ASC
+        ")->fetchAll();
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data'    => [
+                'labels' => array_column($rows, 'label'),
+                'values' => array_map('intval', array_column($rows, 'value')),
+            ]
+        ]);
+
+    } catch (Throwable $e) {
+        return jsonResponse($response, [
+            'success' => false,
+            'error'   => 'Impossible de récupérer la courbe d\'affluence',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+});
