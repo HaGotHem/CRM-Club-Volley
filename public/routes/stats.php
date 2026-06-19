@@ -55,9 +55,11 @@ $app->get('/api/stats/dashboard', function (Request $request, Response $response
                 )
                 SELECT 
                     TO_CHAR(m.month_date, 'Mon') as month,
-                    COUNT(cb.idbilletweezevent) as count
+                    COUNT(cb.idbilletweezevent) FILTER (WHERE b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%') as sales,
+                    COUNT(cb.idbilletweezevent) FILTER (WHERE b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%') as invitations,
+                    COUNT(cb.idbilletweezevent) as total
                 FROM months m
-                LEFT JOIN billet b ON date_trunc('month', b.date_achat) = m.month_date AND b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'
+                LEFT JOIN billet b ON date_trunc('month', b.date_achat) = m.month_date
                 LEFT JOIN contact_billet cb ON b.idbilletweezevent = cb.idbilletweezevent
                 GROUP BY m.month_date
                 ORDER BY m.month_date
@@ -447,34 +449,41 @@ $app->get('/api/stats/affluence', function (Request $request, Response $response
     try {
         $pdo = Database::getConnection();
 
-        $rows = $pdo->query("
-            WITH months AS (
-                SELECT date_trunc('month', m)::date AS month_date
-                FROM generate_series(
-                    date_trunc('month', NOW() - INTERVAL '11 months'),
-                    date_trunc('month', NOW()),
-                    INTERVAL '1 month'
-                ) m
-            )
+        // Détermination de la saison en cours (1er août au 31 juillet)
+        $now = new DateTime();
+        $year = (int)$now->format('Y');
+        $month = (int)$now->format('m');
+
+        if ($month >= 8) {
+            $startDate = "$year-08-01";
+            $endDate = ($year + 1) . "-07-31";
+        } else {
+            $startDate = ($year - 1) . "-08-01";
+            $endDate = "$year-07-31";
+        }
+
+        $rows = $pdo->prepare("
             SELECT
-                TO_CHAR(m.month_date, 'Mon') AS label,
-                COUNT(DISTINCT cb.idcontact)  AS value
-            FROM months m
-            LEFT JOIN evenement e
-                ON date_trunc('month', e.date) = m.month_date
-            LEFT JOIN billet_evenement be
-                ON e.idevenementweezevent = be.idevenementweezevent
-            LEFT JOIN contact_billet cb
-                ON be.idbilletweezevent = cb.idbilletweezevent
-            GROUP BY m.month_date
-            ORDER BY m.month_date ASC
-        ")->fetchAll();
+                e.nom_evenement AS label,
+                COUNT(be.idbilletweezevent) AS tickets,
+                COALESCE(SUM(b.montant_total), 0) AS revenue,
+                e.date
+            FROM evenement e
+            LEFT JOIN billet_evenement be ON e.idevenementweezevent = be.idevenementweezevent
+            LEFT JOIN billet b ON be.idbilletweezevent = b.idbilletweezevent
+            WHERE e.date >= :start AND e.date <= :end
+            GROUP BY e.idevenementweezevent, e.nom_evenement, e.date
+            ORDER BY e.date ASC
+        ");
+        $rows->execute(['start' => $startDate, 'end' => $endDate]);
+        $data = $rows->fetchAll();
 
         return jsonResponse($response, [
             'success' => true,
             'data'    => [
-                'labels' => array_column($rows, 'label'),
-                'values' => array_map('intval', array_column($rows, 'value')),
+                'labels'   => array_column($data, 'label'),
+                'tickets'  => array_map('intval', array_column($data, 'tickets')),
+                'revenues' => array_map('floatval', array_column($data, 'revenue')),
             ]
         ]);
 

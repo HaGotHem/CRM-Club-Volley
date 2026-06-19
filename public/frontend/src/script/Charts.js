@@ -61,29 +61,65 @@ function initAffluenceChart(salesHistory) {
     const affluenceCanvas = document.getElementById('affluenceChart');
     if (affluenceCanvas) {
         const labels = salesHistory ? salesHistory.map(h => h.month) : ['Sep', 'Oct', 'Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aout'];
-        const data = salesHistory ? salesHistory.map(h => h.count) : [10, 28, 22, 30, 45, 42, 40, 48, 44, 38, 60, 62];
+        
+        const salesData = salesHistory ? salesHistory.map(h => h.sales) : [10, 28, 22, 30, 45, 42, 40, 48, 44, 38, 60, 62];
+        const invitedData = salesHistory ? salesHistory.map(h => h.invitations) : [5, 10, 8, 15, 20, 15, 12, 18, 14, 10, 25, 30];
+        const totalData = salesHistory ? salesHistory.map(h => h.total) : [15, 38, 30, 45, 65, 57, 52, 66, 58, 48, 85, 92];
 
         new Chart(affluenceCanvas, {
             type: 'line',
             data: {
                 labels: labels,
-                datasets: [{
-                    label: 'Ventes',
-                    data: data,
-                    borderColor: '#38BDF8',
-                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#38BDF8',
-                    fill: true,
-                }],
+                datasets: [
+                    {
+                        label: 'Ventes',
+                        data: salesData,
+                        borderColor: principal,
+                        backgroundColor: 'transparent',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: principal,
+                        fill: false,
+                    },
+                    {
+                        label: 'Invitations',
+                        data: invitedData,
+                        borderColor: '#94a3b8', // Gray
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: false,
+                        borderDash: [5, 5]
+                    },
+                    {
+                        label: 'Total',
+                        data: totalData,
+                        borderColor: '#38BDF8', // Sky blue
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        borderWidth: 4,
+                        tension: 0.4,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#38BDF8',
+                        fill: true,
+                    }
+                ],
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { 
-                    legend: { display: false },
+                    legend: { 
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 6,
+                            font: { size: 10, weight: '600' }
+                        }
+                    },
                     tooltip: {
                         mode: 'index',
                         intersect: false,

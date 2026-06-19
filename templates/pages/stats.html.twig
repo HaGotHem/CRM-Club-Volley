@@ -81,52 +81,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
         <!-- Left Column: Core Metrics -->
-        <div class="lg:col-span-7 space-y-8">
+        <div class="lg:col-span-12 space-y-8">
             
             <!-- Supporters Summary -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Supporters Totaux -->
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow stats-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="p-3 bg-blue-50 text-principal rounded-2xl">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-gray-800" id="stat-supporters-total">0</p>
-                            <p class="text-sm font-bold text-principal uppercase tracking-tighter">Supporters totaux</p>
-                        </div>
-                    </div>
-                    <div class="mt-auto">
-                        <span class="text-sky-500 text-xs font-bold bg-sky-50 px-2 py-1 rounded-lg" id="stat-supporters-trend">↑ 0% ce mois</span>
-                    </div>
-                </div>
-
-                <!-- Nouveaux Supporters -->
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col hover:shadow-md transition-shadow stats-card">
-                    <div class="flex items-center gap-4 mb-4">
-                        <div class="p-3 bg-yellow-50 text-secondaire rounded-2xl">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-gray-800" id="stat-supporters-new">0</p>
-                            <p class="text-sm font-bold text-principal uppercase tracking-tighter">Nouveaux supporters de la saison</p>
-                        </div>
-                    </div>
-                    <div class="mt-auto">
-                        <span class="text-green-500 text-xs font-bold bg-green-50 px-2 py-1 rounded-lg">Objectif : 200</span>
-                    </div>
-                </div>
             </div>
 
             <!-- ===== Courbe d'affluence ===== -->
             <div class="bg-principal rounded-3xl p-8 shadow-xl shadow-principal/10 text-white">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold">Courbe d'affluence</h3>
-                    <div class="px-3 py-1 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-widest">12 derniers mois</div>
+                    <div class="px-3 py-1 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-widest">Saison en cours (par événement)</div>
                 </div>
 
                 <!-- Squelette visible le temps du chargement -->
-                <div id="affluence-skeleton" class="h-48 flex items-end gap-2 px-2 animate-pulse">
+                <div id="affluence-skeleton" class="h-64 flex items-end gap-2 px-2 animate-pulse">
                     <div class="flex-1 bg-white/10 rounded-t-lg" style="height:30%"></div>
                     <div class="flex-1 bg-white/10 rounded-t-lg" style="height:45%"></div>
                     <div class="flex-1 bg-white/10 rounded-t-lg" style="height:35%"></div>
@@ -141,57 +110,36 @@
                     <div class="flex-1 bg-white/10 rounded-t-lg" style="height:100%"></div>
                 </div>
 
-                <!-- Conteneur caché jusqu'au render -->
                 <div id="affluence-chart" class="hidden"></div>
+            </div>
+
+            <!-- ===== Courbe des recettes ===== -->
+            <div class="bg-principal rounded-3xl p-8 shadow-xl shadow-principal/10 text-white">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold">Recette par événement</h3>
+                    <div class="px-3 py-1 bg-white/10 rounded-lg text-xs font-bold uppercase tracking-widest">Saison en cours (en euros)</div>
+                </div>
+
+                <!-- Squelette visible le temps du chargement -->
+                <div id="revenue-skeleton" class="h-64 flex items-end gap-2 px-2 animate-pulse">
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:20%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:55%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:30%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:40%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:65%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:45%"></div>
+                    <div class="flex-1 bg-white/10 rounded-t-lg" style="height:35%"></div>
+                </div>
+
+                <div id="revenue-chart" class="hidden"></div>
             </div>
         </div>
 
         <!-- Right Column: Marketing & Others -->
-        <div class="lg:col-span-5 space-y-6">
-            
-            <!-- Double Small Stats -->
-            <div class="grid grid-cols-2 gap-6">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center space-y-2">
-                    <p class="text-3xl font-black text-principal" id="stat-places-restantes">783</p>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Places restantes</p>
-                    <div class="text-[10px] font-bold text-sky-500 bg-sky-50 py-1 rounded-full">+10%</div>
-                </div>
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center space-y-2">
-                    <p class="text-3xl font-black text-principal" id="stat-segments">6</p>
-                    <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Segments actifs</p>
-                    <div class="text-[10px] font-bold text-green-500 bg-green-50 py-1 rounded-full">Optimal</div>
-                </div>
-            </div>
-
-            <!-- Comparaison des ventes -->
-            <div class="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-                <h3 class="text-xl font-bold text-gray-800 mb-8">Comparaison des ventes</h3>
-                <div class="flex flex-col xl:flex-row items-end gap-6">
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="w-16 bg-principal rounded-t-3xl shadow-lg shadow-principal/20" style="height: 140px"></div>
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-principal">3,128</p>
-                            <p class="text-sm font-medium text-gray-400">Ce mois-ci</p>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-center gap-4">
-                        <div class="w-16 bg-gray-200 rounded-t-3xl" style="height: 108px"></div>
-                        <div class="text-center">
-                            <p class="text-2xl font-black text-gray-400">2,420</p>
-                            <p class="text-sm font-medium text-gray-400">Mois dernier</p>
-                        </div>
-                    </div>
-                    <div class="flex-1 pb-4 hidden xl:block">
-                        <div class="p-6 bg-blue-50 rounded-3xl border border-blue-100">
-                            <p class="text-blue-800 font-semibold mb-2 flex items-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                                Performance en hausse
-                            </p>
-                            <p class="text-blue-600/80 text-sm">Vos ventes ont augmenté de 29% par rapport au mois dernier. Continuez ainsi !</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="hidden lg:col-span-5 space-y-6">
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

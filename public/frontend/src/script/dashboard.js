@@ -234,8 +234,8 @@ async function loadDashboard() {
 
             // Comparaison des ventes
             if (d.sales_history && d.sales_history.length >= 2) {
-                const thisMonth = d.sales_history[d.sales_history.length - 1].count;
-                const lastMonth = d.sales_history[d.sales_history.length - 2].count;
+                const thisMonth = d.sales_history[d.sales_history.length - 1].sales;
+                const lastMonth = d.sales_history[d.sales_history.length - 2].sales;
                 
                 setText('sales-this-month', thisMonth.toLocaleString('fr-FR'));
                 setText('sales-last-month', lastMonth.toLocaleString('fr-FR'));
