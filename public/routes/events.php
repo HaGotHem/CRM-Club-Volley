@@ -34,30 +34,34 @@ $app->get('/api/events', function (Request $request, Response $response) {
 
         foreach ($weezeventEvents as $wEvent) {
             $wEventFormatted = $weezevent->formatEvent($wEvent);
-            $id = $wEventFormatted['id'];
+            $id = (int)$wEventFormatted['id'];
             $weezeventIds[] = $id;
 
-            if (isset($dbEventsMap[$id])) {
-                // Présent en DB
-                $merged[] = array_merge($dbEventsMap[$id], [
-                    'in_db' => true,
-                    'nom' => $wEventFormatted['nom'], // On privilégie le nom Weezevent si mis à jour
-                    'date' => $wEventFormatted['date'],
-                    'sales_status' => $wEventFormatted['sales_status'] ?? null
-                ]);
-            } else {
-                // Absent en DB
-                $merged[] = array_merge($wEventFormatted, [
-                    'in_db' => false,
-                    'total_tickets' => 0
-                ]);
-            }
+            // Logique de fusion robuste : Weezevent est la source de vérité pour les infos,
+            // la DB est la source de vérité pour le statut d'importation et les statistiques locales.
+            $inDb = isset($dbEventsMap[$id]);
+            
+            $baseData = $inDb ? $dbEventsMap[$id] : $wEventFormatted;
+            
+            $merged[] = array_merge($baseData, [
+                'in_db' => $inDb,
+                'id'    => $id, // Force l'ID numérique
+                'nom'   => $wEventFormatted['nom'],
+                'date'  => $wEventFormatted['date'],
+                'sales_status' => $wEventFormatted['sales_status'] ?? null,
+                'total_tickets' => $inDb ? (int)($dbEventsMap[$id]['total_tickets'] ?? 0) : 0
+            ]);
         }
 
         // 3. Ajouter les événements qui seraient en DB mais plus chez Weezevent (rare)
         foreach ($dbEvents as $e) {
-            if (!in_array($e['idevenementweezevent'], $weezeventIds)) {
-                $merged[] = array_merge($e, ['in_db' => true, 'archived_weezevent' => true]);
+            $dbId = (int)$e['idevenementweezevent'];
+            if (!in_array($dbId, $weezeventIds)) {
+                $merged[] = array_merge($e, [
+                    'id' => $dbId,
+                    'in_db' => true, 
+                    'archived_weezevent' => true
+                ]);
             }
         }
 
@@ -80,7 +84,8 @@ $app->get('/api/events', function (Request $request, Response $response) {
             $isPublished = (isset($evt['sales_status']['id_status']) && (int)$evt['sales_status']['id_status'] === 1);
             $isCurrentSeason = ($seasonStartYear === $currentSeasonStartYear);
             
-            $evt['is_current'] = ($isPublished || ($isCurrentSeason && ($evt['in_db'] ?? false)));
+            // Un événement est "en cours" s'il est publié OU s'il a été importé en DB
+            $evt['is_current'] = ($isPublished || ($evt['in_db'] ?? false));
             
             if (!isset($seasons[$seasonLabel])) {
                 $seasons[$seasonLabel] = [];
@@ -115,13 +120,18 @@ $app->get('/api/events', function (Request $request, Response $response) {
             'past_seasons' => array_keys($seasons)
         ];
 
-        // Pour la "Saison en cours", on prend tous les événements marqués is_current dans TOUTES les saisons
-        // (En général ils sont dans la saison actuelle, mais un événement "Vente en cours" peut techniquement être vieux)
-        foreach ($seasons as $label => $sEvents) {
-            foreach ($sEvents as $evt) {
-                if ($evt['is_current']) {
-                    $sections['current'][] = $evt;
-                }
+        // On identifie aussi tous les événements importés comme "current" pour qu'ils soient visibles en haut
+        foreach ($merged as &$evt) {
+            $evtDate = new \DateTime($evt['date']);
+            $evtMonth = (int)$evtDate->format('n');
+            $evtYear = (int)$evtDate->format('Y');
+            $seasonStartYear = ($evtMonth >= 7) ? $evtYear : $evtYear - 1;
+            
+            $isPublished = (isset($evt['sales_status']['id_status']) && (int)$evt['sales_status']['id_status'] === 1);
+            $evt['is_current'] = ($isPublished || ($evt['in_db'] ?? false));
+            
+            if ($evt['is_current']) {
+                $sections['current'][] = $evt;
             }
         }
 
@@ -141,6 +151,54 @@ $app->get('/api/events', function (Request $request, Response $response) {
             'success' => false,
             'error' => $e->getMessage()
         ], 500);
+    }
+});
+
+/**
+ * Récupère un événement spécifique (vérification après import)
+ */
+$app->get('/api/events/{id}', function (Request $request, Response $response, array $args) {
+    try {
+        $id = (int)$args['id'];
+        $eventRepo = new EvenementRepository();
+        $weezevent = new WeezeventService();
+
+        // On cherche en DB
+        $dbEvent = $eventRepo->findWithStats($id);
+        
+        // On cherche chez Weezevent pour avoir les infos fraîches (nom, statut de vente)
+        $wEvents = $weezevent->getEvents();
+        $wEventMatch = null;
+        foreach ($wEvents as $we) {
+            if ((int)$we['id'] === $id) {
+                $wEventMatch = $weezevent->formatEvent($we);
+                break;
+            }
+        }
+
+        if (!$dbEvent && !$wEventMatch) {
+            return jsonResponse($response, ['success' => false, 'error' => 'Événement introuvable'], 404);
+        }
+
+        $inDb = $dbEvent !== null;
+        $baseData = $inDb ? $dbEvent : $wEventMatch;
+
+        // Fusion
+        $result = array_merge($baseData, [
+            'in_db' => $inDb,
+            'id'    => $id,
+            'nom'   => $wEventMatch ? $wEventMatch['nom'] : ($dbEvent['nom_evenement'] ?? 'Événement'),
+            'date'  => $wEventMatch ? $wEventMatch['date'] : ($dbEvent['date'] ?? null),
+            'sales_status' => $wEventMatch['sales_status'] ?? null,
+            'total_tickets' => $inDb ? (int)($dbEvent['total_tickets'] ?? 0) : 0
+        ]);
+
+        return jsonResponse($response, [
+            'success' => true,
+            'data' => $result
+        ]);
+    } catch (\Exception $e) {
+        return jsonResponse($response, ['success' => false, 'error' => $e->getMessage()], 500);
     }
 });
 
@@ -185,6 +243,9 @@ $app->post('/api/events/import/{id}', function (Request $request, Response $resp
             $participants = [$participants];
         }
 
+        // Récupération du catalogue de tarifs pour avoir les prix et libellés corrects
+        $ticketCatalog = $weezevent->getTicketCatalog($eventId);
+
         $stats = [
             'contacts' => 0,
             'tickets' => 0,
@@ -214,7 +275,7 @@ $app->post('/api/events/import/{id}', function (Request $request, Response $resp
                 }
 
                 // Billet
-                $ticketData = $weezevent->formatTicketFromParticipant($participant);
+                $ticketData = $weezevent->formatTicketFromParticipant($participant, $ticketCatalog);
                 if (!empty($ticketData['id'])) {
                     $billetRepo->save($ticketData);
                     $stats['tickets']++;

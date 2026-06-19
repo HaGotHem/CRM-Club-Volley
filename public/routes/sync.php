@@ -22,11 +22,23 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
         $repository = new ContactRepository();
 
         $events = $weezevent->getEvents();
+        
+        // On ne garde que les 3 derniers événements chronologiques
+        usort($events, function($a, $b) use ($weezevent) {
+            $dateA = $weezevent->formatEvent($a)['date'];
+            $dateB = $weezevent->formatEvent($b)['date'];
+            return strcmp($dateB, $dateA); // Décroissant
+        });
+        $events = array_slice($events, 0, 3);
+
         $participants = [];
         foreach ($events as $event) {
             $eventId = (int)($event['id'] ?? $event['id_event'] ?? 0);
             if ($eventId > 0) {
-                $evParticipants = $weezevent->getParticipants($eventId);
+                // On récupère tout pour l'import réel, mais Weezevent a des limites de pagination.
+                // Ici on passe 10000 en espérant couvrir la majorité des cas, 
+                // ou WeezeventService devrait gérer la pagination.
+                $evParticipants = $weezevent->getParticipants($eventId, 10000);
                 // Si l'API renvoie un seul objet au lieu d'une liste (cas rare mais possible selon structure)
                 if (isset($evParticipants['id']) || isset($evParticipants['participant'])) {
                     $participants[] = $evParticipants;
@@ -100,23 +112,45 @@ $app->post('/api/sync/weezevent', function (Request $request, Response $response
 
 $app->get('/api/sync/weezevent/count', function (Request $request, Response $response) {
     try {
-        $weezevent = new WeezeventService();
-        $events = $weezevent->getEvents();
-        $total = 0;
-        foreach ($events as $event) {
-            $eventId = (int)($event['id'] ?? $event['id_event'] ?? 0);
-            if ($eventId > 0) {
-                $evParticipants = $weezevent->getParticipants($eventId);
-                if (isset($evParticipants['id']) || isset($evParticipants['participant'])) {
-                    $total += 1;
-                } else {
-                    $total += count($evParticipants);
+        $pdo = Database::getConnection();
+        
+        // On essaie d'abord de compter en base locale
+        $count = (int)$pdo->query("SELECT COUNT(*) FROM billet")->fetchColumn();
+        
+        // Si la base est vide, on va chercher chez Weezevent (comportement initial)
+        // mais on prévient que ça peut être long ou on limite.
+        if ($count === 0) {
+            $weezevent = new WeezeventService();
+            $events = $weezevent->getEvents();
+
+            // On ne garde que les 3 derniers événements chronologiques pour éviter le timeout
+            usort($events, function($a, $b) use ($weezevent) {
+                $dateA = $weezevent->formatEvent($a)['date'];
+                $dateB = $weezevent->formatEvent($b)['date'];
+                return strcmp($dateB, $dateA); // Décroissant
+            });
+            $events = array_slice($events, 0, 3);
+
+            $total = 0;
+            foreach ($events as $event) {
+                $eventId = (int)($event['id'] ?? $event['id_event'] ?? 0);
+                if ($eventId > 0) {
+                    // Pour le comptage rapide, on limite à 1 pour vérifier s'il y a des participants
+                    // Note: L'API Weezevent ne semble pas fournir de champ "total" simple sans lister.
+                    $evParticipants = $weezevent->getParticipants($eventId, 50); 
+                    if (isset($evParticipants['id']) || isset($evParticipants['participant'])) {
+                        $total += 1;
+                    } else {
+                        $total += count($evParticipants);
+                    }
                 }
             }
+            $count = $total;
         }
+
         return jsonResponse($response, [
             'success' => true,
-            'total'   => $total
+            'total'   => $count
         ]);
     } catch (Throwable $e) {
         return jsonResponse($response, [
@@ -140,7 +174,15 @@ $app->post('/api/sync/weezevent/import', function (Request $request, Response $r
 
         $events = $weezevent->getEvents();
         
-        // 1) Phase initiale : synchronisation de TOUS les événements Weezevent
+        // On ne garde que les 3 derniers événements chronologiques
+        usort($events, function($a, $b) use ($weezevent) {
+            $dateA = $weezevent->formatEvent($a)['date'];
+            $dateB = $weezevent->formatEvent($b)['date'];
+            return strcmp($dateB, $dateA); // Décroissant
+        });
+        $events = array_slice($events, 0, 3);
+        
+        // 1) Phase initiale : synchronisation de TOUS les événements Weezevent (limité aux 3 derniers désormais)
         $stats = [
             'contacts_created' => 0,
             'contacts_updated' => 0,
@@ -167,7 +209,7 @@ $app->post('/api/sync/weezevent/import', function (Request $request, Response $r
         foreach ($events as $event) {
             $eventId = (int)($event['id'] ?? $event['id_event'] ?? 0);
             if ($eventId > 0) {
-                $evParticipants = $weezevent->getParticipants($eventId);
+                $evParticipants = $weezevent->getParticipants($eventId, 10000);
                 if (isset($evParticipants['id']) || isset($evParticipants['participant'])) {
                     $all[] = $evParticipants;
                 } else {

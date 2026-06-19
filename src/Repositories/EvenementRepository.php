@@ -21,15 +21,32 @@ final class EvenementRepository
     public function findAllWithStats(): array
     {
         $sql = "SELECT e.*, 
-                       COUNT(cb.idContact) as total_tickets
+                       (SELECT COUNT(*) 
+                        FROM billet_evenement be 
+                        WHERE be.idEvenementWeezevent = e.idEvenementWeezevent) as total_tickets
                 FROM evenement e
-                LEFT JOIN billet_evenement be ON e.idEvenementWeezevent = be.idEvenementWeezevent
-                LEFT JOIN contact_billet cb ON be.idBilletWeezevent = cb.idBilletWeezevent
-                GROUP BY e.idEvenementWeezevent
                 ORDER BY e.date DESC";
 
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Récupère un événement spécifique avec ses stats
+     */
+    public function findWithStats(int $id): ?array
+    {
+        $sql = "SELECT e.*, 
+                       (SELECT COUNT(*) 
+                        FROM billet_evenement be 
+                        WHERE be.idEvenementWeezevent = e.idEvenementWeezevent) as total_tickets
+                FROM evenement e
+                WHERE e.idEvenementWeezevent = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['id' => $id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 
     public function exists(int $id): bool

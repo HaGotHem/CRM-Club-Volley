@@ -31,7 +31,7 @@ final class WeezeventService
     /**
      * Récupère les participants pour un événement spécifique.
      */
-    public function getParticipants(int $eventId): array
+    public function getParticipants(int $eventId, int $limit = 50): array
     {
         try {
             $response = $this->client->get('/participant/list', [
@@ -40,7 +40,8 @@ final class WeezeventService
                     'access_token'   => $this->accessToken,
                     'id_event[]'     => $eventId,
                     'include_addon'  => 'false',
-                    'full'           => 'true'
+                    'full'           => 'true',
+                    'limit'          => $limit
                 ]
             ]);
 
