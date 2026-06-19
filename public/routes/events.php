@@ -84,8 +84,8 @@ $app->get('/api/events', function (Request $request, Response $response) {
             $isPublished = (isset($evt['sales_status']['id_status']) && (int)$evt['sales_status']['id_status'] === 1);
             $isCurrentSeason = ($seasonStartYear === $currentSeasonStartYear);
             
-            // Un événement est "en cours" s'il est publié OU s'il a été importé en DB
-            $evt['is_current'] = ($isPublished || ($evt['in_db'] ?? false));
+            // Un événement est "en cours" s'il appartient à la saison actuelle ET (est publié OU a été importé en DB)
+            $evt['is_current'] = $isCurrentSeason && ($isPublished || ($evt['in_db'] ?? false));
             
             if (!isset($seasons[$seasonLabel])) {
                 $seasons[$seasonLabel] = [];
@@ -120,25 +120,20 @@ $app->get('/api/events', function (Request $request, Response $response) {
             'past_seasons' => array_keys($seasons)
         ];
 
-        // On identifie aussi tous les événements importés comme "current" pour qu'ils soient visibles en haut
-        foreach ($merged as &$evt) {
-            $evtDate = new \DateTime($evt['date']);
-            $evtMonth = (int)$evtDate->format('n');
-            $evtYear = (int)$evtDate->format('Y');
-            $seasonStartYear = ($evtMonth >= 7) ? $evtYear : $evtYear - 1;
-            
-            $isPublished = (isset($evt['sales_status']['id_status']) && (int)$evt['sales_status']['id_status'] === 1);
-            $evt['is_current'] = ($isPublished || ($evt['in_db'] ?? false));
-            
-            if ($evt['is_current']) {
-                $sections['current'][] = $evt;
-            }
+        // On identifie uniquement les événements de la saison en cours comme "current"
+        if (isset($seasons[$currentSeasonLabel])) {
+            $sections['current'] = $seasons[$currentSeasonLabel];
         }
 
         // Tri de la section current par date décroissante
         usort($sections['current'], function ($a, $b) {
             return strcmp($b['date'], $a['date']);
         });
+
+        // Supprimer la saison actuelle de la liste des saisons passées pour éviter les doublons dans l'UI
+        $sections['past_seasons'] = array_values(array_filter($sections['past_seasons'], function($label) use ($currentSeasonLabel) {
+            return $label !== $currentSeasonLabel;
+        }));
 
         return jsonResponse($response, [
             'success' => true,
