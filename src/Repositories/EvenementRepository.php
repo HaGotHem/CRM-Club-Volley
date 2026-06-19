@@ -21,10 +21,10 @@ final class EvenementRepository
     public function findAllWithStats(): array
     {
         $sql = "SELECT e.*, 
-                       (SELECT COUNT(*) 
-                        FROM billet_evenement be 
-                        WHERE be.idEvenementWeezevent = e.idEvenementWeezevent) as total_tickets
+                       COUNT(be.idBilletWeezevent) as total_tickets
                 FROM evenement e
+                LEFT JOIN billet_evenement be ON be.idEvenementWeezevent = e.idEvenementWeezevent
+                GROUP BY e.idEvenementWeezevent
                 ORDER BY e.date DESC";
 
         $stmt = $this->db->query($sql);
@@ -37,11 +37,11 @@ final class EvenementRepository
     public function findWithStats(int $id): ?array
     {
         $sql = "SELECT e.*, 
-                       (SELECT COUNT(*) 
-                        FROM billet_evenement be 
-                        WHERE be.idEvenementWeezevent = e.idEvenementWeezevent) as total_tickets
+                       COUNT(be.idBilletWeezevent) as total_tickets
                 FROM evenement e
-                WHERE e.idEvenementWeezevent = :id";
+                LEFT JOIN billet_evenement be ON be.idEvenementWeezevent = e.idEvenementWeezevent
+                WHERE e.idEvenementWeezevent = :id
+                GROUP BY e.idEvenementWeezevent";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['id' => $id]);

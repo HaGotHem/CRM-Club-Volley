@@ -124,41 +124,44 @@ $app->get('/api/stats/dashboard', function (Request $request, Response $response
             $new_visitors_count = count($new_visitors_list);
         }
 
-        // Helper function for trends
-        $getTrend = function($queryCurrent, $queryPrevious) use ($pdo) {
-            $current = (int) $pdo->query($queryCurrent)->fetchColumn();
-            $previous = (int) $pdo->query($queryPrevious)->fetchColumn();
+        // Optimized Trend retrieval
+        $getTrendOptimized = function(string $table, string $dateColumn, string $filter = '1=1') use ($pdo) {
+            $sql = "
+                SELECT 
+                    COUNT(*) FILTER (WHERE $dateColumn >= NOW() - INTERVAL '30 days') as current,
+                    COUNT(*) FILTER (WHERE $dateColumn >= NOW() - INTERVAL '60 days' AND $dateColumn < NOW() - INTERVAL '30 days') as previous
+                FROM $table
+                WHERE $filter
+            ";
+            $res = $pdo->query($sql)->fetch();
+            $current = (int) $res['current'];
+            $previous = (int) $res['previous'];
             if ($previous === 0) return $current > 0 ? 100 : 0;
             return round((($current - $previous) / $previous) * 100, 1);
         };
 
         // Contacts Trends (30 days)
-        $contacts_trend = $getTrend(
-            "SELECT COUNT(*) FROM contact WHERE date_creation >= NOW() - INTERVAL '30 days'",
-            "SELECT COUNT(*) FROM contact WHERE date_creation >= NOW() - INTERVAL '60 days' AND date_creation < NOW() - INTERVAL '30 days'"
-        );
+        $contacts_trend = $getTrendOptimized('contact', 'date_creation');
 
-        // Groups Trends (30 days) - assuming groups have no date, we might just compare current count to... well, if no date, trend is hard.
-        // Let's check if 'segment' has a date column. If not, we'll return 0 or mock it.
+        // Groups Trends (30 days)
         $hasDateSegment = $pdo->query("SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'segment' AND column_name = 'date_creation'")->fetchColumn();
         $groups_trend = 0;
         if ($hasDateSegment) {
-            $groups_trend = $getTrend(
-                "SELECT COUNT(*) FROM segment WHERE date_creation >= NOW() - INTERVAL '30 days'",
-                "SELECT COUNT(*) FROM segment WHERE date_creation >= NOW() - INTERVAL '60 days' AND date_creation < NOW() - INTERVAL '30 days'"
-            );
+            $groups_trend = $getTrendOptimized('segment', 'date_creation');
         }
 
         // Sales Trends (30 days)
-        $sales_trend = $getTrend(
-            "SELECT COUNT(*) FROM contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent WHERE b.date_achat >= NOW() - INTERVAL '30 days' AND b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'",
-            "SELECT COUNT(*) FROM contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent WHERE b.date_achat >= NOW() - INTERVAL '60 days' AND b.date_achat < NOW() - INTERVAL '30 days' AND b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'"
+        $sales_trend = $getTrendOptimized(
+            'contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent',
+            'b.date_achat',
+            "b.type_tarif NOT ILIKE '%invitation%' AND b.type_tarif NOT ILIKE '%gratuit%'"
         );
 
         // Invitations Trends (30 days)
-        $invites_trend = $getTrend(
-            "SELECT COUNT(*) FROM contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent WHERE b.date_achat >= NOW() - INTERVAL '30 days' AND (b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%')",
-            "SELECT COUNT(*) FROM contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent WHERE b.date_achat >= NOW() - INTERVAL '60 days' AND b.date_achat < NOW() - INTERVAL '30 days' AND (b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%')"
+        $invites_trend = $getTrendOptimized(
+            'contact_billet cb JOIN billet b ON cb.idbilletweezevent = b.idbilletweezevent',
+            'b.date_achat',
+            "(b.type_tarif ILIKE '%invitation%' OR b.type_tarif ILIKE '%gratuit%')"
         );
 
         return jsonResponse($response, [

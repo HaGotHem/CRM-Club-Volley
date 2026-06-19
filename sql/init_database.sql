@@ -76,6 +76,9 @@ CREATE TABLE contact (
 CREATE INDEX idx_contact_email ON contact(email);
 CREATE INDEX idx_contact_source ON contact(source);
 CREATE INDEX idx_contact_date_creation ON contact(date_creation);
+CREATE INDEX idx_billet_date_achat ON billet(date_achat);
+CREATE INDEX idx_billet_type_tarif ON billet(type_tarif);
+CREATE INDEX idx_evenement_date ON evenement(date);
 
 COMMENT ON COLUMN contact.consentement_marketing IS 'TRUE = optin Brevo, FALSE = optout';
 

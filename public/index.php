@@ -7,24 +7,13 @@ use Slim\Factory\AppFactory;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
 
-use App\Models\Contact;
-use App\Models\Administrateur;
-use App\Repositories\AdminRepository;
-use App\Repositories\ContactRepository;
-use App\Repositories\SegmentRepository;
-use App\Repositories\EvenementRepository;
-use App\Repositories\BilletRepository;
-use App\Repositories\ConsentementRepository;
 use App\Middleware\AuthMiddleware;
+use App\Repositories\AdminRepository;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 require __DIR__ . '/../src/Helpers.php';
 require __DIR__ . '/../src/Database.php';
-
-// Les modèles sont chargés via l'autoloader PSR-4 configuré dans composer.json
-// On peut garder les inclusions manuelles pour les services/repos si l'autoloader n'est pas utilisé partout,
-// mais avec PSR-4 "App\\" => "src/", l'autoloader vendor/autoload.php devrait tout gérer.
 
 // Chargement du fichier .env
 $dotenv = Dotenv::createImmutable(__DIR__ . '/..');
